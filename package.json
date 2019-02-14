@@ -1,27 +1,19 @@
 {
   "name": "computer-science-training",
   "version": "1.0.0",
+  "repository": "https://github.com/torendo/computer-science-training.git",
+  "author": "Stanislav Proshkin <toren4eg@gmail.com> (https://github.com/torendo)",
+  "license": "MIT",
   "scripts": {
     "start": "echo \"Error\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/torendo/computer-science-training.git"
-  },
-  "author": "Stanislav Proshkin <toren4eg@gmail.com> (https://github.com/torendo)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/torendo/computer-science-training/issues"
-  },
-  "homepage": "https://github.com/torendo/computer-science-training#readme",
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "lit-element": "^2.0.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
-    "@babel/preset-env": "^7.3.1",
     "gulp": "^4.0.0",
-    "eslint": "^4.16.0"
+    "eslint": "^5.13.0",
+    "rollup-stream": "^1.24.1"
   }
 }
