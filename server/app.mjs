@@ -4,7 +4,7 @@ import path from 'path';
 const {__dirname, require} = expose;
 
 const PORT = 3000;
-const PUBLIC_PATH = __dirname + '/public';
+const PUBLIC_PATH = __dirname + '/../client';
 const app = express();
 
 const isDev = process.env.NODE_ENV === 'development';
