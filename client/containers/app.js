@@ -8,11 +8,12 @@ export class XApp extends LitElement {
     ];
     return html`
       <p>A paragraph</p>
-      <x-something/>
-      ---
-      <x-router routes=${JSON.stringify(routes)} />
-      ---
-      <page-array></page-array>
+      <x-something></x-something>
+      <p>---</p>
+      <a href="/array">array</a>
+      <a href="/list">list</a>
+      <p>---</p>
+      <x-router .routes=${routes}></x-router>
     `;
   }
 

@@ -2,5 +2,6 @@
 <project version="4">
   <component name="JavaScriptLibraryMappings">
     <file url="PROJECT" libraries="{@types/css-modules, @types/css-modules-require-hook, @types/react, @types/react-css-modules, @types/webpack}" />
+    <includedPredefinedLibrary name="Node.js Core" />
   </component>
 </project>
