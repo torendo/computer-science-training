@@ -16,21 +16,15 @@ export class XRouter extends LitElement {
   }
 
   render() {
-    let template;
+    let template = '';
     if (this.routes) {
       const route = this.routes.find(route => {
         return route.path === decodeURIComponent(location.pathname);
       });
       if (route) {
         template = `<${route.component} />`;
-      } else {
-        template = '';
       }
-    } else {
-      template = '';
     }
-
-    // return html`${template}`;
     return html`${unsafeHTML(template)}`;
   }
 

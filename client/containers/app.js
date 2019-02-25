@@ -10,8 +10,8 @@ export class XApp extends LitElement {
       <p>A paragraph</p>
       <x-something></x-something>
       <p>---</p>
-      <a href="/array">array</a>
-      <a href="/list">list</a>
+      <a href="/array" is="x-router-a">array</a>
+      <a href="/list" is="x-router-a">list</a>
       <p>---</p>
       <x-router .routes=${routes}></x-router>
     `;
