@@ -3,17 +3,16 @@ import {LitElement, html} from 'lit-element';
 export class XApp extends LitElement {
   render() {
     const routes = [
-      {path: '/array', component: 'page-array'},
-      {path: '/list', component: 'page-list'}
+      {path: '/array', component: 'page-array', title: 'Array'},
+      {path: '/list', component: 'page-list', title: 'List'}
     ];
     return html`
-      <p>A paragraph</p>
-      <x-something></x-something>
-      <p>---</p>
-      <a href="/array" is="x-router-a">array</a>
-      <a href="/list" is="x-router-a">list</a>
-      <p>---</p>
-      <x-router .routes=${routes}></x-router>
+      <h3>Workshop applications</h3>
+      <ul>
+        ${routes.map(route => html`<li><a href="${route.path}" is="x-router-a">${route.title}</a></li>`)}
+      </ul>
+      <x-router .routes=${routes}></x-router>      
+      <x-footer></x-footer>
     `;
   }
 

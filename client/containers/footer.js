@@ -1,9 +1,9 @@
 import {LitElement, html} from 'lit-element';
 
-export class PageList extends LitElement {
+export class XFooter extends LitElement {
   render() {
     return html`
-      <p>List Page</p>
+      <p>Built with ❤ and Webcomponents</p>
     `;
   }
 
@@ -12,4 +12,4 @@ export class PageList extends LitElement {
   }
 }
 
-customElements.define('page-list', PageList);
+customElements.define('x-footer', XFooter);
