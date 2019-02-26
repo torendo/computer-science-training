@@ -22,7 +22,7 @@ export class XRouter extends LitElement {
         return route.path === decodeURIComponent(location.pathname);
       });
       if (route) {
-        template = `<${route.component} />`;
+        template = `<${route.component}></${route.component}>`;
       }
     }
     return html`${unsafeHTML(template)}`;
