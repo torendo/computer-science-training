@@ -10,7 +10,7 @@ export class XRouterA extends HTMLAnchorElement {
   }
 
   disconnectedCallback() {
-    this.removeEventListener(this.xRouterListener);
+    this.removeEventListener('click', this.xRouterListener);
   }
 }
 
