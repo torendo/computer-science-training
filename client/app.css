@@ -1,3 +1,9 @@
 .body {
   background: aliceblue;
 }
+
+.controlpanel {
+  padding: 10px;
+  margin: 10px;
+  background: cornsilk;
+}
