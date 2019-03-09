@@ -24,15 +24,25 @@ export class PageArray extends LitElement {
   }
 
   handleClickNew() {
-    const arr = [];
-    const arrLength = Math.ceil(Math.random() * 60);
-    const maxFilledElements = Math.ceil(Math.random() * arrLength);
+    const arrLength = Math.ceil(Math.random() * 59);
+    const arr = new Array(arrLength);
     for (let i = 0; i < arrLength; i++) {
-      const item = {index: i, data: null, state: null};
-      if (i < maxFilledElements) item.data = Math.ceil(Math.random() * 1000);
-      arr.push(item);
+      arr[i] = {
+        index: i,
+        data: null,
+        state: null
+      };
     }
     this.items = arr;
+    this.requestUpdate();
+  }
+
+  handleClickFill() {
+    const maxFilledElements = Math.ceil(Math.random() * this.items.length);
+    for (let i = 0; i < maxFilledElements; i++) {
+      this.items[i].data = Math.ceil(Math.random() * 1000);
+    }
+    this.items = [...this.items];
     this.requestUpdate();
   }
 

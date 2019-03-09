@@ -19,13 +19,13 @@ export class XItemsHorizontal extends LitElement {
       ${this.items.map(item => html`
         <div class="item">
           <div class="index">
-            ${item.index != null ? item.index : ''}
+            ${item.index}
           </div>
           <div class="data" style="background-color: ${rnd()}">
-            ${item.data != null ? item.data : ''}
+            ${item.data}
           </div>
           <div class="state ${item.state != null ? '' : 'hidden'}">
-            ${item.state != null ? item.state : ''}
+            ${item.state != null || typeof item.state !== 'boolean' ? item.state : ''}
           </div>
         </div>
       `)}      
@@ -37,9 +37,13 @@ export class XItemsHorizontal extends LitElement {
 XItemsHorizontal.styles = css`
   :host {
     display: block;
+    columns: 6;
   }
   .index, .data, .state {
     display: inline-block;
+  }
+  .data {
+    
   }
   .hidden {
     display: none;

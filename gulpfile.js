@@ -10,7 +10,7 @@ var nodeResolve = require('rollup-plugin-node-resolve');
 function js(isProd) {
   var bundler = rollup({
     input: './client/index.js',
-    name: 'app.js',
+    name: 'index.js',
     format: 'umd',
     sourcemap: true,
     plugins: [
@@ -19,7 +19,7 @@ function js(isProd) {
         main: true
       })
     ]
-  }).pipe(source('app.js', './dist/client'));
+  }).pipe(source('index.js', './dist/client'));
   if (isProd) {
     bundler
       .pipe(buffer())
