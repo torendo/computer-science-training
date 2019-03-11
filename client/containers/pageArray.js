@@ -48,7 +48,11 @@ export class PageArray extends LitElement {
   * iteratorNew() {
     let length = 0;
     yield 'Enter size of array to create';
-    this.dialog.open().then(result => length = result);
+    this.dialog.open().then(result => {
+      length = result;
+      this.iterator.next();
+    });
+    yield 'Dialog opened'; //skipped in promise
     yield `Will create empty array with ${length} cells`;
     const arrLength = Math.ceil(Math.random() * length);
     const arr = new Array(arrLength);
