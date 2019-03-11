@@ -11,7 +11,7 @@ export class PageArray extends LitElement {
       <h4>Array</h4>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Fill</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Del</x-button>
@@ -35,7 +35,7 @@ export class PageArray extends LitElement {
 
   handleClick(iterator, btn) {
     if (!this.iterator) {
-      this.iterator = this.iteratorNew();
+      this.iterator = iterator.call(this);
       this.toggleButtonsActivity(btn, true);
     }
     const iteration = this.iterate();
@@ -77,26 +77,21 @@ export class PageArray extends LitElement {
     yield 'New array created; total items = 0';
   }
 
-  handleClickFill(e, btn) {
-    const maxFilledElements = Math.ceil(Math.random() * this.items.length);
-    for (let i = 0; i < maxFilledElements; i++) {
+  * iteratorFill() {
+    let length = 0;
+    yield 'Enter number of items to fill in';
+    this.dialog.open().then(nodes => {
+      const form = nodes.find(node => node.tagName === 'FORM');
+      length = Number((new FormData(form)).get('length'));
+      this.iterate();
+    });
+    yield 'Dialog opened'; //skipped in promise
+    yield `Will fill in ${length} items`;
+    for (let i = 0; i < length; i++) {
       this.items[i].data = Math.ceil(Math.random() * 1000);
     }
     this.items = [...this.items];
-    this.toggleButtonsActivity(btn, true);
-    this.requestUpdate();
-  }
-
-  handleClickIns() {
-
-  }
-
-  handleClickFind() {
-
-  }
-
-  handleClickDel() {
-
+    yield 'Fill completed; total items = ' + length;
   }
 
   toggleButtonsActivity(btn, status) {
