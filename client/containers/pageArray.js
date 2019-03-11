@@ -20,7 +20,9 @@ export class PageArray extends LitElement {
       <x-console></x-console>
       <x-items-horizontal .items=${this.items}></x-items-horizontal>
       <x-dialog>
-        <label>Number: <input type="number"></label>
+        <form>
+          <label>Number: <input name="length" type="number"></label>
+        </form>
       </x-dialog>
     `;
   }
@@ -36,8 +38,7 @@ export class PageArray extends LitElement {
       this.iterator = this.iteratorNew();
       this.toggleButtonsActivity(btn, true);
     }
-    const iteration = this.iterator.next();
-    this.console.setMessage(iteration.value);
+    const iteration = this.iterate();
     if (iteration.done) {
       this.iterator = null;
       this.toggleButtonsActivity(btn, false);
@@ -45,18 +46,24 @@ export class PageArray extends LitElement {
     this.requestUpdate();
   }
 
+  iterate() {
+    const iteration = this.iterator.next();
+    this.console.setMessage(iteration.value);
+    return iteration;
+  }
+
   * iteratorNew() {
     let length = 0;
     yield 'Enter size of array to create';
-    this.dialog.open().then(result => {
-      length = result;
-      this.iterator.next();
+    this.dialog.open().then(nodes => {
+      const form = nodes.find(node => node.tagName === 'FORM');
+      length = Number((new FormData(form)).get('length'));
+      this.iterate();
     });
     yield 'Dialog opened'; //skipped in promise
     yield `Will create empty array with ${length} cells`;
-    const arrLength = Math.ceil(Math.random() * length);
-    const arr = new Array(arrLength);
-    for (let i = 0; i < arrLength; i++) {
+    const arr = new Array(length);
+    for (let i = 0; i < length; i++) {
       arr[i] = {
         index: i,
         data: null,
