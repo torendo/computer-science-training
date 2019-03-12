@@ -27,6 +27,10 @@ export class PageArray extends LitElement {
     `;
   }
 
+  createRenderRoot() {
+    return this;
+  }
+
   firstUpdated() {
     this.console = this.querySelector('x-console');
     this.dialog = this.querySelector('x-dialog');
@@ -46,6 +50,13 @@ export class PageArray extends LitElement {
     this.requestUpdate();
   }
 
+  toggleButtonsActivity(btn, status) {
+    this.querySelectorAll('x-button').forEach(el => {
+      if (el !== btn) el.disabled = status;
+    });
+    btn.activated = status;
+  }
+
   iterate() {
     const iteration = this.iterator.next();
     this.console.setMessage(iteration.value);
@@ -60,7 +71,7 @@ export class PageArray extends LitElement {
       length = Number((new FormData(form)).get('length'));
       this.iterate();
     });
-    yield 'Dialog opened'; //skipped in promise
+    yield 'Dialog opened'; //skip in promise
     yield `Will create empty array with ${length} cells`;
     const arr = new Array(length);
     for (let i = 0; i < length; i++) {
@@ -85,24 +96,13 @@ export class PageArray extends LitElement {
       length = Number((new FormData(form)).get('length'));
       this.iterate();
     });
-    yield 'Dialog opened'; //skipped in promise
+    yield 'Dialog opened'; //skip in promise
     yield `Will fill in ${length} items`;
     for (let i = 0; i < length; i++) {
       this.items[i].data = Math.ceil(Math.random() * 1000);
     }
     this.items = [...this.items];
     yield 'Fill completed; total items = ' + length;
-  }
-
-  toggleButtonsActivity(btn, status) {
-    this.querySelectorAll('x-button').forEach(el => {
-      if (el !== btn) el.disabled = status;
-    });
-    btn.activated = status;
-  }
-
-  createRenderRoot() {
-    return this;
   }
 }
 
