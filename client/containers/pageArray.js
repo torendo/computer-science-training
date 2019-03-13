@@ -16,7 +16,7 @@ export class PageArray extends LitElement {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Find</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Del</x-button>
         <label><input class="dups" type="checkbox" disabled>Dups OK</label>
       </div>
@@ -154,6 +154,59 @@ export class PageArray extends LitElement {
     this.resetItemsState();
     this.items = [...this.items];
     yield `Insertion completed item; total items ${this.length}`;
+  }
+
+  * iteratorFind() {
+    let key = 0;
+    yield 'Enter key of item to find';
+    this.dialog.open().then(nodes => {
+      const form = nodes.find(node => node.tagName === 'FORM');
+      key = Number((new FormData(form)).get('number'));
+      this.iterate();
+    });
+    yield 'Dialog opened'; //skip in promise
+    yield `Looking for item with key ${key}`;
+    let foundAt = 0;
+    for (let i = 0; i < this.length; i++) {
+      this.resetItemsState();
+      this.items[i].state = true;
+      this.items = [...this.items];
+      this.requestUpdate();
+      if (this.items[i].data === key) {
+        foundAt = i;
+        break;
+      }
+      yield `Checking next cell; index = ${i + 1}`;
+    }
+    if (this.dups) {
+      //should be in recursion function next for cycle
+      foundAt = null;
+      yield `Have found item at index = ${foundAt}`;
+      for (let i = foundAt; i < this.length; i++) {
+        this.resetItemsState();
+        this.items[i].state = true;
+        this.items = [...this.items];
+        this.requestUpdate();
+        if (this.items[i].data === key) {
+          foundAt = i;
+          break;
+        }
+        yield `Checking for additional matches; index = ${i + 1}`;
+      }
+      if (!foundAt) {
+        yield `No additional items with key ${key}`;
+      } else {
+        yield `Have found item at index = ${foundAt}`;
+      }
+    } else {
+      this.resetItemsState();
+      this.items = [...this.items];
+      if (!foundAt) {
+        yield `Not found item with key ${key}`;
+      } else {
+        yield `Have found item at index = ${foundAt}`;
+      }
+    }
   }
 }
 
