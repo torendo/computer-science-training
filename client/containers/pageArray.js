@@ -3,7 +3,7 @@ import {LitElement, html} from 'lit-element';
 export class PageArray extends LitElement {
   constructor() {
     super();
-    this.items = [];
+    this.items = this.initItems();
   }
 
   render() {
@@ -61,6 +61,20 @@ export class PageArray extends LitElement {
     const iteration = this.iterator.next();
     this.console.setMessage(iteration.value);
     return iteration;
+  }
+
+  initItems() {
+    const length = Math.ceil(Math.random() * 60);
+    const lengthFill = Math.ceil(Math.random() * 60);
+    const arr = new Array(length);
+    for (let i = 0; i < length; i++) {
+      arr[i] = {
+        index: i,
+        data: i < lengthFill ? Math.ceil(Math.random() * 1000) : null,
+        state: null
+      };
+    }
+    return arr;
   }
 
   * iteratorNew() {
