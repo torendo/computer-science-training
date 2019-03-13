@@ -12,7 +12,7 @@ export class PageArray extends LitElement {
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Ins</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Del</x-button>
         <label><input class="dups" type="checkbox" disabled>Dups OK</label>
@@ -71,7 +71,7 @@ export class PageArray extends LitElement {
       arr[i] = {
         index: i,
         data: i < lengthFill ? Math.ceil(Math.random() * 1000) : null,
-        state: null
+        state: i === 0
       };
     }
     return arr;
@@ -92,7 +92,7 @@ export class PageArray extends LitElement {
       arr[i] = {
         index: i,
         data: null,
-        state: null
+        state: i === 0
       };
     }
     this.items = arr;
@@ -117,6 +117,10 @@ export class PageArray extends LitElement {
     }
     this.items = [...this.items];
     yield 'Fill completed; total items = ' + length;
+  }
+
+  * iteratorIns() {
+    yield 'Enter number of items to fill in';
   }
 }
 

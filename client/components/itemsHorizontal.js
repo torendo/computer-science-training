@@ -21,11 +21,11 @@ export class XItemsHorizontal extends LitElement {
           <div class="index">
             ${item.index}
           </div>
-          <div class="data" style="background-color: ${rnd()}">
+          <div class="data" style="${item.data ? 'background-color:' + rnd() : ''}">
             ${item.data}
           </div>
-          <div class="state ${item.state != null ? '' : 'hidden'}">
-            ${item.state != null || typeof item.state !== 'boolean' ? item.state : ''}
+          <div class="state ${item.state != null && item.state !== false ? '' : 'hidden'}">
+            ${item.state != null && typeof item.state !== 'boolean' ? item.state : ''}
           </div>
         </div>
       `)}      
@@ -36,14 +36,34 @@ export class XItemsHorizontal extends LitElement {
 //add css with columns
 XItemsHorizontal.styles = css`
   :host {
-    display: block;
-    columns: 6;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 20.5em;
+  }
+  .item {
+    display: flex;
   }
   .index, .data, .state {
-    display: inline-block;
+    align-self: center;
+  }
+  .index {
+    width: 1.5em;
+    padding-right: 4px;
+    text-align: right;
   }
   .data {
-    
+    padding: 0 10px;
+    line-height: 1.7em;
+    margin: 0;
+    border: 1px solid lightgray;
+    min-width: 1.7em;
+    min-height: 1.7em;
+  }
+  .state:before {
+    content: '<—';
+    padding-left: 4px;
+    color: crimson;    
   }
   .hidden {
     display: none;
