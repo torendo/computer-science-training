@@ -1,9 +1,12 @@
 import {LitElement, html} from 'lit-element';
+import {getRandomColor100} from "../utils/colors";
 
 export class PageArray extends LitElement {
   constructor() {
     super();
-    this.items = this.initItems();
+    this.items = [];
+    this.length = 0;
+    this.initItems();
   }
 
   render() {
@@ -21,7 +24,7 @@ export class PageArray extends LitElement {
       <x-items-horizontal .items=${this.items}></x-items-horizontal>
       <x-dialog>
         <form>
-          <label>Number: <input name="length" type="number"></label>
+          <label>Number: <input name="number" type="number"></label>
         </form>
       </x-dialog>
     `;
@@ -63,18 +66,24 @@ export class PageArray extends LitElement {
     return iteration;
   }
 
+  resetItemsState() {
+    this.items.forEach(item => item.state = false);
+  }
+
   initItems() {
     const length = Math.ceil(Math.random() * 60);
-    const lengthFill = Math.ceil(Math.random() * 60);
+    const lengthFill = Math.ceil(Math.random() * length);
     const arr = new Array(length);
     for (let i = 0; i < length; i++) {
       arr[i] = {
         index: i,
         data: i < lengthFill ? Math.ceil(Math.random() * 1000) : null,
-        state: i === 0
+        state: i === 0,
+        color: i < lengthFill ? getRandomColor100() : null,
       };
     }
-    return arr;
+    this.items = arr;
+    this.length = lengthFill;
   }
 
   * iteratorNew() {
@@ -82,7 +91,7 @@ export class PageArray extends LitElement {
     yield 'Enter size of array to create';
     this.dialog.open().then(nodes => {
       const form = nodes.find(node => node.tagName === 'FORM');
-      length = Number((new FormData(form)).get('length'));
+      length = Number((new FormData(form)).get('number'));
       this.iterate();
     });
     yield 'Dialog opened'; //skip in promise
@@ -107,20 +116,44 @@ export class PageArray extends LitElement {
     yield 'Enter number of items to fill in';
     this.dialog.open().then(nodes => {
       const form = nodes.find(node => node.tagName === 'FORM');
-      length = Number((new FormData(form)).get('length'));
+      length = Number((new FormData(form)).get('number'));
       this.iterate();
     });
     yield 'Dialog opened'; //skip in promise
     yield `Will fill in ${length} items`;
     for (let i = 0; i < length; i++) {
       this.items[i].data = Math.ceil(Math.random() * 1000);
+      this.items[i].color = getRandomColor100();
     }
     this.items = [...this.items];
-    yield 'Fill completed; total items = ' + length;
+    this.length = length;
+    yield `Fill completed; total items = ${length}`;
   }
 
   * iteratorIns() {
-    yield 'Enter number of items to fill in';
+    let key = 0;
+    yield 'Enter key of item to insert';
+    this.dialog.open().then(nodes => {
+      const form = nodes.find(node => node.tagName === 'FORM');
+      key = Number((new FormData(form)).get('number'));
+      this.iterate();
+    });
+    yield 'Dialog opened'; //skip in promise
+    yield `Will insert item with key ${key}`;
+    this.resetItemsState();
+    this.items[this.length] = {
+      index: this.length,
+      data: key,
+      state: true,
+      color: getRandomColor100()
+    };
+    this.items = [...this.items];
+    this.requestUpdate();
+    yield `Inserted item with key ${key} at index ${this.length}`;
+    this.length++;
+    this.resetItemsState();
+    this.items = [...this.items];
+    yield `Insertion completed item; total items ${this.length}`;
   }
 }
 

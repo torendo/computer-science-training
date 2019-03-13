@@ -1,5 +1,4 @@
 import {LitElement, html, css} from 'lit-element';
-import {colors100} from '../utils/colors';
 
 export class XItemsHorizontal extends LitElement {
   static get properties() {
@@ -14,14 +13,13 @@ export class XItemsHorizontal extends LitElement {
   }
 
   render() {
-    const rnd = () => colors100[Math.ceil(Math.random() * colors100.length)];
     return html`
       ${this.items.map(item => html`
         <div class="item">
           <div class="index">
             ${item.index}
           </div>
-          <div class="data" style="${item.data ? 'background-color:' + rnd() : ''}">
+          <div class="data" style="${item.color ? 'background-color:' + item.color : ''}">
             ${item.data}
           </div>
           <div class="state ${item.state != null && item.state !== false ? '' : 'hidden'}">
@@ -53,17 +51,27 @@ XItemsHorizontal.styles = css`
     text-align: right;
   }
   .data {
-    padding: 0 10px;
-    line-height: 1.7em;
-    margin: 0;
-    border: 1px solid lightgray;
     min-width: 1.7em;
     min-height: 1.7em;
+    padding: 0 10px;
+    margin: 0;
+    line-height: 1.7em;
+    border: 1px solid lightgray;
+  }
+  .state {
+    position: relative;
+    min-height: 1.7em;
+    padding-left: 3em;
+    line-height: 1.7em;
   }
   .state:before {
-    content: '<—';
-    padding-left: 4px;
-    color: crimson;    
+    content: '←';
+    position: absolute;  
+    left: 0;
+    margin-top: -.1em;
+    padding-left: 6px;
+    font-size: 2em;
+    color: crimson;
   }
   .hidden {
     display: none;

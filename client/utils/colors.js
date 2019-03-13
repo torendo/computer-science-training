@@ -20,6 +20,10 @@ export const colors100 = [
   '#CFD8DC'
 ];
 
+export const getRandomColor100 = () => {
+  return colors100[Math.ceil(Math.random() * colors100.length)];
+};
+
 export const colors400 = [
   '#EF5350',
   '#AB47BC',
@@ -41,3 +45,7 @@ export const colors400 = [
   '#FF7043',
   '#9CCC65'
 ];
+
+export const getRandomColor400 = () => {
+  return colors400[Math.ceil(Math.random() * colors400.length)];
+};
