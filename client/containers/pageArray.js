@@ -68,6 +68,7 @@ export class PageArray extends LitElement {
 
   resetItemsState() {
     this.items.forEach(item => item.state = false);
+    this.items[0].state = true;
   }
 
   initItems() {
