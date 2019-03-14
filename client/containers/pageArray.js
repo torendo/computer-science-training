@@ -1,5 +1,5 @@
 import {LitElement, html} from 'lit-element';
-import {getRandomColor100} from "../utils/colors";
+import {getRandomColor100} from '../utils/colors';
 
 export class PageArray extends LitElement {
   constructor() {
@@ -166,7 +166,7 @@ export class PageArray extends LitElement {
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
     yield `Looking for item with key ${key}`;
-    let foundAt = 0;
+    let foundAt;
     let isAdditional = false;
     for (let i = 0; i < this.length; i++) {
       this.resetItemsState();
@@ -201,7 +201,35 @@ export class PageArray extends LitElement {
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
     yield `Looking for item with key ${key}`;
-
+    let foundAt;
+    let deletedCount = 0;
+    let isAdditional = false;
+    for (let i = 0; i < this.length; i++) {
+      this.resetItemsState();
+      this.items[i].state = true;
+      this.items = [...this.items];
+      this.requestUpdate();
+      if (deletedCount > 0) {
+        yield `Will shift item ${deletedCount} spaces`;
+        this.items[i - deletedCount].data = this.items[i].data;
+        this.items[i - deletedCount].color = this.items[i].color;
+        this.items[i].data = null;
+        this.items[i].color = null;
+        i -= deletedCount;
+        continue;
+      }
+      if (this.items[i].data === key) {
+        foundAt = i;
+        deletedCount++;
+        this.items[i].data = null;
+        this.items[i].color = null;
+        yield `Have found and deleted ${isAdditional ? 'additioal' : ''} item at index = ${foundAt}`;
+        if (this.dups.checked) {
+          isAdditional = true;
+        }
+      }
+      yield `Checking ${isAdditional ? 'for additioal matches' : 'next cell'}; index = ${i + 1}`;
+    }
   }
 }
 
