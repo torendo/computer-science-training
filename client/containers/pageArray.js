@@ -17,7 +17,7 @@ export class PageArray extends LitElement {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Del</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
         <label><input class="dups" type="checkbox" checked disabled>Dups OK</label>
       </div>
       <x-console></x-console>
@@ -190,6 +190,18 @@ export class PageArray extends LitElement {
       yield `Have found item at index = ${foundAt}`;
     }
     this.resetItemsState(true);
+  }
+
+  * iteratorDel() {
+    let key = 0;
+    yield 'Enter key of item to delete';
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    yield `Looking for item with key ${key}`;
+
   }
 }
 

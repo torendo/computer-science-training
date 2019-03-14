@@ -32,6 +32,7 @@ export class XDialog extends LitElement {
         this.dialog.removeEventListener('close', onClose);
         if (this.dialog.returnValue === 'default') {
           resolve(new FormData(this.form));
+          this.form.reset();
         } else {
           reject();
         }
