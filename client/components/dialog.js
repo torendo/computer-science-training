@@ -4,12 +4,12 @@ export class XDialog extends LitElement {
   render() {
     return html`
       <dialog>
-        <p>
-          <slot></slot>
-        </p>
         <form method="dialog">
+          <p class="slotCnt">
+            <slot></slot>
+          </p>
+          <button value="default">Confirm</button>
           <button value="cancel">Cancel</button>
-          <button value="confirm">Confirm</button>
         </form>
       </dialog>
     `;
@@ -17,6 +17,12 @@ export class XDialog extends LitElement {
 
   firstUpdated() {
     this.dialog = this.shadowRoot.querySelector('dialog');
+    this.form = this.shadowRoot.querySelector('form');
+    //move slotted nodes into dialog's form directly for proper work FormData
+    //TODO: find a better way to beat this problem
+    const slot = this.shadowRoot.querySelector('slot');
+    this.shadowRoot.querySelector('.slotCnt').append(...slot.assignedNodes());
+    slot.remove();
   }
 
   open() {
@@ -24,8 +30,8 @@ export class XDialog extends LitElement {
       this.dialog.showModal();
       const onClose = () => {
         this.dialog.removeEventListener('close', onClose);
-        if (this.dialog.returnValue === 'confirm') {
-          resolve(this.shadowRoot.querySelector('slot').assignedNodes());
+        if (this.dialog.returnValue === 'default') {
+          resolve(new FormData(this.form));
         } else {
           reject();
         }

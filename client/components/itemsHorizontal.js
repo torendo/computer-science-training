@@ -31,7 +31,6 @@ export class XItemsHorizontal extends LitElement {
   }
 }
 
-//add css with columns
 XItemsHorizontal.styles = css`
   :host {
     display: flex;

@@ -18,14 +18,12 @@ export class PageArray extends LitElement {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Del</x-button>
-        <label><input class="dups" type="checkbox" disabled>Dups OK</label>
+        <label><input class="dups" type="checkbox" checked disabled>Dups OK</label>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items}></x-items-horizontal>
       <x-dialog>
-        <form>
-          <label>Number: <input name="number" type="number"></label>
-        </form>
+        <label>Number: <input name="number" type="number"></label>
       </x-dialog>
     `;
   }
@@ -63,12 +61,17 @@ export class PageArray extends LitElement {
   iterate() {
     const iteration = this.iterator.next();
     this.console.setMessage(iteration.value);
+    const activatedBtn = this.querySelector('x-button.activated');
+    if (activatedBtn) activatedBtn.focus();
     return iteration;
   }
 
-  resetItemsState() {
+  resetItemsState(isFinish) {
     this.items.forEach(item => item.state = false);
-    this.items[0].state = true;
+    if (isFinish) {
+      this.items[0].state = true;
+      this.items = [...this.items];
+    }
   }
 
   initItems() {
@@ -90,11 +93,10 @@ export class PageArray extends LitElement {
   * iteratorNew() {
     let length = 0;
     yield 'Enter size of array to create';
-    this.dialog.open().then(nodes => {
-      const form = nodes.find(node => node.tagName === 'FORM');
-      length = Number((new FormData(form)).get('number'));
+    this.dialog.open().then(formData => {
+      length = Number(formData.get('number'));
       this.iterate();
-    });
+    }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
     yield `Will create empty array with ${length} cells`;
     const arr = new Array(length);
@@ -106,6 +108,7 @@ export class PageArray extends LitElement {
       };
     }
     this.items = arr;
+    this.length = 0;
     this.dups.disabled = false;
     yield 'Select Duplicates Ok or not';
     this.dups.disabled = true;
@@ -115,11 +118,10 @@ export class PageArray extends LitElement {
   * iteratorFill() {
     let length = 0;
     yield 'Enter number of items to fill in';
-    this.dialog.open().then(nodes => {
-      const form = nodes.find(node => node.tagName === 'FORM');
-      length = Number((new FormData(form)).get('number'));
+    this.dialog.open().then(formData => {
+      length = Number(formData.get('number'));
       this.iterate();
-    });
+    }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
     yield `Will fill in ${length} items`;
     for (let i = 0; i < length; i++) {
@@ -134,11 +136,10 @@ export class PageArray extends LitElement {
   * iteratorIns() {
     let key = 0;
     yield 'Enter key of item to insert';
-    this.dialog.open().then(nodes => {
-      const form = nodes.find(node => node.tagName === 'FORM');
-      key = Number((new FormData(form)).get('number'));
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
       this.iterate();
-    });
+    }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
     yield `Will insert item with key ${key}`;
     this.resetItemsState();
@@ -152,22 +153,21 @@ export class PageArray extends LitElement {
     this.requestUpdate();
     yield `Inserted item with key ${key} at index ${this.length}`;
     this.length++;
-    this.resetItemsState();
-    this.items = [...this.items];
+    this.resetItemsState(true);
     yield `Insertion completed item; total items ${this.length}`;
   }
 
   * iteratorFind() {
     let key = 0;
     yield 'Enter key of item to find';
-    this.dialog.open().then(nodes => {
-      const form = nodes.find(node => node.tagName === 'FORM');
-      key = Number((new FormData(form)).get('number'));
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
       this.iterate();
-    });
+    }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
     yield `Looking for item with key ${key}`;
     let foundAt = 0;
+    let isAdditional = false;
     for (let i = 0; i < this.length; i++) {
       this.resetItemsState();
       this.items[i].state = true;
@@ -175,39 +175,21 @@ export class PageArray extends LitElement {
       this.requestUpdate();
       if (this.items[i].data === key) {
         foundAt = i;
-        break;
-      }
-      yield `Checking next cell; index = ${i + 1}`;
-    }
-    if (this.dups) {
-      //should be in recursion function next for cycle
-      foundAt = null;
-      yield `Have found item at index = ${foundAt}`;
-      for (let i = foundAt; i < this.length; i++) {
-        this.resetItemsState();
-        this.items[i].state = true;
-        this.items = [...this.items];
-        this.requestUpdate();
-        if (this.items[i].data === key) {
-          foundAt = i;
+        yield `Have found ${isAdditional ? 'additioal' : ''} item at index = ${foundAt}`;
+        if (this.dups.checked) {
+          isAdditional = true;
+        } else {
           break;
         }
-        yield `Checking for additional matches; index = ${i + 1}`;
       }
-      if (!foundAt) {
-        yield `No additional items with key ${key}`;
-      } else {
-        yield `Have found item at index = ${foundAt}`;
-      }
-    } else {
-      this.resetItemsState();
-      this.items = [...this.items];
-      if (!foundAt) {
-        yield `Not found item with key ${key}`;
-      } else {
-        yield `Have found item at index = ${foundAt}`;
-      }
+      yield `Checking ${isAdditional ? 'for additioal matches' : 'next cell'}; index = ${i + 1}`;
     }
+    if (isAdditional) {
+      yield `No additional items with key ${key}`;
+    } else {
+      yield `Have found item at index = ${foundAt}`;
+    }
+    this.resetItemsState(true);
   }
 }
 

@@ -18,6 +18,18 @@ export class XButton extends LitElement {
     `;
   }
 
+  createRenderRoot() {
+    return this.attachShadow({mode: 'open', delegatesFocus: true});
+  }
+
+  updated() {
+    if (this.activated) {
+      this.classList.add('activated');
+    } else {
+      this.classList.remove('activated');
+    }
+  }
+
   handleClick() {
     this.callback(this);
   }
