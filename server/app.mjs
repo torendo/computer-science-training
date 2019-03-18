@@ -3,7 +3,7 @@ import express from 'express';
 import path from 'path';
 const {__dirname, require} = expose;
 
-const PORT = 3000;
+const PORT = 3003;
 const PUBLIC_PATH = __dirname + '/../client';
 const app = express();
 

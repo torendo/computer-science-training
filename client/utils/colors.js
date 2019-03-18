@@ -21,7 +21,7 @@ export const colors100 = [
 ];
 
 export const getRandomColor100 = () => {
-  return colors100[Math.ceil(Math.random() * colors100.length)];
+  return colors100[Math.floor(Math.random() * colors100.length)];
 };
 
 export const colors400 = [
@@ -47,5 +47,5 @@ export const colors400 = [
 ];
 
 export const getRandomColor400 = () => {
-  return colors400[Math.ceil(Math.random() * colors400.length)];
+  return colors400[Math.floor(Math.random() * colors400.length)];
 };

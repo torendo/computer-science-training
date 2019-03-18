@@ -185,7 +185,7 @@ export class PageArray extends LitElement {
       yield `Checking ${isAdditional ? 'for additioal matches' : 'next cell'}; index = ${i + 1}`;
     }
     if (isAdditional) {
-      yield `No additional items with key ${key}`;
+      yield `No ${isAdditional ? 'additioal' : ''} items with key ${key}`;
     } else {
       yield `Have found item at index = ${foundAt}`;
     }
@@ -208,27 +208,30 @@ export class PageArray extends LitElement {
       this.resetItemsState();
       this.items[i].state = true;
       this.items = [...this.items];
-      this.requestUpdate();
-      if (deletedCount > 0) {
-        yield `Will shift item ${deletedCount} spaces`;
-        this.items[i - deletedCount].data = this.items[i].data;
-        this.items[i - deletedCount].color = this.items[i].color;
-        this.items[i].data = null;
-        this.items[i].color = null;
-        i -= deletedCount;
-        continue;
-      }
       if (this.items[i].data === key) {
         foundAt = i;
         deletedCount++;
         this.items[i].data = null;
         this.items[i].color = null;
+        if (this.dups.checked) isAdditional = true;
         yield `Have found and deleted ${isAdditional ? 'additioal' : ''} item at index = ${foundAt}`;
-        if (this.dups.checked) {
-          isAdditional = true;
-        }
+      } else if (deletedCount > 0) {
+        yield `Will shift item ${deletedCount} spaces`;
+        this.items[i - deletedCount].data = this.items[i].data;
+        this.items[i - deletedCount].color = this.items[i].color;
+        this.items[i].data = null;
+        this.items[i].color = null;
+      } else {
+        yield `Checking ${isAdditional ? 'for additioal matches' : 'next cell'}; index = ${i + 1}`;
       }
-      yield `Checking ${isAdditional ? 'for additioal matches' : 'next cell'}; index = ${i + 1}`;
+      this.requestUpdate();
+    }
+    this.length -= deletedCount;
+    this.resetItemsState(true);
+    if (deletedCount > 0) {
+      yield `Shift${deletedCount > 1 ? 's' : ''} complete; no ${isAdditional ? 'more' : ''} items to delete`;
+    } else {
+      yield `No ${isAdditional ? 'additioal' : ''} items with key ${key}`;
     }
   }
 }
