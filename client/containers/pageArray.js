@@ -213,8 +213,8 @@ export class PageArray extends LitElement {
         deletedCount++;
         this.items[i].data = null;
         this.items[i].color = null;
-        if (this.dups.checked) isAdditional = true;
         yield `Have found and deleted ${isAdditional ? 'additioal' : ''} item at index = ${foundAt}`;
+        if (this.dups.checked) isAdditional = true;
       } else if (deletedCount > 0) {
         yield `Will shift item ${deletedCount} spaces`;
         this.items[i - deletedCount].data = this.items[i].data;
