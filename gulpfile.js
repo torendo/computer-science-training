@@ -31,7 +31,7 @@ function js(isProd) {
 function statics() {
   return gulp.src([
     './client/index.html',
-    './client/app.css'
+    './client/index.css'
   ])
     .pipe(gulp.dest('./dist/client'));
 }
@@ -49,7 +49,6 @@ function clean() {
 function lint() {
   return gulp.src(['./client/**/*.js', './server/**/*.js'])
     .pipe(eslint())
-    .pipe(eslint.format())
     .pipe(eslint.failAfterError());
 }
 exports.lint = lint;

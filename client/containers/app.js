@@ -4,13 +4,14 @@ export class XApp extends LitElement {
   render() {
     const routes = [
       {path: '/array', component: 'page-array', title: 'Array'},
+      {path: '/orderedArray', component: 'page-ordered-array', title: 'Ordered Array'},
       {path: '/list', component: 'page-list', title: 'List'}
     ];
     return html`
       <h3>Workshop applications</h3>
-      <ul>
-        ${routes.map(route => html`<li><a href="${route.path}" is="x-router-a">${route.title}</a></li>`)}
-      </ul>
+      <nav>
+        ${routes.map(route => html`<div class="nav-item"><a href="${route.path}" is="x-router-a">${route.title}</a></div>`)}
+      </nav>
       <x-router .routes=${routes}></x-router>      
       <x-footer></x-footer>
     `;

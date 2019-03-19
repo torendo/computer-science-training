@@ -36,7 +36,8 @@ XItemsHorizontal.styles = css`
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    height: 20.5em;
+    height: 19em;
+    max-width: 600px;
   }
   .item {
     display: flex;
@@ -73,7 +74,7 @@ XItemsHorizontal.styles = css`
     color: crimson;
   }
   .hidden {
-    display: none;
+    visibility: hidden;
   }
 `;
 

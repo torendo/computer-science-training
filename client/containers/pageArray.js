@@ -75,13 +75,13 @@ export class PageArray extends LitElement {
   }
 
   initItems() {
-    const length = Math.ceil(Math.random() * 60);
-    const lengthFill = Math.ceil(Math.random() * length);
+    const length = Math.floor(Math.random() * 60);
+    const lengthFill = Math.floor(Math.random() * length);
     const arr = new Array(length);
     for (let i = 0; i < length; i++) {
       arr[i] = {
         index: i,
-        data: i < lengthFill ? Math.ceil(Math.random() * 1000) : null,
+        data: i < lengthFill ? Math.floor(Math.random() * 1000) : null,
         state: i === 0,
         color: i < lengthFill ? getRandomColor100() : null,
       };
@@ -125,7 +125,7 @@ export class PageArray extends LitElement {
     yield 'Dialog opened'; //skip in promise
     yield `Will fill in ${length} items`;
     for (let i = 0; i < length; i++) {
-      this.items[i].data = Math.ceil(Math.random() * 1000);
+      this.items[i].data = Math.floor(Math.random() * 1000);
       this.items[i].color = getRandomColor100();
     }
     this.items = [...this.items];
