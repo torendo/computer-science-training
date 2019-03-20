@@ -1,5 +1,5 @@
 import {LitElement, html} from 'lit-element';
-import {getRandomColor100} from '../utils/colors';
+import {getRandomColor100, getUniqueRandomNumber} from '../utils';
 
 export class PageArray extends LitElement {
   constructor() {
@@ -77,14 +77,14 @@ export class PageArray extends LitElement {
   initItems() {
     const length = 20;
     const lengthFill = 10;
-    const arr = new Array(length);
+    const arr = [];
     for (let i = 0; i < length; i++) {
-      arr[i] = {
+      arr.push({
         index: i,
         data: i < lengthFill ? Math.floor(Math.random() * 1000) : null,
         state: i === 0,
         color: i < lengthFill ? getRandomColor100() : null,
-      };
+      });
     }
     this.items = arr;
     this.length = lengthFill;
@@ -102,13 +102,13 @@ export class PageArray extends LitElement {
       return 'ERROR: use size between 0 and 60';
     }
     yield `Will create empty array with ${length} cells`;
-    const arr = new Array(length);
+    const arr = [];
     for (let i = 0; i < length; i++) {
-      arr[i] = {
+      arr.push({
         index: i,
         data: null,
         state: i === 0
-      };
+      });
     }
     this.items = arr;
     this.length = 0;
@@ -134,10 +134,7 @@ export class PageArray extends LitElement {
       if (this.dups.checked) {
         this.items[i].data = Math.floor(Math.random() * 1000);
       } else {
-        this.items[i].data = (function getUniqueNumber(items) {
-          const num = Math.floor(Math.random() * 1000);
-          return items.find(i => i.data === num) ? getUniqueNumber(items) : num;
-        })(this.items);
+        this.items[i].data = getUniqueRandomNumber(this.items, 1000);
       }
       this.items[i].color = getRandomColor100();
     }

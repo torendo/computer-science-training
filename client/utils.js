@@ -1,3 +1,16 @@
+export const getUniqueRandomArray = (length, max) => {
+  const array = [];
+  for (let i = 0; i < length; i++) {
+    array.push(getUniqueRandomNumber(array, max));
+  }
+  return array;
+};
+
+export const getUniqueRandomNumber = (items, max) => {
+  const num = Math.floor(Math.random() * max);
+  return items.find(i => i === num) ? getUniqueRandomNumber(items, max) : num;
+};
+
 export const colors100 = [
   '#FFCDD2',
   '#F8BBD0',

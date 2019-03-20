@@ -1,5 +1,5 @@
 import {LitElement, html} from 'lit-element';
-import {getRandomColor100} from '../utils/colors';
+import {getRandomColor100, getUniqueRandomArray} from '../utils';
 
 export class PageOrderedArray extends LitElement {
   constructor() {
@@ -14,12 +14,12 @@ export class PageOrderedArray extends LitElement {
       <h4>Array</h4>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Fill</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Del</x-button>
-        <label><input class="dups" type="radio" name="alg" checked disabled>Linear</label>
-        <label><input class="dups" type="radio" name="alg" disabled>Ordered</label>
+        <label><input type="radio" name="algorythm" checked disabled>Linear</label>
+        <label><input type="radio" name="algorythm" class="binary" disabled>Binary</label>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items}></x-items-horizontal>
@@ -36,7 +36,7 @@ export class PageOrderedArray extends LitElement {
   firstUpdated() {
     this.console = this.querySelector('x-console');
     this.dialog = this.querySelector('x-dialog');
-    this.dups = this.querySelector('.dups');
+    this.binary = this.querySelector('.binary');
   }
 
   handleClick(iterator, btn) {
@@ -78,15 +78,18 @@ export class PageOrderedArray extends LitElement {
   initItems() {
     const length = 20;
     const lengthFill = 10;
-    const arr = new Array(length);
+    const arr = [];
+    const arrValues = getUniqueRandomArray(lengthFill, 1000);
+    arrValues.sort((a, b) => a - b);
     for (let i = 0; i < length; i++) {
-      arr[i] = {
+      arr.push({
         index: i,
-        data: i < lengthFill ? Math.floor(Math.random() * 1000) : null,
+        data: i < lengthFill ? arrValues[i] : null,
         state: i === 0,
         color: i < lengthFill ? getRandomColor100() : null,
-      };
+      });
     }
+
     this.items = arr;
     this.length = lengthFill;
   }
@@ -103,13 +106,13 @@ export class PageOrderedArray extends LitElement {
       return 'ERROR: use size between 0 and 60';
     }
     yield `Will create empty array with ${length} cells`;
-    const arr = new Array(length);
+    const arr = [];
     for (let i = 0; i < length; i++) {
-      arr[i] = {
+      arr.push({
         index: i,
         data: null,
         state: i === 0
-      };
+      });
     }
     this.items = arr;
     this.length = 0;
@@ -118,6 +121,30 @@ export class PageOrderedArray extends LitElement {
     this.dups.disabled = true;
     yield 'New array created; total items = 0';
   }
+
+  * iteratorFill() {
+    let length = 0;
+    yield 'Enter number of items to fill in';
+    this.dialog.open().then(formData => {
+      length = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (length > this.items.length && length < 0) {
+      return `ERROR: can't fill more than ${this.items.length} items`;
+    }
+    yield `Will fill in ${length} items`;
+    const arrValues = getUniqueRandomArray(length, 1000);
+    arrValues.sort((a, b) => a - b);
+    arrValues.forEach((value, i) => {
+      this.items[i].data = value;
+      this.items[i].color = getRandomColor100();
+    });
+    this.items = [...this.items];
+    this.length = length;
+    yield `Fill completed; total items = ${length}`;
+  }
+
 }
 
 customElements.define('page-ordered-array', PageOrderedArray);
