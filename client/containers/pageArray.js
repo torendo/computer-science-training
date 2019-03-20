@@ -131,7 +131,14 @@ export class PageArray extends LitElement {
     }
     yield `Will fill in ${length} items`;
     for (let i = 0; i < length; i++) {
-      this.items[i].data = Math.floor(Math.random() * 1000);
+      if (this.dups.checked) {
+        this.items[i].data = Math.floor(Math.random() * 1000);
+      } else {
+        this.items[i].data = (function getUniqueNumber(items) {
+          const num = Math.floor(Math.random() * 1000);
+          return items.find(i => i.data === num) ? getUniqueNumber(items) : num;
+        })(this.items);
+      }
       this.items[i].color = getRandomColor100();
     }
     this.items = [...this.items];
@@ -149,6 +156,10 @@ export class PageArray extends LitElement {
     yield 'Dialog opened'; //skip in promise
     if (key > 999 && key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
+    }
+    if (!this.dups.checked) {
+      const found =  this.items.find(i => i.data === key);
+      if (found) yield `ERROR: you already have item with key ${key} at index ${found.index}`;
     }
     yield `Will insert item with key ${key}`;
     this.resetItemsState();
