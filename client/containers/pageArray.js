@@ -75,8 +75,8 @@ export class PageArray extends LitElement {
   }
 
   initItems() {
-    const length = Math.floor(Math.random() * 60);
-    const lengthFill = Math.floor(Math.random() * length);
+    const length = 20;
+    const lengthFill = 10;
     const arr = new Array(length);
     for (let i = 0; i < length; i++) {
       arr[i] = {
@@ -98,6 +98,9 @@ export class PageArray extends LitElement {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (length > 60 && length < 0) {
+      return 'ERROR: use size between 0 and 60';
+    }
     yield `Will create empty array with ${length} cells`;
     const arr = new Array(length);
     for (let i = 0; i < length; i++) {
@@ -123,6 +126,9 @@ export class PageArray extends LitElement {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (length > this.items.length && length < 0) {
+      return `ERROR: can't fill more than ${this.items.length} items`;
+    }
     yield `Will fill in ${length} items`;
     for (let i = 0; i < length; i++) {
       this.items[i].data = Math.floor(Math.random() * 1000);
@@ -141,6 +147,9 @@ export class PageArray extends LitElement {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key > 999 && key < 0) {
+      return 'ERROR: can\'t insert. Need key between 0 and 999';
+    }
     yield `Will insert item with key ${key}`;
     this.resetItemsState();
     this.items[this.length] = {
@@ -165,6 +174,9 @@ export class PageArray extends LitElement {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key > 999 && key < 0) {
+      return 'ERROR: use key between 0 and 999';
+    }
     yield `Looking for item with key ${key}`;
     let foundAt;
     let isAdditional = false;
@@ -200,6 +212,9 @@ export class PageArray extends LitElement {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key > 999 && key < 0) {
+      return 'ERROR: use key between 0 and 999';
+    }
     yield `Looking for item with key ${key}`;
     let foundAt;
     let deletedCount = 0;
