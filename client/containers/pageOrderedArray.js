@@ -18,7 +18,8 @@ export class PageOrderedArray extends LitElement {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Del</x-button>
-        <label><input class="dups" type="checkbox" checked disabled>Dups OK</label>
+        <label><input class="dups" type="radio" name="alg" checked disabled>Linear</label>
+        <label><input class="dups" type="radio" name="alg" disabled>Ordered</label>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items}></x-items-horizontal>
@@ -75,13 +76,13 @@ export class PageOrderedArray extends LitElement {
   }
 
   initItems() {
-    const length = Math.ceil(Math.random() * 60);
-    const lengthFill = Math.ceil(Math.random() * length);
+    const length = 20;
+    const lengthFill = 10;
     const arr = new Array(length);
     for (let i = 0; i < length; i++) {
       arr[i] = {
         index: i,
-        data: i < lengthFill ? Math.ceil(Math.random() * 1000) : null,
+        data: i < lengthFill ? Math.floor(Math.random() * 1000) : null,
         state: i === 0,
         color: i < lengthFill ? getRandomColor100() : null,
       };
@@ -98,6 +99,9 @@ export class PageOrderedArray extends LitElement {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (length > 60 && length < 0) {
+      return 'ERROR: use size between 0 and 60';
+    }
     yield `Will create empty array with ${length} cells`;
     const arr = new Array(length);
     for (let i = 0; i < length; i++) {
