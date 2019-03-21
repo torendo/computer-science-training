@@ -16,10 +16,10 @@ export class PageOrderedArray extends LitElement {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Find</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Del</x-button>
-        <label><input type="radio" name="algorythm" class="algorythm_linear" checked disabled>Linear</label>
-        <label><input type="radio" name="algorythm" class="algorythm_binary" disabled>Binary</label>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
+        <label><input type="radio" name="algorythm" class="algorythm_linear" checked>Linear</label>
+        <label><input type="radio" name="algorythm" class="algorythm_binary">Binary</label>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items}></x-items-horizontal>
@@ -69,10 +69,19 @@ export class PageOrderedArray extends LitElement {
   }
 
   resetItemsState(isFinish) {
-    this.items.forEach(item => item.state = false);
+    this.items.forEach(item => {
+      item.state = false;
+      item.marker = false;
+    });
     if (isFinish) {
       this.items[0].state = true;
       this.items = [...this.items];
+    }
+  }
+
+  markItems(range) {
+    for (let i = range.start; i <= range.end; i++) {
+      this.items[i].marker = true;
     }
   }
 
@@ -117,9 +126,6 @@ export class PageOrderedArray extends LitElement {
     }
     this.items = arr;
     this.length = 0;
-    this.dups.disabled = false;
-    yield 'Select Duplicates Ok or not';
-    this.dups.disabled = true;
     yield 'New array created; total items = 0';
   }
 
@@ -165,18 +171,36 @@ export class PageOrderedArray extends LitElement {
     }
     yield `Will insert item with key ${key}`;
     let insertAt = this.length;
-    for (let i = 0; i < this.length; i++) {
-      this.resetItemsState();
-      this.items[i].state = true;
-      this.items = [...this.items];
-      if (this.items[i].data > key) {
-        insertAt = i;
-        yield `Will insert at index ${insertAt}, following shift`;
-        break;
+    if (this.linear.checked) {
+      for (let i = 0; i < this.length; i++) {
+        this.resetItemsState();
+        this.items[i].state = true;
+        this.items = [...this.items];
+        if (this.items[i].data > key) {
+          insertAt = i;
+          yield `Will insert at index ${insertAt}, following shift`;
+          break;
+        }
+        if (i !== this.length - 1) {
+          yield `Checking at index = ${i + 1}`;
+        }
       }
-      if (i !== this.length - 1) {
-        yield `Checking at index = ${i + 1}`;
+    }
+    if (this.binary.checked) {
+      let range = {start: 0, end: this.length - 1};
+      let i;
+      while (true) {
+        i = range.start + Math.floor((range.end - range.start) / 2);
+        this.resetItemsState();
+        this.items[i].state = true;
+        this.markItems(range);
+        this.items = [...this.items];
+        yield `Checking index ${i}; range = ${range.start} to ${range.end}`;
+        if (this.items[i].data > key) range = {start: range.start, end: i - 1};
+        if (this.items[i].data < key) range = {start: i + 1, end: range.end};
+        if (range.end - range.start < 0) break;
       }
+      insertAt = (key > this.items[i].data) ? i + 1 : i;
     }
     this.resetItemsState();
     this.items[this.length].state = true;
@@ -197,10 +221,138 @@ export class PageOrderedArray extends LitElement {
     this.items[insertAt].data = key;
     this.items[insertAt].color = getRandomColor100();
     this.items = [...this.items];
-    yield `Have inserted item ${key} at index ${this.length}`;
+    yield `Have inserted item ${key} at index ${insertAt}`;
     this.length++;
     this.resetItemsState(true);
-    yield `Insertion completed item; total items ${this.length}`;
+    yield `Insertion completed; total items ${this.length}`;
+  }
+
+  * iteratorFind() {
+    let key = 0;
+    yield 'Enter key of item to find';
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (key > 999 && key < 0) {
+      return 'ERROR: use key between 0 and 999';
+    }
+    yield `Looking for item with key ${key}`;
+    let foundAt;
+    if (this.linear.checked) {
+      for (let i = 0; i < this.length; i++) {
+        this.resetItemsState();
+        this.items[i].state = true;
+        this.items = [...this.items];
+        if (this.items[i].data === key) {
+          foundAt = i;
+          break;
+        }
+        if (i !== this.length - 1) {
+          yield `Checking at index = ${i + 1}`;
+        }
+      }
+    }
+    if (this.binary.checked) {
+      let range = {start: 0, end: this.length - 1};
+      let i;
+      while (true) {
+        i = range.start + Math.floor((range.end - range.start) / 2);
+        this.resetItemsState();
+        this.items[i].state = true;
+        this.markItems(range);
+        this.items = [...this.items];
+        yield `Checking index ${i}; range = ${range.start} to ${range.end}`;
+        if (this.items[i].data === key) {
+          foundAt = i;
+          break;
+        }
+        if (this.items[i].data > key) range = {start: range.start, end: i - 1};
+        if (this.items[i].data < key) range = {start: i + 1, end: range.end};
+        if (range.end - range.start < 0) break;
+      }
+    }
+    if (foundAt == null) {
+      yield `No items with key ${key}`;
+    } else {
+      yield `Have found item at index = ${foundAt}`;
+    }
+    this.resetItemsState(true);
+  }
+
+  * iteratorDel() {
+    let key = 0;
+    yield 'Enter key of item to delete';
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (key > 999 && key < 0) {
+      return 'ERROR: use key between 0 and 999';
+    }
+    yield `Looking for item with key ${key}`;
+    let foundAt;
+    if (this.linear.checked) {
+      for (let i = 0; i < this.length; i++) {
+        this.resetItemsState();
+        this.items[i].state = true;
+        this.items = [...this.items];
+        if (this.items[i].data === key) {
+          foundAt = i;
+          break;
+        }
+        if (i !== this.length - 1) {
+          yield `Checking at index = ${i + 1}`;
+        }
+      }
+    }
+    if (this.binary.checked) {
+      let range = {start: 0, end: this.length - 1};
+      let i;
+      while (true) {
+        i = range.start + Math.floor((range.end - range.start) / 2);
+        this.resetItemsState();
+        this.items[i].state = true;
+        this.markItems(range);
+        this.items = [...this.items];
+        yield `Checking index ${i}; range = ${range.start} to ${range.end}`;
+        if (this.items[i].data === key) {
+          foundAt = i;
+          break;
+        }
+        if (this.items[i].data > key) range = {start: range.start, end: i - 1};
+        if (this.items[i].data < key) range = {start: i + 1, end: range.end};
+        if (range.end - range.start < 0) break;
+      }
+    }
+    if (foundAt == null) {
+      this.resetItemsState(true);
+      return `No items with key ${key}`;
+    }
+    this.resetItemsState();
+    this.items[foundAt].state = true;
+    this.items[foundAt].data = null;
+    this.items[foundAt].color = null;
+    this.items = [...this.items];
+    yield `Have found and deleted item at index = ${foundAt}`;
+    if (foundAt !== this.length - 1) {
+      yield 'Will shift items';
+    }
+    for (let i = foundAt + 1; i < this.length; i++) {
+      this.resetItemsState();
+      this.items[i].state = true;
+      this.items[i - 1].data = this.items[i].data;
+      this.items[i - 1].color = this.items[i].color;
+      this.items[i].data = null;
+      this.items[i].color = null;
+      this.items = [...this.items];
+      yield `Shifted item from index ${i}`;
+    }
+    this.length--;
+    this.resetItemsState(true);
+    yield `Shift completed; total items ${this.length}`;
   }
 }
 

@@ -173,7 +173,7 @@ export class PageArray extends LitElement {
     yield `Inserted item with key ${key} at index ${this.length}`;
     this.length++;
     this.resetItemsState(true);
-    yield `Insertion completed item; total items ${this.length}`;
+    yield `Insertion completed; total items ${this.length}`;
   }
 
   * iteratorFind() {
@@ -199,16 +199,17 @@ export class PageArray extends LitElement {
         yield `Have found ${isAdditional ? 'additioal' : ''} item at index = ${foundAt}`;
         if (this.dups.checked) {
           isAdditional = true;
+          foundAt = null;
         } else {
           break;
         }
       }
-      yield `Checking ${isAdditional ? 'for additioal matches' : 'next cell'}; index = ${i + 1}`;
+      if (i !== this.length - 1) {
+        yield `Checking ${isAdditional ? 'for additioal matches' : 'next cell'}; index = ${i + 1}`;
+      }
     }
-    if (isAdditional) {
+    if (foundAt == null) {
       yield `No ${isAdditional ? 'additioal' : ''} items with key ${key}`;
-    } else {
-      yield `Have found item at index = ${foundAt}`;
     }
     this.resetItemsState(true);
   }

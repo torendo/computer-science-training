@@ -22,7 +22,7 @@ export class XItemsHorizontal extends LitElement {
           <div class="data" style="${item.color ? 'background-color:' + item.color : ''}">
             ${item.data}
           </div>
-          <div class="state ${item.state != null && item.state !== false ? '' : 'hidden'}">
+          <div class="state_container ${item.state ? 'state' : ''} ${item.marker ? 'marker' : ''}">
             ${item.state != null && typeof item.state !== 'boolean' ? item.state : ''}
           </div>
         </div>
@@ -58,11 +58,20 @@ XItemsHorizontal.styles = css`
     line-height: 1.7em;
     border: 1px solid lightgray;
   }
-  .state {
+  .state_container {
     position: relative;
     min-height: 1.7em;
     padding-left: 3em;
     line-height: 1.7em;
+  }
+  .marker:after {
+    content: '';
+    width: 4px;
+    height: 1.9em;
+    position: absolute;
+    left: 0;
+    margin-top: -1px;
+    background-color: royalblue;
   }
   .state:before {
     content: '←';
@@ -72,9 +81,6 @@ XItemsHorizontal.styles = css`
     padding-left: 6px;
     font-size: 2em;
     color: crimson;
-  }
-  .hidden {
-    visibility: hidden;
   }
 `;
 
