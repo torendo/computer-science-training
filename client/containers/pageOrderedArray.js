@@ -18,8 +18,8 @@ export class PageOrderedArray extends LitElement {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
-        <label><input type="radio" name="algorythm" class="algorythm_linear" checked>Linear</label>
-        <label><input type="radio" name="algorythm" class="algorythm_binary">Binary</label>
+        <label><input type="radio" name="algorythm" class="algorythm algorythm_linear" checked>Linear</label>
+        <label><input type="radio" name="algorythm" class="algorythm algorythm_binary">Binary</label>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items}></x-items-horizontal>
@@ -56,6 +56,9 @@ export class PageOrderedArray extends LitElement {
   toggleButtonsActivity(btn, status) {
     this.querySelectorAll('x-button').forEach(el => {
       if (el !== btn) el.disabled = status;
+    });
+    this.querySelectorAll('.algorythm').forEach(el => {
+      el.disabled = status;
     });
     btn.activated = status;
   }
@@ -352,7 +355,7 @@ export class PageOrderedArray extends LitElement {
     }
     this.length--;
     this.resetItemsState(true);
-    yield `Shift completed; total items ${this.length}`;
+    yield `${foundAt !== this.length - 1 ? 'Shift completed' : 'Completed'}; total items ${this.length}`;
   }
 }
 
