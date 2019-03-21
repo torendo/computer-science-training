@@ -144,6 +144,9 @@ export class PageArray extends LitElement {
   }
 
   * iteratorIns() {
+    if (this.items.length === this.length) {
+      return 'ERROR: can\'t insert, array is full';
+    }
     let key = 0;
     yield 'Enter key of item to insert';
     this.dialog.open().then(formData => {
@@ -167,7 +170,6 @@ export class PageArray extends LitElement {
       color: getRandomColor100()
     };
     this.items = [...this.items];
-    this.requestUpdate();
     yield `Inserted item with key ${key} at index ${this.length}`;
     this.length++;
     this.resetItemsState(true);
@@ -192,7 +194,6 @@ export class PageArray extends LitElement {
       this.resetItemsState();
       this.items[i].state = true;
       this.items = [...this.items];
-      this.requestUpdate();
       if (this.items[i].data === key) {
         foundAt = i;
         yield `Have found ${isAdditional ? 'additioal' : ''} item at index = ${foundAt}`;
@@ -230,7 +231,6 @@ export class PageArray extends LitElement {
     for (let i = 0; i < this.length; i++) {
       this.resetItemsState();
       this.items[i].state = true;
-      this.items = [...this.items];
       if (this.items[i].data === key) {
         foundAt = i;
         deletedCount++;
@@ -247,7 +247,7 @@ export class PageArray extends LitElement {
       } else {
         yield `Checking ${isAdditional ? 'for additioal matches' : 'next cell'}; index = ${i + 1}`;
       }
-      this.requestUpdate();
+      this.items = [...this.items];
     }
     this.length -= deletedCount;
     this.resetItemsState(true);

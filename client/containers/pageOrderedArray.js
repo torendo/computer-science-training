@@ -15,11 +15,11 @@ export class PageOrderedArray extends LitElement {
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Ins</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Del</x-button>
-        <label><input type="radio" name="algorythm" checked disabled>Linear</label>
-        <label><input type="radio" name="algorythm" class="binary" disabled>Binary</label>
+        <label><input type="radio" name="algorythm" class="algorythm_linear" checked disabled>Linear</label>
+        <label><input type="radio" name="algorythm" class="algorythm_binary" disabled>Binary</label>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items}></x-items-horizontal>
@@ -36,7 +36,8 @@ export class PageOrderedArray extends LitElement {
   firstUpdated() {
     this.console = this.querySelector('x-console');
     this.dialog = this.querySelector('x-dialog');
-    this.binary = this.querySelector('.binary');
+    this.binary = this.querySelector('.algorythm_binary');
+    this.linear = this.querySelector('.algorythm_linear');
   }
 
   handleClick(iterator, btn) {
@@ -145,6 +146,62 @@ export class PageOrderedArray extends LitElement {
     yield `Fill completed; total items = ${length}`;
   }
 
+  * iteratorIns() {
+    if (this.items.length === this.length) {
+      return 'ERROR: can\'t insert, array is full';
+    }
+    let key = 0;
+    yield 'Enter key of item to insert';
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (key > 999 && key < 0) {
+      return 'ERROR: use key between 0 and 999';
+    }
+    if (this.items.find(i => i.data === key)) {
+      return 'ERROR: can\'t insert, duplicate found';
+    }
+    yield `Will insert item with key ${key}`;
+    let insertAt = this.length;
+    for (let i = 0; i < this.length; i++) {
+      this.resetItemsState();
+      this.items[i].state = true;
+      this.items = [...this.items];
+      if (this.items[i].data > key) {
+        insertAt = i;
+        yield `Will insert at index ${insertAt}, following shift`;
+        break;
+      }
+      if (i !== this.length - 1) {
+        yield `Checking at index = ${i + 1}`;
+      }
+    }
+    this.resetItemsState();
+    this.items[this.length].state = true;
+    this.items = [...this.items];
+    if (insertAt !== this.length) {
+      yield 'Will shift cells to make room';
+    }
+    for (let i = this.length; i > insertAt; i--) {
+      this.items[i].data = this.items[i - 1].data;
+      this.items[i].color = this.items[i - 1].color;
+      this.items[i - 1].data = null;
+      this.items[i - 1].color = null;
+      this.resetItemsState();
+      this.items[i - 1].state = true;
+      this.items = [...this.items];
+      yield `Shifted item from index ${i - 1}`;
+    }
+    this.items[insertAt].data = key;
+    this.items[insertAt].color = getRandomColor100();
+    this.items = [...this.items];
+    yield `Have inserted item ${key} at index ${this.length}`;
+    this.length++;
+    this.resetItemsState(true);
+    yield `Insertion completed item; total items ${this.length}`;
+  }
 }
 
 customElements.define('page-ordered-array', PageOrderedArray);
