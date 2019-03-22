@@ -1,4 +1,5 @@
 import {LitElement, html} from 'lit-element';
+import {Item} from '../classes/item';
 import {getRandomColor100, getUniqueRandomArray} from '../utils';
 
 export class PageOrderedArray extends LitElement {
@@ -50,6 +51,7 @@ export class PageOrderedArray extends LitElement {
       this.iterator = null;
       this.toggleButtonsActivity(btn, false);
     }
+    this.items = [...this.items];
     this.requestUpdate();
   }
 
@@ -71,20 +73,18 @@ export class PageOrderedArray extends LitElement {
     return iteration;
   }
 
-  resetItemsState(isFinish) {
+  resetItemsState(item = this.items[0]) {
     this.items.forEach(item => {
-      item.state = false;
-      item.marker = false;
+      item.unmark();
     });
-    if (isFinish) {
-      this.items[0].state = true;
-      this.items = [...this.items];
+    if (item) {
+      item.setState();
     }
   }
 
   markItems(range) {
     for (let i = range.start; i <= range.end; i++) {
-      this.items[i].marker = true;
+      this.items[i].setMarker();
     }
   }
 
@@ -95,14 +95,13 @@ export class PageOrderedArray extends LitElement {
     const arrValues = getUniqueRandomArray(lengthFill, 1000);
     arrValues.sort((a, b) => a - b);
     for (let i = 0; i < length; i++) {
-      arr.push({
+      arr.push(new Item({
         index: i,
         data: i < lengthFill ? arrValues[i] : null,
         state: i === 0,
         color: i < lengthFill ? getRandomColor100() : null,
-      });
+      }));
     }
-
     this.items = arr;
     this.length = lengthFill;
   }
@@ -121,11 +120,11 @@ export class PageOrderedArray extends LitElement {
     yield `Will create empty array with ${length} cells`;
     const arr = [];
     for (let i = 0; i < length; i++) {
-      arr.push({
+      arr.push(new Item({
         index: i,
         data: null,
         state: i === 0
-      });
+      }));
     }
     this.items = arr;
     this.length = 0;
@@ -147,12 +146,45 @@ export class PageOrderedArray extends LitElement {
     const arrValues = getUniqueRandomArray(length, 1000);
     arrValues.sort((a, b) => a - b);
     arrValues.forEach((value, i) => {
-      this.items[i].data = value;
-      this.items[i].color = getRandomColor100();
+      this.items[i].setData(value);
     });
-    this.items = [...this.items];
     this.length = length;
     yield `Fill completed; total items = ${length}`;
+  }
+
+  * linearSearch(key, isInsertion) {
+    for (let i = 0; i < this.length; i++) {
+      this.resetItemsState(this.items[i]);
+      if (this.items[i].data === key || isInsertion && this.items[i].data > key) {
+        return i;
+      }
+      if (i !== this.length - 1) {
+        yield `Checking at index = ${i + 1}`;
+      }
+    }
+  }
+
+  * binarySearch(key, isInsertion) {
+    let range = {start: 0, end: this.length - 1};
+    let i;
+    while (true) {
+      i = Math.floor((range.end + range.start) / 2);
+      if (range.end < range.start) {
+        return isInsertion ? i + 1 : null;
+      }
+      this.resetItemsState(this.items[i]);
+      this.markItems(range);
+      if (this.items[i].data === key) {
+        return i;
+      } else {
+        yield `Checking index ${i}; range = ${range.start} to ${range.end}`;
+      }
+      if (this.items[i].data > key) {
+        range.end = i - 1;
+      } else {
+        range.start = i + 1;
+      }
+    }
   }
 
   * iteratorIns() {
@@ -173,60 +205,30 @@ export class PageOrderedArray extends LitElement {
       return 'ERROR: can\'t insert, duplicate found';
     }
     yield `Will insert item with key ${key}`;
-    let insertAt = this.length;
-    if (this.linear.checked) {
-      for (let i = 0; i < this.length; i++) {
-        this.resetItemsState();
-        this.items[i].state = true;
-        this.items = [...this.items];
-        if (this.items[i].data > key) {
-          insertAt = i;
-          yield `Will insert at index ${insertAt}, following shift`;
-          break;
-        }
-        if (i !== this.length - 1) {
-          yield `Checking at index = ${i + 1}`;
-        }
+    let insertAt;
+    const iterator = this.linear.checked ? this.linearSearch(key, true) : this.binarySearch(key, true);
+    while (true) {
+      const iteration = iterator.next();
+      if (iteration.done) {
+        insertAt = iteration.value != null ? iteration.value : this.length;
+        break;
       }
+      yield iteration.value;
     }
-    if (this.binary.checked) {
-      let range = {start: 0, end: this.length - 1};
-      let i;
-      while (true) {
-        i = range.start + Math.floor((range.end - range.start) / 2);
-        this.resetItemsState();
-        this.items[i].state = true;
-        this.markItems(range);
-        this.items = [...this.items];
-        yield `Checking index ${i}; range = ${range.start} to ${range.end}`;
-        if (this.items[i].data > key) range = {start: range.start, end: i - 1};
-        if (this.items[i].data < key) range = {start: i + 1, end: range.end};
-        if (range.end - range.start < 0) break;
-      }
-      insertAt = (key > this.items[i].data) ? i + 1 : i;
-    }
-    this.resetItemsState();
-    this.items[this.length].state = true;
-    this.items = [...this.items];
+    yield `Will insert at index ${insertAt}${insertAt !== this.length ? ', following shift' : ''}`;
+    this.resetItemsState(this.items[this.length]);
     if (insertAt !== this.length) {
       yield 'Will shift cells to make room';
     }
     for (let i = this.length; i > insertAt; i--) {
-      this.items[i].data = this.items[i - 1].data;
-      this.items[i].color = this.items[i - 1].color;
-      this.items[i - 1].data = null;
-      this.items[i - 1].color = null;
-      this.resetItemsState();
-      this.items[i - 1].state = true;
-      this.items = [...this.items];
+      this.items[i].moveDataFrom(this.items[i - 1]);
+      this.resetItemsState(this.items[i - 1]);
       yield `Shifted item from index ${i - 1}`;
     }
-    this.items[insertAt].data = key;
-    this.items[insertAt].color = getRandomColor100();
-    this.items = [...this.items];
+    this.items[insertAt].setData(key);
     yield `Have inserted item ${key} at index ${insertAt}`;
     this.length++;
-    this.resetItemsState(true);
+    this.resetItemsState();
     yield `Insertion completed; total items ${this.length}`;
   }
 
@@ -243,45 +245,21 @@ export class PageOrderedArray extends LitElement {
     }
     yield `Looking for item with key ${key}`;
     let foundAt;
-    if (this.linear.checked) {
-      for (let i = 0; i < this.length; i++) {
-        this.resetItemsState();
-        this.items[i].state = true;
-        this.items = [...this.items];
-        if (this.items[i].data === key) {
-          foundAt = i;
-          break;
-        }
-        if (i !== this.length - 1) {
-          yield `Checking at index = ${i + 1}`;
-        }
+    const iterator = this.linear.checked ? this.linearSearch(key) : this.binarySearch(key);
+    while (true) {
+      const iteration = iterator.next();
+      if (iteration.done) {
+        foundAt = iteration.value;
+        break;
       }
-    }
-    if (this.binary.checked) {
-      let range = {start: 0, end: this.length - 1};
-      let i;
-      while (true) {
-        i = range.start + Math.floor((range.end - range.start) / 2);
-        this.resetItemsState();
-        this.items[i].state = true;
-        this.markItems(range);
-        this.items = [...this.items];
-        yield `Checking index ${i}; range = ${range.start} to ${range.end}`;
-        if (this.items[i].data === key) {
-          foundAt = i;
-          break;
-        }
-        if (this.items[i].data > key) range = {start: range.start, end: i - 1};
-        if (this.items[i].data < key) range = {start: i + 1, end: range.end};
-        if (range.end - range.start < 0) break;
-      }
+      yield iteration.value;
     }
     if (foundAt == null) {
       yield `No items with key ${key}`;
     } else {
       yield `Have found item at index = ${foundAt}`;
     }
-    this.resetItemsState(true);
+    this.resetItemsState();
   }
 
   * iteratorDel() {
@@ -297,65 +275,33 @@ export class PageOrderedArray extends LitElement {
     }
     yield `Looking for item with key ${key}`;
     let foundAt;
-    if (this.linear.checked) {
-      for (let i = 0; i < this.length; i++) {
-        this.resetItemsState();
-        this.items[i].state = true;
-        this.items = [...this.items];
-        if (this.items[i].data === key) {
-          foundAt = i;
-          break;
-        }
-        if (i !== this.length - 1) {
-          yield `Checking at index = ${i + 1}`;
-        }
+    const iterator = this.linear.checked ? this.linearSearch(key) : this.binarySearch(key);
+    while (true) {
+      const iteration = iterator.next();
+      if (iteration.done) {
+        foundAt = iteration.value;
+        break;
       }
-    }
-    if (this.binary.checked) {
-      let range = {start: 0, end: this.length - 1};
-      let i;
-      while (true) {
-        i = range.start + Math.floor((range.end - range.start) / 2);
-        this.resetItemsState();
-        this.items[i].state = true;
-        this.markItems(range);
-        this.items = [...this.items];
-        yield `Checking index ${i}; range = ${range.start} to ${range.end}`;
-        if (this.items[i].data === key) {
-          foundAt = i;
-          break;
-        }
-        if (this.items[i].data > key) range = {start: range.start, end: i - 1};
-        if (this.items[i].data < key) range = {start: i + 1, end: range.end};
-        if (range.end - range.start < 0) break;
-      }
+      yield iteration.value;
     }
     if (foundAt == null) {
-      this.resetItemsState(true);
+      this.resetItemsState();
       return `No items with key ${key}`;
     }
-    this.resetItemsState();
-    this.items[foundAt].state = true;
-    this.items[foundAt].data = null;
-    this.items[foundAt].color = null;
-    this.items = [...this.items];
+    this.items[foundAt].clear();
     yield `Have found and deleted item at index = ${foundAt}`;
     if (foundAt !== this.length - 1) {
+      this.resetItemsState(this.items[foundAt]);
       yield 'Will shift items';
     }
     for (let i = foundAt + 1; i < this.length; i++) {
-      this.resetItemsState();
-      this.items[i].state = true;
-      this.items[i - 1].data = this.items[i].data;
-      this.items[i - 1].color = this.items[i].color;
-      this.items[i].data = null;
-      this.items[i].color = null;
-      this.items = [...this.items];
+      this.resetItemsState(this.items[i]);
+      this.items[i - 1].moveDataFrom(this.items[i]);
       yield `Shifted item from index ${i}`;
     }
     this.length--;
-    this.resetItemsState(true);
-    yield `${foundAt !== this.length - 1 ? 'Shift completed' : 'Completed'}; total items ${this.length}`;
+    this.resetItemsState();
+    yield `${foundAt !== this.length ? 'Shift completed' : 'Completed'}; total items ${this.length}`;
   }
 }
 
