@@ -1,5 +1,6 @@
 import {LitElement, html} from 'lit-element';
-import {getRandomColor100, getUniqueRandomNumber} from '../utils';
+import {getUniqueRandomNumber} from '../utils';
+import {Item} from '../classes/item';
 
 export class PageArray extends LitElement {
   constructor() {
@@ -48,6 +49,7 @@ export class PageArray extends LitElement {
       this.iterator = null;
       this.toggleButtonsActivity(btn, false);
     }
+    this.items = [...this.items];
     this.requestUpdate();
   }
 
@@ -67,10 +69,9 @@ export class PageArray extends LitElement {
   }
 
   resetItemsState(isFinish) {
-    this.items.forEach(item => item.state = false);
+    this.items.forEach(item => item.setState(false));
     if (isFinish) {
-      this.items[0].state = true;
-      this.items = [...this.items];
+      this.items[0].setState();
     }
   }
 
@@ -79,12 +80,9 @@ export class PageArray extends LitElement {
     const lengthFill = 10;
     const arr = [];
     for (let i = 0; i < length; i++) {
-      arr.push({
-        index: i,
-        data: i < lengthFill ? Math.floor(Math.random() * 1000) : null,
-        state: i === 0,
-        color: i < lengthFill ? getRandomColor100() : null,
-      });
+      const item = new Item({index: i, state: i === 0});
+      if (i < lengthFill) item.setData(Math.floor(Math.random() * 1000));
+      arr.push(item);
     }
     this.items = arr;
     this.length = lengthFill;
@@ -104,11 +102,7 @@ export class PageArray extends LitElement {
     yield `Will create empty array with ${length} cells`;
     const arr = [];
     for (let i = 0; i < length; i++) {
-      arr.push({
-        index: i,
-        data: null,
-        state: i === 0
-      });
+      arr.push(new Item({index: i, state: i === 0}));
     }
     this.items = arr;
     this.length = 0;
@@ -132,13 +126,11 @@ export class PageArray extends LitElement {
     yield `Will fill in ${length} items`;
     for (let i = 0; i < length; i++) {
       if (this.dups.checked) {
-        this.items[i].data = Math.floor(Math.random() * 1000);
+        this.items[i].setData(Math.floor(Math.random() * 1000));
       } else {
-        this.items[i].data = getUniqueRandomNumber(this.items, 1000);
+        this.items[i].setData(getUniqueRandomNumber(this.items, 1000));
       }
-      this.items[i].color = getRandomColor100();
     }
-    this.items = [...this.items];
     this.length = length;
     yield `Fill completed; total items = ${length}`;
   }
@@ -163,13 +155,7 @@ export class PageArray extends LitElement {
     }
     yield `Will insert item with key ${key}`;
     this.resetItemsState();
-    this.items[this.length] = {
-      index: this.length,
-      data: key,
-      state: true,
-      color: getRandomColor100()
-    };
-    this.items = [...this.items];
+    this.items[this.length].setData(key).setState();
     yield `Inserted item with key ${key} at index ${this.length}`;
     this.length++;
     this.resetItemsState(true);
@@ -192,8 +178,7 @@ export class PageArray extends LitElement {
     let isAdditional = false;
     for (let i = 0; i < this.length; i++) {
       this.resetItemsState();
-      this.items[i].state = true;
-      this.items = [...this.items];
+      this.items[i].setState();
       if (this.items[i].data === key) {
         foundAt = i;
         yield `Have found ${isAdditional ? 'additioal' : ''} item at index = ${foundAt}`;
@@ -231,24 +216,19 @@ export class PageArray extends LitElement {
     let isAdditional = false;
     for (let i = 0; i < this.length; i++) {
       this.resetItemsState();
-      this.items[i].state = true;
+      this.items[i].setState();
       if (this.items[i].data === key) {
         foundAt = i;
         deletedCount++;
-        this.items[i].data = null;
-        this.items[i].color = null;
+        this.items[i].clear();
         yield `Have found and deleted ${isAdditional ? 'additioal' : ''} item at index = ${foundAt}`;
         if (this.dups.checked) isAdditional = true;
       } else if (deletedCount > 0) {
         yield `Will shift item ${deletedCount} spaces`;
-        this.items[i - deletedCount].data = this.items[i].data;
-        this.items[i - deletedCount].color = this.items[i].color;
-        this.items[i].data = null;
-        this.items[i].color = null;
+        this.items[i - deletedCount].moveDataFrom(this.items[i]);
       } else {
         yield `Checking ${isAdditional ? 'for additioal matches' : 'next cell'}; index = ${i + 1}`;
       }
-      this.items = [...this.items];
     }
     this.length -= deletedCount;
     this.resetItemsState(true);

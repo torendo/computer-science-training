@@ -1,6 +1,6 @@
 import {LitElement, html} from 'lit-element';
 import {Item} from '../classes/item';
-import {getRandomColor100, getUniqueRandomArray} from '../utils';
+import {getUniqueRandomArray} from '../utils';
 
 export class PageOrderedArray extends LitElement {
   constructor() {
@@ -95,12 +95,9 @@ export class PageOrderedArray extends LitElement {
     const arrValues = getUniqueRandomArray(lengthFill, 1000);
     arrValues.sort((a, b) => a - b);
     for (let i = 0; i < length; i++) {
-      arr.push(new Item({
-        index: i,
-        data: i < lengthFill ? arrValues[i] : null,
-        state: i === 0,
-        color: i < lengthFill ? getRandomColor100() : null,
-      }));
+      const item = new Item({index: i, state: i === 0});
+      if (i < lengthFill) item.setData(arrValues[i]);
+      arr.push(item);
     }
     this.items = arr;
     this.length = lengthFill;

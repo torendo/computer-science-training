@@ -12,24 +12,29 @@ export class Item {
   clear() {
     this.data = null;
     this.color = null;
+    return this;
   }
 
   unmark() {
     this.state = false;
     this.marker = false;
+    return this;
   }
 
   setState(state = true) {
     this.state = state;
+    return this;
   }
 
   setMarker(marker = true) {
     this.marker = marker;
+    return this;
   }
 
   setData(value, color = getRandomColor100()) {
     this.data = value;
     this.color = color;
+    return this;
   }
 
   moveDataFrom(item) {
@@ -37,5 +42,6 @@ export class Item {
     this.color = item.color;
     item.data = null;
     item.color = null;
+    return this;
   }
 }
