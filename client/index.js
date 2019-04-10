@@ -9,4 +9,5 @@ import './containers/app';
 import './containers/pageArray';
 import './containers/pageOrderedArray';
 import './containers/pageList';
+import './containers/pageBubbleSort';
 import './containers/footer';

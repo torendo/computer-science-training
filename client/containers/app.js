@@ -5,6 +5,7 @@ export class XApp extends LitElement {
     const routes = [
       {path: '/array', component: 'page-array', title: 'Array'},
       {path: '/orderedArray', component: 'page-ordered-array', title: 'Ordered Array'},
+      {path: '/bubbleSort', component: 'page-bubble-sort', title: 'Bubble Sort'},
       {path: '/list', component: 'page-list', title: 'List'}
     ];
     return html`
