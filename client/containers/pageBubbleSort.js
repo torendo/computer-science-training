@@ -5,6 +5,7 @@ export class PageBubbleSort extends LitElement {
   constructor() {
     super();
     this.items = [];
+    this.markers = [];
     this.length = 0;
     this.initItems();
   }
@@ -14,14 +15,14 @@ export class PageBubbleSort extends LitElement {
       <h4>Array</h4>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Fill</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Ins</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Find</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Del</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Size</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Draw</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Run</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Step</x-button>
         <label><input class="dups" type="checkbox" checked disabled>Dups OK</label>
       </div>
       <x-console></x-console>
-      <x-items-horizontal .items=${this.items}></x-items-horizontal>
+      <x-items-vertical .items=${this.items} .markers=${this.markers}></x-items-vertical>
       <x-dialog>
         <label>Number: <input name="number" type="number"></label>
       </x-dialog>
@@ -35,7 +36,6 @@ export class PageBubbleSort extends LitElement {
   firstUpdated() {
     this.console = this.querySelector('x-console');
     this.dialog = this.querySelector('x-dialog');
-    this.dups = this.querySelector('.dups');
   }
 
   handleClick(iterator, btn) {
