@@ -1,5 +1,5 @@
 export class Marker {
-  constructor({position, color = 'red', size = 1, text}) {
+  constructor({position, text, color = 'red', size = 1}) {
     this.position = position;
     this.color = color;
     this.size = size;

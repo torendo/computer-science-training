@@ -1,11 +1,12 @@
 import {LitElement, html} from 'lit-element';
 import {Item} from '../classes/item';
+import {Marker} from '../classes/marker';
 
 export class PageBubbleSort extends LitElement {
   constructor() {
     super();
     this.items = [];
-    this.markers = [];
+    this.markers = [new Marker({position: 3, text: 'test'})];
     this.length = 0;
     this.initItems();
   }
@@ -75,12 +76,12 @@ export class PageBubbleSort extends LitElement {
   }
 
   initItems() {
-    const length = 20;
+    const length = 10;
     const lengthFill = 10;
     const arr = [];
     for (let i = 0; i < length; i++) {
       const item = new Item({index: i, state: i === 0});
-      if (i < lengthFill) item.setData(Math.floor(Math.random() * 1000));
+      if (i < lengthFill) item.setData(Math.floor(Math.random() * 100));
       arr.push(item);
     }
     this.items = arr;
