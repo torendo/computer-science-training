@@ -6,8 +6,9 @@ export class PageBubbleSort extends LitElement {
   constructor() {
     super();
     this.items = [];
-    this.markers = [new Marker({position: 3, text: 'test'})];
-    this.length = 0;
+    this.markers = [];
+    this.isReverseOrder = false;
+    this.length = 10;
     this.initItems();
   }
 
@@ -16,11 +17,9 @@ export class PageBubbleSort extends LitElement {
       <h4>Array</h4>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Size</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Draw</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Run</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Step</x-button>
-        <label><input class="dups" type="checkbox" checked disabled>Dups OK</label>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorSize)}>Size</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorRun)}>Run</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorStep)}>Step</x-button>
       </div>
       <x-console></x-console>
       <x-items-vertical .items=${this.items} .markers=${this.markers}></x-items-vertical>
@@ -76,40 +75,44 @@ export class PageBubbleSort extends LitElement {
   }
 
   initItems() {
-    const length = 10;
-    const lengthFill = 10;
     const arr = [];
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < this.length; i++) {
       const item = new Item({index: i, state: i === 0});
-      if (i < lengthFill) item.setData(Math.floor(Math.random() * 100));
+      const value = this.isReverseOrder ? (this.length - i) * (this.length === 10 ? 10 : 1) : Math.floor(Math.random() * 100);
+      item.setData(value);
       arr.push(item);
     }
     this.items = arr;
-    this.length = lengthFill;
+    this.markers = [
+      new Marker({position: 0, size: 1, color: 'blue', text: 'inner'}),
+      new Marker({position: 1, size: 1, color: 'blue', text: 'inner+1'}),
+      new Marker({position: this.length - 1, size: 2, color: 'red', text: 'outer'})
+    ];
   }
 
   * iteratorNew() {
-    let length = 0;
-    yield 'Enter size of array to create';
-    this.dialog.open().then(formData => {
-      length = Number(formData.get('number'));
-      this.iterate();
-    }, () => this.iterate());
-    yield 'Dialog opened'; //skip in promise
-    if (length > 60 && length < 0) {
-      return 'ERROR: use size between 0 and 60';
+    this.isReverseOrder = !this.isReverseOrder;
+    this.initItems(this.isReverseOrder);
+    yield `Created ${this.isReverseOrder ? 'reverse' : 'ordered'} array`;
+  }
+
+  * iteratorSize() {
+    this.length = this.length === 10 ? 100 : 10;
+    this.initItems();
+    yield `Created ${this.length} elements array`;
+  }
+
+  * iteratorStep() {
+    for (let i = 0; i < this.length; i++) {
+
+      yield 'Created ' + this.length + ' elements array';
     }
-    yield `Will create empty array with ${length} cells`;
-    const arr = [];
-    for (let i = 0; i < length; i++) {
-      arr.push(new Item({index: i, state: i === 0}));
-    }
-    this.items = arr;
-    this.length = 0;
-    this.dups.disabled = false;
-    yield 'Select Duplicates Ok or not';
-    this.dups.disabled = true;
-    yield 'New array created; total items = 0';
+  }
+
+  * iteratorRun() {
+    this.length = this.length === 10 ? 100 : 10;
+    this.initItems();
+    yield 'Created ' + this.length + ' elements array';
   }
 
 }

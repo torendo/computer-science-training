@@ -22,7 +22,7 @@ export class XItemsVertical extends LitElement {
             <div class="data" style="${item.color ? 'background-color:' + item.color + ';' : ''} ${item.data ? 'height:' + item.data + '%;' : ''}">
             </div>
           </div>
-          <div class="index">
+          <div class="index" style="${this.items.length > 10 ? 'display:none;' : ''}">
             ${item.index}
           </div>
           <div class="marker_container">
@@ -36,7 +36,11 @@ export class XItemsVertical extends LitElement {
   drawMarker(i) {
     const marker = this.markers.find(marker => marker.position === i);
     if (marker) {
-      return html`<div class="marker size_${marker.size} ${marker.color ? 'color_' + marker.color : ''}">${marker.text}</div>`;
+      return html`
+        <div class="marker size_${marker.size} ${marker.color ? 'color_' + marker.color : ''}">
+          <span>${this.items.length > 10 ? '' : marker.text}</span>
+        </div>
+      `;
     }
   }
 }
@@ -51,13 +55,12 @@ XItemsVertical.styles = css`
   .item {
     display: flex;
     flex-direction: column;
-  }
-  .index, .data, .state {
-    width: auto;
-    text-align: center;
+    min-width: 5px;
+    flex-grow: 1;
   }
   .index {
-    padding-right: 4px;
+    text-align: center;
+    padding: 5px 0;
   }
   .data_container {
     display: flex;
@@ -65,19 +68,21 @@ XItemsVertical.styles = css`
     height: 400px;
   }
   .data {
-    min-width: 1.7em;
-    min-height: 1.7em;
-    padding: 0;
-    margin: 0;
     border: 1px solid lightgray;
   }
   .marker_container {
     position: relative;
-    height: 100px;
+    height: 6em;
   }
   .marker {
     position: relative;
-    padding-top: 1em; /*configurable*/
+    font-size: .8em;
+    text-align: center;
+  }
+  .marker span {
+    position: absolute;
+    min-width: 5em;
+    transform: translateX(-50%);
   }
   .marker:before {
     content: '';
@@ -92,17 +97,59 @@ XItemsVertical.styles = css`
     border: 2px solid;
     border-left: none;
     border-bottom: none;
-    border-color: red; /*configurable*/
   }
   .marker:after {
     content: '';
     display: block;
     position: absolute;
     width: 2px;
-    height: 1em; /*configurable*/
     top: 0;
     left: 50%;
-    background-color: red; /*configurable*/
+  }
+  .size_1.marker {
+    padding-top: 1em;
+  }
+  .size_1.marker:after {
+    height: 1em;
+  }
+  .size_2.marker {
+    padding-top: 3em;
+  }
+  .size_2.marker:after {
+    height: 3em;
+  }
+  .size_3.marker {
+    padding-top: 5em;
+  }
+  .size_3.marker:after {
+    height: 5em;
+  }
+  .color_red.marker {
+    color: red;
+  }
+  .color_red.marker:before {
+    border-color: red;
+  }
+  .color_red.marker:after {
+    background-color: red;
+  }
+  .color_blue.marker {
+    color: blue;
+  }
+  .color_blue.marker:before {
+    border-color: blue;
+  }
+  .color_blue.marker:after {
+    background-color: blue;
+  }
+  .color_purple.marker {
+    color: purple;
+  }
+  .color_purple.marker:before {
+    border-color: purple;
+  }
+  .color_purple.marker:after {
+    background-color: purple;
   }
 `;
 
