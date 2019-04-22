@@ -44,4 +44,14 @@ export class Item {
     item.color = null;
     return this;
   }
+
+  switchDataWith(item) {
+    const cacheData = this.data;
+    const cacheColor = this.color;
+    this.data = item.data;
+    this.color = item.color;
+    item.data = cacheData;
+    item.color = cacheColor;
+    return this;
+  }
 }

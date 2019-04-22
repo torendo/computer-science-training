@@ -34,14 +34,18 @@ export class XItemsVertical extends LitElement {
   }
 
   drawMarker(i) {
-    const marker = this.markers.find(marker => marker.position === i);
-    if (marker) {
-      return html`
-        <div class="marker size_${marker.size} ${marker.color ? 'color_' + marker.color : ''}">
-          <span>${this.items.length > 10 ? '' : marker.text}</span>
-        </div>
-      `;
-    }
+    let result = '';
+    this.markers.forEach(marker => {
+      if (marker.position === i) {
+        result = html`
+          ${result}
+          <div class="marker size_${marker.size} ${marker.color ? 'color_' + marker.color : ''}">
+            <span>${this.items.length > 10 ? '' : marker.text}</span>
+          </div>
+        `;
+      }
+    });
+    return result;
   }
 }
 
@@ -75,7 +79,9 @@ XItemsVertical.styles = css`
     height: 6em;
   }
   .marker {
-    position: relative;
+    position: absolute;
+    top: 0;
+    width: 100%;
     font-size: .8em;
     text-align: center;
   }
@@ -83,6 +89,7 @@ XItemsVertical.styles = css`
     position: absolute;
     min-width: 5em;
     transform: translateX(-50%);
+    text-shadow: 1px 1px 0px white;
   }
   .marker:before {
     content: '';
@@ -107,18 +114,21 @@ XItemsVertical.styles = css`
     left: 50%;
   }
   .size_1.marker {
+    z-index: 3;
     padding-top: 1em;
   }
   .size_1.marker:after {
     height: 1em;
   }
   .size_2.marker {
+    z-index: 2;
     padding-top: 3em;
   }
   .size_2.marker:after {
     height: 3em;
   }
   .size_3.marker {
+    z-index: 1;
     padding-top: 5em;
   }
   .size_3.marker:after {

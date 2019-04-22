@@ -1,23 +1,25 @@
 import {LitElement, html, css} from 'lit-element';
 
 export class XConsole extends LitElement {
+  static get properties() {
+    return {
+      defaultMessage: {type: String}
+    };
+  }
+
   constructor() {
     super();
-    this.default = 'Press any key';
+    this.defaultMessage = 'Press any key';
   }
 
   render() {
     return html`
-      <p class="message">${this.default}</p>
+      <p class="message">${this.message || this.defaultMessage}</p>
     `;
   }
 
-  firstUpdated() {
-    this.container = this.shadowRoot.querySelector('.message');
-  }
-
   setMessage(text) {
-    this.container.innerText = text != null ? text : this.default;
+    this.message = text;
     this.requestUpdate();
   }
 }
