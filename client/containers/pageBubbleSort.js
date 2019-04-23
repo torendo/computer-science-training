@@ -20,9 +20,10 @@ export class PageBubbleSort extends LitElement {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorSize)}>Size</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorRun)}>Run</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorStep)}>Step</x-button>
+        <x-button .callback=${this.handleAbort.bind(this)} class="btn_abort hidden">Abort</x-button>
       </div>
-      <x-console class="console_stats" defaultMessage="-"></x-console>
       <x-console class="console_verbose"></x-console>
+      <x-console class="console_stats" defaultMessage="—"></x-console>
       <x-items-vertical .items=${this.items} .markers=${this.markers}></x-items-vertical>
       <x-dialog>
         <label>Number: <input name="number" type="number"></label>
@@ -38,6 +39,7 @@ export class PageBubbleSort extends LitElement {
     this.consoleStats = this.querySelector('.console_stats');
     this.console = this.querySelector('.console_verbose');
     this.dialog = this.querySelector('x-dialog');
+    this.btnStop = this.querySelector('.btn_abort');
   }
 
   handleClick(iterator, btn) {
@@ -102,9 +104,14 @@ export class PageBubbleSort extends LitElement {
   }
 
   * iteratorStep() {
+    this.btnStop.classList.remove('hidden');
+    this.btnStop.disabled = false;
+    this.isFinish = false;
+    let isCompleted;
     let swaps = 0;
     let comparsions = 0;
     this.updateStats(swaps, comparsions);
+    loopOuter:
     for (let outer = this.length - 1; outer > 0; outer--) {
       for (let inner = 0; inner < outer; inner++) {
         comparsions++;
@@ -115,10 +122,12 @@ export class PageBubbleSort extends LitElement {
         } else {
           yield 'Will not be swapped';
         }
+        if (this.isFinish) break loopOuter;
         this.updateStats(swaps, comparsions);
         this.markers[0].position++;
         this.markers[1].position++;
       }
+      isCompleted = true;
       this.markers[0].position = 0;
       this.markers[1].position = 1;
       this.markers[2].position--;
@@ -126,36 +135,46 @@ export class PageBubbleSort extends LitElement {
     this.markers[0].position = 0;
     this.markers[1].position = 1;
     this.markers[2].position = this.length - 1;
-    return 'Sort is complete';
+    this.btnStop.classList.add('hidden');
+    return `Sort is ${isCompleted ? 'complete' : 'aborted'}`;
   }
 
   * iteratorRun() {
+    this.btnStop.classList.remove('hidden');
+    this.btnStop.disabled = false;
+    this.isFinish = false;
     let iterator;
-    let isFinish;
+    let isCompleted;
     while(true) {
+      yield 'Press Next to start';
+      if (this.isFinish) break;
       const interval = setInterval(() => {
         if (!iterator) {
           iterator = this.iteratorStep();
         }
-        const iteration = iterator.next();
-        this.console.setMessage(iteration.value);
-        if (iteration.done) {
-          iterator = null;
-          clearInterval(interval);
-          isFinish = true;
+        if (iterator.next().done) {
+          isCompleted = true;
+          this.handleAbort();
         }
         this.items = [...this.items];
         this.requestUpdate();
 
-      }, 200);
-      if (isFinish) break;
-      yield 'Press to pause';
+      }, this.length === 10 ? 200 : 50);
+      yield 'Press Next to pause';
       clearInterval(interval);
-      yield 'Press to start';
+      if (this.isFinish) break;
     }
-    return ';';
+    this.btnStop.classList.add('hidden');
+    return `Sort is ${isCompleted ? 'complete' : 'aborted'}`;
   }
 
+  handleAbort() {
+    this.isFinish = true;
+    this.markers[0].position = 0;
+    this.markers[1].position = 1;
+    this.markers[2].position = this.length - 1;
+    this.iterate();
+  }
 }
 
 customElements.define('page-bubble-sort', PageBubbleSort);

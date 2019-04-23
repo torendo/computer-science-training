@@ -19,6 +19,15 @@ x-router {
   flex: auto;
 }
 
+x-console {
+  margin: 10px;
+  background: aliceblue;
+}
+
+x-console.console_stats {
+  background: honeydew;
+}
+
 nav {
   display: flex;
   flex-direction: row;
@@ -42,4 +51,8 @@ nav {
 .credits-my {
   font-size: .8em;
   color: darkgray;
+}
+
+.hidden {
+  display: none;
 }

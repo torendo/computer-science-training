@@ -25,10 +25,11 @@ export class XConsole extends LitElement {
 }
 
 XConsole.styles = css`
+  :host {
+    display: block;
+  }
   .message {
     padding: 10px;
-    margin: 10px;
-    background: aliceblue;
     font-family: monospace;
   }
 `;
