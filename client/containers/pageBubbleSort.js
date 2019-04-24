@@ -49,6 +49,7 @@ export class PageBubbleSort extends LitElement {
       this.iterator = null;
       this.toggleButtonsActivity(btn, false);
     }
+    this.items = [...this.items];
     this.requestUpdate();
   }
 
@@ -163,7 +164,7 @@ export class PageBubbleSort extends LitElement {
         }
         this.items = [...this.items];
         this.requestUpdate();
-      }, this.length === 10 ? 200 : 50);
+      }, this.length === 10 ? 200 : 40);
       yield 'Press Next to pause';
       clearInterval(interval);
       if (isDone || this.isAborted) break;
