@@ -29,9 +29,13 @@ export const colors100 = [
   '#FFE0B2',
   '#FFCCBC',
   '#D7CCC8',
+  '#CFD8DC',
   '#F5F5F5',
-  '#CFD8DC'
 ];
+
+export const getColor100 = (i) => {
+  return colors100[i % colors100.length];
+};
 
 export const getRandomColor100 = () => {
   return colors100[Math.floor(Math.random() * colors100.length)];
@@ -39,25 +43,29 @@ export const getRandomColor100 = () => {
 
 export const colors400 = [
   '#EF5350',
-  '#AB47BC',
   '#EC407A',
+  '#AB47BC',
   '#7E57C2',
-  '#42A5F5',
-  '#26A69A',
-  '#D4E157',
-  '#66BB6A',
-  '#FFA726',
-  '#8D6E63',
-  '#BDBDBD',
   '#5C6BC0',
-  '#78909C',
+  '#42A5F5',
   '#29B6F6',
-  '#FFEE58',
   '#26C6DA',
+  '#26A69A',
+  '#66BB6A',
+  '#9CCC65',
+  '#D4E157',
+  '#FFEE58',
   '#FFCA28',
+  '#FFA726',
   '#FF7043',
-  '#9CCC65'
+  '#8D6E63',
+  '#78909C',
+  '#BDBDBD',
 ];
+
+export const getColor400 = (i) => {
+  return colors400[i % colors400.length];
+};
 
 export const getRandomColor400 = () => {
   return colors400[Math.floor(Math.random() * colors400.length)];

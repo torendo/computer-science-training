@@ -1,6 +1,7 @@
 import {LitElement, html} from 'lit-element';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
+import {getColor100} from '../utils';
 
 export class PageBubbleSort extends LitElement {
   constructor() {
@@ -77,7 +78,7 @@ export class PageBubbleSort extends LitElement {
     for (let i = 0; i < this.length; i++) {
       const item = new Item({index: i, state: i === 0});
       const value = this.isReverseOrder ? (this.length - i) * (this.length === 10 ? 10 : 1) : Math.floor(Math.random() * 100);
-      item.setData(value);
+      item.setData(value, getColor100(value));
       arr.push(item);
     }
     this.items = arr;
