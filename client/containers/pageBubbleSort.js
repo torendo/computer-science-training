@@ -11,6 +11,7 @@ export class PageBubbleSort extends LitElement {
     this.isReverseOrder = false;
     this.length = 10;
     this.initItems();
+    this.initMarkers();
   }
 
   render() {
@@ -82,6 +83,9 @@ export class PageBubbleSort extends LitElement {
       arr.push(item);
     }
     this.items = arr;
+  }
+
+  initMarkers() {
     this.markers = [
       new Marker({position: 0, size: 1, color: 'blue', text: 'inner'}),
       new Marker({position: 1, size: 1, color: 'blue', text: 'inner+1'}),
@@ -100,9 +104,7 @@ export class PageBubbleSort extends LitElement {
   }
 
   afterSort() {
-    this.markers[0].position = 0;
-    this.markers[1].position = 1;
-    this.markers[2].position = this.length - 1;
+    this.initMarkers();
     this.btnStop.classList.add('hidden');
   }
 
