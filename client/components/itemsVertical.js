@@ -1,9 +1,11 @@
 import {LitElement, html, css} from 'lit-element';
+import {Item} from '../classes/item';
 
 export class XItemsVertical extends LitElement {
   static get properties() {
     return {
       items: {type: Array},
+      temp: {type: Object},
       markers: {type: Array}
     };
   }
@@ -30,9 +32,25 @@ export class XItemsVertical extends LitElement {
           </div>
         </div>
       `)}      
+      ${this.drawTemp()}
     `;
   }
 
+  drawTemp() {
+    if (this.temp instanceof Item) {
+      return html`
+        <div class="item temp">
+          <div class="data_container">
+            <div class="data" style="${this.temp.color ? 'background-color:' + this.temp.color + ';' : ''} ${this.temp.data ? 'height:' + this.temp.data + '%;' : ''}">
+            </div>
+          </div>
+          <div class="marker_container">
+            ${this.drawMarker('temp')}
+          </div>
+        </div>
+      `;
+    }
+  }
   drawMarker(i) {
     let result = '';
     this.markers.forEach(marker => {
@@ -62,14 +80,18 @@ XItemsVertical.styles = css`
     min-width: 5px;
     flex-grow: 1;
   }
+  .temp {
+    margin-left: 2em;
+  }
   .index {
     text-align: center;
-    padding: 5px 0;
+    margin-bottom: 5px;
   }
   .data_container {
     display: flex;
     flex-direction: column-reverse;
     height: 400px;
+    margin-bottom: 5px;
   }
   .data {
     border: 1px solid lightgray;
