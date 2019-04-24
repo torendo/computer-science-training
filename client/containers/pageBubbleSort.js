@@ -49,7 +49,6 @@ export class PageBubbleSort extends LitElement {
       this.iterator = null;
       this.toggleButtonsActivity(btn, false);
     }
-    this.items = [...this.items];
     this.requestUpdate();
   }
 
@@ -76,7 +75,7 @@ export class PageBubbleSort extends LitElement {
   initItems() {
     const arr = [];
     for (let i = 0; i < this.length; i++) {
-      const item = new Item({index: i, state: i === 0});
+      const item = new Item({index: i});
       const value = this.isReverseOrder ? (this.length - i) * (this.length === 10 ? 10 : 1) : Math.floor(Math.random() * 100);
       item.setData(value, getColor100(value));
       arr.push(item);
