@@ -25,9 +25,6 @@ export class PageBubbleSort extends LitElement {
       <x-console class="console_verbose"></x-console>
       <x-console class="console_stats" defaultMessage="—"></x-console>
       <x-items-vertical .items=${this.items} .markers=${this.markers}></x-items-vertical>
-      <x-dialog>
-        <label>Number: <input name="number" type="number"></label>
-      </x-dialog>
     `;
   }
 
@@ -38,7 +35,6 @@ export class PageBubbleSort extends LitElement {
   firstUpdated() {
     this.consoleStats = this.querySelector('.console_stats');
     this.console = this.querySelector('.console_verbose');
-    this.dialog = this.querySelector('x-dialog');
     this.btnStop = this.querySelector('.btn_abort');
   }
 
@@ -54,6 +50,11 @@ export class PageBubbleSort extends LitElement {
     }
     this.items = [...this.items];
     this.requestUpdate();
+  }
+
+  handleAbort() {
+    this.isAborted = true;
+    this.iterate();
   }
 
   toggleButtonsActivity(btn, status) {
@@ -91,6 +92,19 @@ export class PageBubbleSort extends LitElement {
     this.consoleStats.setMessage(`Swaps: ${swaps}, Comparsions: ${comparsions}`);
   }
 
+  beforeSort() {
+    this.btnStop.classList.remove('hidden');
+    this.btnStop.disabled = false;
+    this.isAborted = false;
+  }
+
+  afterSort() {
+    this.markers[0].position = 0;
+    this.markers[1].position = 1;
+    this.markers[2].position = this.length - 1;
+    this.btnStop.classList.add('hidden');
+  }
+
   * iteratorNew() {
     this.isReverseOrder = !this.isReverseOrder;
     this.initItems();
@@ -104,10 +118,7 @@ export class PageBubbleSort extends LitElement {
   }
 
   * iteratorStep() {
-    this.btnStop.classList.remove('hidden');
-    this.btnStop.disabled = false;
-    this.isFinish = false;
-    let isCompleted;
+    this.beforeSort();
     let swaps = 0;
     let comparsions = 0;
     this.updateStats(swaps, comparsions);
@@ -122,58 +133,43 @@ export class PageBubbleSort extends LitElement {
         } else {
           yield 'Will not be swapped';
         }
-        if (this.isFinish) break loopOuter;
         this.updateStats(swaps, comparsions);
         this.markers[0].position++;
         this.markers[1].position++;
+        if (this.isAborted) break loopOuter;
       }
-      isCompleted = true;
       this.markers[0].position = 0;
       this.markers[1].position = 1;
       this.markers[2].position--;
     }
-    this.markers[0].position = 0;
-    this.markers[1].position = 1;
-    this.markers[2].position = this.length - 1;
-    this.btnStop.classList.add('hidden');
-    return `Sort is ${isCompleted ? 'complete' : 'aborted'}`;
+    this.afterSort();
+    return `Sort is ${this.isAborted ? 'aborted' : 'complete'}`;
   }
 
   * iteratorRun() {
-    this.btnStop.classList.remove('hidden');
-    this.btnStop.disabled = false;
-    this.isFinish = false;
+    this.beforeSort();
     let iterator;
-    let isCompleted;
+    let isDone = false;
     while(true) {
       yield 'Press Next to start';
-      if (this.isFinish) break;
+      if (isDone || this.isAborted) break;
       const interval = setInterval(() => {
         if (!iterator) {
           iterator = this.iteratorStep();
         }
         if (iterator.next().done) {
-          isCompleted = true;
-          this.handleAbort();
+          isDone = true;
+          this.iterate();
         }
         this.items = [...this.items];
         this.requestUpdate();
-
       }, this.length === 10 ? 200 : 50);
       yield 'Press Next to pause';
       clearInterval(interval);
-      if (this.isFinish) break;
+      if (isDone || this.isAborted) break;
     }
-    this.btnStop.classList.add('hidden');
-    return `Sort is ${isCompleted ? 'complete' : 'aborted'}`;
-  }
-
-  handleAbort() {
-    this.isFinish = true;
-    this.markers[0].position = 0;
-    this.markers[1].position = 1;
-    this.markers[2].position = this.length - 1;
-    this.iterate();
+    this.afterSort();
+    return `Sort is ${this.isAborted ? 'aborted' : 'complete'}`;
   }
 }
 
