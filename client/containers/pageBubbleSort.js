@@ -26,7 +26,7 @@ export class PageBubbleSort extends LitElement {
       </div>
       <x-console class="console_verbose"></x-console>
       <x-console class="console_stats" defaultMessage="—"></x-console>
-      <x-items-vertical .items=${this.items} .markers=${this.markers}></x-items-vertical>
+      <x-items-vertical .items=${this.items} .markers=${this.markers} .temp=${this.temp}></x-items-vertical>
     `;
   }
 
@@ -111,12 +111,14 @@ export class PageBubbleSort extends LitElement {
   * iteratorNew() {
     this.isReverseOrder = !this.isReverseOrder;
     this.initItems();
+    this.initMarkers();
     yield `Created ${this.isReverseOrder ? 'reverse' : 'ordered'} array`;
   }
 
   * iteratorSize() {
     this.length = this.length === 10 ? 100 : 10;
     this.initItems();
+    this.initMarkers();
     yield `Created ${this.length} elements array`;
   }
 
