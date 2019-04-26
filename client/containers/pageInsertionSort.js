@@ -16,30 +16,44 @@ export class PageInsertionSort extends PageBubbleSort {
     ];
   }
 
+  updateStats(copies = 0, comparsions = 0) {
+    this.consoleStats.setMessage(`Copies: ${copies}, Comparsions: ${comparsions}`);
+  }
+
+  afterSort() {
+    super.afterSort();
+    this.temp = new Item({data: 0});
+  }
+
   * iteratorStep() {
     this.beforeSort();
-    let swaps = 0;
+    let copies = 0;
     let comparsions = 0;
-    this.updateStats(swaps, comparsions);
+    this.updateStats(copies, comparsions);
     loopOuter:
-    for (let outer = this.length - 1; outer > 0; outer--) {
-      for (let inner = 0; inner < outer; inner++) {
+    for (let inner, outer = 1; outer < this.length; outer++) {
+      yield 'Will copy outer to temp';
+      this.items[outer].switchDataWith(this.temp);
+      copies++;
+      for (inner = outer; inner > 0; inner--) {
         comparsions++;
-        if (this.items[inner].data > this.items[inner + 1].data) {
-          yield 'Will be swapped';
-          this.items[inner].switchDataWith(this.items[inner + 1]);
-          swaps++;
-        } else {
-          yield 'Will not be swapped';
+        if (this.temp.data > this.items[inner - 1].data) {
+          yield 'Have compared inner-1 and temp: no copy necessary';
+          this.updateStats(copies, comparsions);
+          break;
         }
-        this.updateStats(swaps, comparsions);
-        this.markers[0].position++;
-        this.markers[1].position++;
+        yield 'Have compared inner-1 and temp: will copy inner to inner-1';
+        this.items[inner].switchDataWith(this.items[inner - 1]);
+        copies++;
+        this.updateStats(copies, comparsions);
+        this.markers[0].position--;
         if (this.isAborted) break loopOuter;
       }
-      this.markers[0].position = 0;
-      this.markers[1].position = 1;
-      this.markers[2].position--;
+      yield 'Will copy temp to inner';
+      this.temp.switchDataWith(this.items[inner]);
+      this.markers[0].position = outer + 1;
+      this.markers[1].position++;
+      if (this.isAborted) break;
     }
     this.afterSort();
     return `Sort is ${this.isAborted ? 'aborted' : 'complete'}`;

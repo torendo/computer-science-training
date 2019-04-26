@@ -42,6 +42,7 @@ export class PageSelectSort extends PageBubbleSort {
       this.markers[1].position++;
       this.markers[2].position = outer + 1;
       this.updateStats(swaps, comparsions);
+      if (this.isAborted) break;
     }
     this.afterSort();
     return `Sort is ${this.isAborted ? 'aborted' : 'complete'}`;
