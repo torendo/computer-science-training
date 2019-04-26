@@ -14,6 +14,19 @@ export class PageBubbleSort extends LitElement {
     this.initMarkers();
   }
 
+  /*
+  * algorithm:
+
+    for (let outer = items.length - 1; outer > 0; outer--) {
+      for (let inner = 0; inner < outer; inner++) {
+        if (items[inner] > items[inner + 1]) {
+          swap(items[inner], items[inner + 1]);
+        }
+      }
+    }
+
+  * */
+
   render() {
     return html`
       <h4>Array</h4>

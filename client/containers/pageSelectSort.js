@@ -2,6 +2,22 @@ import {PageBubbleSort} from './pageBubbleSort';
 import {Marker} from '../classes/marker';
 
 export class PageSelectSort extends PageBubbleSort {
+
+  /*
+  * algorithm:
+
+    for (let outer = 0; outer < items.length - 1; outer++) {
+      min = outer;
+      for (let inner = outer + 1; inner < items.length; inner++) {
+        if (items[inner] < items[min]) {
+          min = inner;
+        }
+      }
+      swap(items[outer], items[min]);
+    }
+
+  * */
+
   initMarkers() {
     this.markers = [
       new Marker({position: 1, size: 1, color: 'blue', text: 'inner'}),
@@ -36,7 +52,6 @@ export class PageSelectSort extends PageBubbleSort {
         swaps++;
       } else {
         yield 'Will not be swapped';
-        min++;
       }
       this.markers[0].position = outer + 2;
       this.markers[1].position++;

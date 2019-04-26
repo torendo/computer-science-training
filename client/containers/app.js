@@ -18,6 +18,8 @@ export class XApp extends LitElement {
       <x-router .routes=${routes}></x-router>      
       <x-footer></x-footer>
     `;
+    //TODO: add buttons description from Java applets
+    //TODO: add short version of provided algorithms on the same page
   }
 
   createRenderRoot() {

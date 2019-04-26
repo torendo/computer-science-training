@@ -3,6 +3,20 @@ import {Marker} from '../classes/marker';
 import {Item} from '../classes/item';
 
 export class PageInsertionSort extends PageBubbleSort {
+
+  /*
+  * algorithm:
+
+    for (let inner, outer = 1; outer < items.length; outer++) {
+      temp = items[outer];
+      for (inner = outer; inner > 0 && temp >= items[inner - 1]; inner--) {
+        items[inner] = items[inner - 1];
+      }
+      items[inner] = temp;
+    }
+
+  * */
+
   initItems() {
     super.initItems();
     this.temp = new Item({data: 0});
@@ -37,7 +51,7 @@ export class PageInsertionSort extends PageBubbleSort {
       copies++;
       for (inner = outer; inner > 0; inner--) {
         comparsions++;
-        if (this.temp.data > this.items[inner - 1].data) {
+        if (this.temp.data >= this.items[inner - 1].data) {
           yield 'Have compared inner-1 and temp: no copy necessary';
           this.updateStats(copies, comparsions);
           break;
