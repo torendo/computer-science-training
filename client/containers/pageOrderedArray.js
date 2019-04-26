@@ -1,91 +1,37 @@
-import {LitElement, html} from 'lit-element';
+import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {getUniqueRandomArray} from '../utils';
+import {PageArray} from './pageArray';
 
-export class PageOrderedArray extends LitElement {
-  constructor() {
-    super();
-    this.items = [];
-    this.length = 0;
-    this.initItems();
-  }
-
-  render() {
+export class PageOrderedArray extends PageArray {
+  drawAdditionalControl() {
     return html`
-      <h4>Array</h4>
-      <div class="controlpanel">
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
-        <label><input type="radio" name="algorythm" class="algorythm algorythm_linear" checked>Linear</label>
-        <label><input type="radio" name="algorythm" class="algorythm algorythm_binary">Binary</label>
-      </div>
-      <x-console></x-console>
-      <x-items-horizontal .items=${this.items}></x-items-horizontal>
-      <x-dialog>
-        <label>Number: <input name="number" type="number"></label>
-      </x-dialog>
+      <label><input type="radio" name="algorithm" class="algorithm algorithm_linear" checked>Linear</label>
+      <label><input type="radio" name="algorithm" class="algorithm algorithm_binary">Binary</label>
     `;
-  }
-
-  createRenderRoot() {
-    return this;
   }
 
   firstUpdated() {
     this.console = this.querySelector('x-console');
     this.dialog = this.querySelector('x-dialog');
-    this.binary = this.querySelector('.algorythm_binary');
-    this.linear = this.querySelector('.algorythm_linear');
-  }
-
-  handleClick(iterator, btn) {
-    if (!this.iterator) {
-      this.iterator = iterator.call(this);
-      this.toggleButtonsActivity(btn, true);
-    }
-    const iteration = this.iterate();
-    if (iteration.done) {
-      this.iterator = null;
-      this.toggleButtonsActivity(btn, false);
-    }
-    this.items = [...this.items];
-    this.requestUpdate();
+    this.binary = this.querySelector('.algorithm_binary');
+    this.linear = this.querySelector('.algorithm_linear');
   }
 
   toggleButtonsActivity(btn, status) {
-    this.querySelectorAll('x-button').forEach(el => {
-      if (el !== btn) el.disabled = status;
-    });
-    this.querySelectorAll('.algorythm').forEach(el => {
+    super.toggleButtonsActivity(btn, status);
+    this.querySelectorAll('.algorithm').forEach(el => {
       el.disabled = status;
     });
-    btn.activated = status;
-  }
-
-  iterate() {
-    const iteration = this.iterator.next();
-    this.console.setMessage(iteration.value);
-    const activatedBtn = this.querySelector('x-button.activated');
-    if (activatedBtn) activatedBtn.focus();
-    return iteration;
-  }
-
-  resetItemsState(item = this.items[0]) {
     this.items.forEach(item => {
-      item.unmark();
+      item.mark = false;
     });
-    if (item) {
-      item.setState();
-    }
   }
 
   markItems(range) {
-    for (let i = range.start; i <= range.end; i++) {
-      this.items[i].setMarker();
-    }
+    this.items.forEach((item, i) => {
+      item.mark = i >= range.start && i <= range.end;
+    });
   }
 
   initItems() {
@@ -111,7 +57,7 @@ export class PageOrderedArray extends LitElement {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
-    if (length > 60 && length < 0) {
+    if (length > 60 || length < 0) {
       return 'ERROR: use size between 0 and 60';
     }
     yield `Will create empty array with ${length} cells`;
@@ -151,7 +97,7 @@ export class PageOrderedArray extends LitElement {
 
   * linearSearch(key, isInsertion) {
     for (let i = 0; i < this.length; i++) {
-      this.resetItemsState(this.items[i]);
+      this.markers[0].position = i;
       if (this.items[i].data === key || isInsertion && this.items[i].data > key) {
         return i;
       }
@@ -169,7 +115,7 @@ export class PageOrderedArray extends LitElement {
       if (range.end < range.start) {
         return isInsertion ? i + 1 : null;
       }
-      this.resetItemsState(this.items[i]);
+      this.markers[0].position = i;
       this.markItems(range);
       if (this.items[i].data === key) {
         return i;
@@ -195,7 +141,7 @@ export class PageOrderedArray extends LitElement {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
-    if (key > 999 && key < 0) {
+    if (key > 999 || key < 0) {
       return 'ERROR: use key between 0 and 999';
     }
     if (this.items.find(i => i.data === key)) {
@@ -213,20 +159,20 @@ export class PageOrderedArray extends LitElement {
       yield iteration.value;
     }
     yield `Will insert at index ${insertAt}${insertAt !== this.length ? ', following shift' : ''}`;
-    this.resetItemsState(this.items[this.length]);
+    this.markers[0].position = this.length;
     if (insertAt !== this.length) {
       yield 'Will shift cells to make room';
     }
     for (let i = this.length; i > insertAt; i--) {
       this.items[i].moveDataFrom(this.items[i - 1]);
-      this.resetItemsState(this.items[i - 1]);
+      this.markers[0].position = i - 1;
       yield `Shifted item from index ${i - 1}`;
     }
     this.items[insertAt].setData(key);
     yield `Have inserted item ${key} at index ${insertAt}`;
     this.length++;
-    this.resetItemsState();
-    yield `Insertion completed; total items ${this.length}`;
+    this.markers[0].position = 0;
+    return `Insertion completed; total items ${this.length}`;
   }
 
   * iteratorFind() {
@@ -256,7 +202,7 @@ export class PageOrderedArray extends LitElement {
     } else {
       yield `Have found item at index = ${foundAt}`;
     }
-    this.resetItemsState();
+    this.markers[0].position = 0;
   }
 
   * iteratorDel() {
@@ -282,23 +228,23 @@ export class PageOrderedArray extends LitElement {
       yield iteration.value;
     }
     if (foundAt == null) {
-      this.resetItemsState();
+      this.markers[0].position = 0;
       return `No items with key ${key}`;
     }
     this.items[foundAt].clear();
     yield `Have found and deleted item at index = ${foundAt}`;
     if (foundAt !== this.length - 1) {
-      this.resetItemsState(this.items[foundAt]);
+      this.markers[0].position = foundAt;
       yield 'Will shift items';
     }
     for (let i = foundAt + 1; i < this.length; i++) {
-      this.resetItemsState(this.items[i]);
+      this.markers[0].position = i;
       this.items[i - 1].moveDataFrom(this.items[i]);
       yield `Shifted item from index ${i}`;
     }
     this.length--;
-    this.resetItemsState();
-    yield `${foundAt !== this.length ? 'Shift completed' : 'Completed'}; total items ${this.length}`;
+    this.markers[0].position = 0;
+    return `${foundAt !== this.length ? 'Shift completed' : 'Completed'}; total items ${this.length}`;
   }
 }
 

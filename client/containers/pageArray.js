@@ -1,13 +1,16 @@
 import {LitElement, html} from 'lit-element';
 import {getUniqueRandomNumber} from '../utils';
 import {Item} from '../classes/item';
+import {Marker} from '../classes/marker';
 
 export class PageArray extends LitElement {
   constructor() {
     super();
     this.items = [];
+    this.markers = [];
     this.length = 0;
     this.initItems();
+    this.initMarkers();
   }
 
   render() {
@@ -19,13 +22,19 @@ export class PageArray extends LitElement {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
-        <label><input class="dups" type="checkbox" checked disabled>Dups OK</label>
+        ${this.drawAdditionalControl()}
       </div>
       <x-console></x-console>
-      <x-items-horizontal .items=${this.items}></x-items-horizontal>
+      <x-items-horizontal .items=${this.items} .markers=${this.markers}></x-items-horizontal>
       <x-dialog>
         <label>Number: <input name="number" type="number"></label>
       </x-dialog>
+    `;
+  }
+
+  drawAdditionalControl() {
+    return html`
+      <label><input class="dups" type="checkbox" checked disabled>Dups OK</label>
     `;
   }
 
@@ -68,13 +77,6 @@ export class PageArray extends LitElement {
     return iteration;
   }
 
-  resetItemsState(isFinish) {
-    this.items.forEach(item => item.setState(false));
-    if (isFinish) {
-      this.items[0].setState();
-    }
-  }
-
   initItems() {
     const length = 20;
     const lengthFill = 10;
@@ -88,6 +90,12 @@ export class PageArray extends LitElement {
     this.length = lengthFill;
   }
 
+  initMarkers() {
+    this.markers = [
+      new Marker({position: 0, size: 1, color: 'red'})
+    ];
+  }
+
   * iteratorNew() {
     let length = 0;
     yield 'Enter size of array to create';
@@ -96,7 +104,7 @@ export class PageArray extends LitElement {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
-    if (length > 60 && length < 0) {
+    if (length > 60 || length < 0) {
       return 'ERROR: use size between 0 and 60';
     }
     yield `Will create empty array with ${length} cells`;
@@ -120,7 +128,7 @@ export class PageArray extends LitElement {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
-    if (length > this.items.length && length < 0) {
+    if (length > this.items.length || length < 0) {
       return `ERROR: can't fill more than ${this.items.length} items`;
     }
     yield `Will fill in ${length} items`;
@@ -154,11 +162,11 @@ export class PageArray extends LitElement {
       if (found) yield `ERROR: you already have item with key ${key} at index ${found.index}`;
     }
     yield `Will insert item with key ${key}`;
-    this.resetItemsState();
-    this.items[this.length].setData(key).setState();
+    this.items[this.length].setData(key);
+    this.markers[0].position = this.length;
     yield `Inserted item with key ${key} at index ${this.length}`;
     this.length++;
-    this.resetItemsState(true);
+    this.markers[0].position = 0;
     yield `Insertion completed; total items ${this.length}`;
   }
 
@@ -177,8 +185,7 @@ export class PageArray extends LitElement {
     let foundAt;
     let isAdditional = false;
     for (let i = 0; i < this.length; i++) {
-      this.resetItemsState();
-      this.items[i].setState();
+      this.markers[0].position = i;
       if (this.items[i].data === key) {
         foundAt = i;
         yield `Have found ${isAdditional ? 'additioal' : ''} item at index = ${foundAt}`;
@@ -196,7 +203,7 @@ export class PageArray extends LitElement {
     if (foundAt == null) {
       yield `No ${isAdditional ? 'additioal' : ''} items with key ${key}`;
     }
-    this.resetItemsState(true);
+    this.markers[0].position = 0;
   }
 
   * iteratorDel() {
@@ -215,8 +222,7 @@ export class PageArray extends LitElement {
     let deletedCount = 0;
     let isAdditional = false;
     for (let i = 0; i < this.length; i++) {
-      this.resetItemsState();
-      this.items[i].setState();
+      this.markers[0].position = i;
       if (this.items[i].data === key) {
         foundAt = i;
         deletedCount++;
@@ -231,7 +237,7 @@ export class PageArray extends LitElement {
       }
     }
     this.length -= deletedCount;
-    this.resetItemsState(true);
+    this.markers[0].position = 0;
     if (deletedCount > 0) {
       yield `Shift${deletedCount > 1 ? 's' : ''} complete; no ${isAdditional ? 'more' : ''} items to delete`;
     } else {

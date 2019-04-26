@@ -3,18 +3,20 @@ import {LitElement, html, css} from 'lit-element';
 export class XItemsHorizontal extends LitElement {
   static get properties() {
     return {
-      items: {type: Array}
+      items: {type: Array},
+      markers: {type: Array}
     };
   }
 
   constructor() {
     super();
     this.items = [];
+    this.markers = [];
   }
 
   render() {
     return html`
-      ${this.items.map(item => html`
+      ${this.items.map((item, i) => html`
         <div class="item">
           <div class="index">
             ${item.index}
@@ -22,12 +24,27 @@ export class XItemsHorizontal extends LitElement {
           <div class="data" style="${item.color ? 'background-color:' + item.color : ''}">
             ${item.data}
           </div>
-          <div class="state_container ${item.state ? 'state' : ''} ${item.marker ? 'marker' : ''}">
-            ${item.state != null && typeof item.state !== 'boolean' ? item.state : ''}
+          <div class="marker_container ${item.mark ? 'mark' : ''}">
+            ${this.drawMarker(i)}
           </div>
         </div>
       `)}      
     `;
+  }
+
+  drawMarker(i) {
+    let result = '';
+    this.markers.forEach(marker => {
+      if (marker.position === i) {
+        result = html`
+          ${result}
+          <div class="marker size_${marker.size} ${marker.color ? 'color_' + marker.color : ''}">
+            <span>${marker.text}</span>
+          </div>
+        `;
+      }
+    });
+    return result;
   }
 }
 
@@ -58,13 +75,13 @@ XItemsHorizontal.styles = css`
     line-height: 1.7em;
     border: 1px solid lightgray;
   }
-  .state_container {
+  .marker_container {
     position: relative;
     min-height: 1.7em;
     padding-left: 3em;
     line-height: 1.7em;
   }
-  .marker:after {
+  .mark:before {
     content: '';
     width: 4px;
     height: 1.9em;
@@ -73,14 +90,83 @@ XItemsHorizontal.styles = css`
     margin-top: -1px;
     background-color: royalblue;
   }
-  .state:before {
-    content: '←';
-    position: absolute;  
+  .marker {
+    position: absolute;
     left: 0;
-    margin-top: -.1em;
-    padding-left: 6px;
-    font-size: 2em;
-    color: crimson;
+    height: 100%;
+    font-size: .8em;
+    text-align: center;
+  }
+  .marker:before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    top: 50%;
+    left: 6px;
+    transform: rotate(-135deg) translate(50%, 50%);
+    transform-origin: center;
+    border: 2px solid;
+    border-left: none;
+    border-bottom: none;
+  }
+  .marker:after {
+    content: '';
+    display: block;
+    position: absolute;
+    height: 2px;
+    top: 50%;
+    left: 6px;
+    margin-top: -2px;
+  }
+  .size_1.marker {
+    z-index: 3;
+    padding-left: 2em;
+  }
+  .size_1.marker:after {
+    width: 1em;
+  }
+  .size_2.marker {
+    z-index: 2;
+    padding-left: 4em;
+  }
+  .size_2.marker:after {
+    width: 3em;
+  }
+  .size_3.marker {
+    z-index: 1;
+    padding-left: 6em;
+  }
+  .size_3.marker:after {
+    width: 5em;
+  }
+  .color_red.marker {
+    color: red;
+  }
+  .color_red.marker:before {
+    border-color: red;
+  }
+  .color_red.marker:after {
+    background-color: red;
+  }
+  .color_blue.marker {
+    color: blue;
+  }
+  .color_blue.marker:before {
+    border-color: blue;
+  }
+  .color_blue.marker:after {
+    background-color: blue;
+  }
+  .color_purple.marker {
+    color: purple;
+  }
+  .color_purple.marker:before {
+    border-color: purple;
+  }
+  .color_purple.marker:after {
+    background-color: purple;
   }
 `;
 
