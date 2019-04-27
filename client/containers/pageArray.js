@@ -1,9 +1,10 @@
-import {LitElement, html} from 'lit-element';
+import {html} from 'lit-element';
 import {getUniqueRandomNumber} from '../utils';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
+import {PageBase} from './pageBase';
 
-export class PageArray extends LitElement {
+export class PageArray extends PageBase {
   constructor() {
     super();
     this.items = [];
@@ -38,43 +39,10 @@ export class PageArray extends LitElement {
     `;
   }
 
-  createRenderRoot() {
-    return this;
-  }
-
   firstUpdated() {
     this.console = this.querySelector('x-console');
     this.dialog = this.querySelector('x-dialog');
     this.dups = this.querySelector('.dups');
-  }
-
-  handleClick(iterator, btn) {
-    if (!this.iterator) {
-      this.iterator = iterator.call(this);
-      this.toggleButtonsActivity(btn, true);
-    }
-    const iteration = this.iterate();
-    if (iteration.done) {
-      this.iterator = null;
-      this.toggleButtonsActivity(btn, false);
-    }
-    this.items = [...this.items];
-    this.requestUpdate();
-  }
-
-  toggleButtonsActivity(btn, status) {
-    this.querySelectorAll('x-button').forEach(el => {
-      if (el !== btn) el.disabled = status;
-    });
-    btn.activated = status;
-  }
-
-  iterate() {
-    const iteration = this.iterator.next();
-    this.console.setMessage(iteration.value);
-    const activatedBtn = this.querySelector('x-button.activated');
-    if (activatedBtn) activatedBtn.focus();
-    return iteration;
   }
 
   initItems() {

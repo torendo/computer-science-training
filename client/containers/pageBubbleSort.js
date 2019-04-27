@@ -1,9 +1,10 @@
-import {LitElement, html} from 'lit-element';
+import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {getColor100} from '../utils';
+import {PageBase} from './pageBase';
 
-export class PageBubbleSort extends LitElement {
+export class PageBubbleSort extends PageBase {
   constructor() {
     super();
     this.items = [];
@@ -43,48 +44,15 @@ export class PageBubbleSort extends LitElement {
     `;
   }
 
-  createRenderRoot() {
-    return this;
-  }
-
   firstUpdated() {
     this.consoleStats = this.querySelector('.console_stats');
     this.console = this.querySelector('.console_verbose');
     this.btnStop = this.querySelector('.btn_abort');
   }
 
-  handleClick(iterator, btn) {
-    if (!this.iterator) {
-      this.iterator = iterator.call(this);
-      this.toggleButtonsActivity(btn, true);
-    }
-    const iteration = this.iterate();
-    if (iteration.done) {
-      this.iterator = null;
-      this.toggleButtonsActivity(btn, false);
-    }
-    this.items = [...this.items];
-    this.requestUpdate();
-  }
-
   handleAbort() {
     this.isAborted = true;
     this.iterate();
-  }
-
-  toggleButtonsActivity(btn, status) {
-    this.querySelectorAll('x-button').forEach(el => {
-      if (el !== btn) el.disabled = status;
-    });
-    btn.activated = status;
-  }
-
-  iterate() {
-    const iteration = this.iterator.next();
-    this.console.setMessage(iteration.value);
-    const activatedBtn = this.querySelector('x-button.activated');
-    if (activatedBtn) activatedBtn.focus();
-    return iteration;
   }
 
   initItems() {
