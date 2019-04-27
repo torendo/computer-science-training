@@ -7,6 +7,7 @@ import {PageBase} from './pageBase';
 export class PageBubbleSort extends PageBase {
   constructor() {
     super();
+    this.title = 'Bubble Sort';
     this.items = [];
     this.markers = [];
     this.isReverseOrder = false;
@@ -30,7 +31,7 @@ export class PageBubbleSort extends PageBase {
 
   render() {
     return html`
-      <h4>Array</h4>
+      <h4>${this.title}</h4>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorSize)}>Size</x-button>

@@ -7,6 +7,7 @@ import {PageBase} from './pageBase';
 export class PageArray extends PageBase {
   constructor() {
     super();
+    this.title = 'Array';
     this.items = [];
     this.markers = [];
     this.length = 0;
@@ -16,7 +17,7 @@ export class PageArray extends PageBase {
 
   render() {
     return html`
-      <h4>Array</h4>
+      <h4>${this.title}</h4>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>

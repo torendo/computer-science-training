@@ -3,6 +3,10 @@ import {Marker} from '../classes/marker';
 import {Item} from '../classes/item';
 
 export class PageInsertionSort extends PageBubbleSort {
+  constructor() {
+    super();
+    this.title = 'Insertion Sort';
+  }
 
   /*
   * algorithm:

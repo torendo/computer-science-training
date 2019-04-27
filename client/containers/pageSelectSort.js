@@ -2,6 +2,10 @@ import {PageBubbleSort} from './pageBubbleSort';
 import {Marker} from '../classes/marker';
 
 export class PageSelectSort extends PageBubbleSort {
+  constructor() {
+    super();
+    this.title = 'Select Sort';
+  }
 
   /*
   * algorithm:

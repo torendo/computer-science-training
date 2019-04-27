@@ -4,6 +4,11 @@ import {getUniqueRandomArray} from '../utils';
 import {PageArray} from './pageArray';
 
 export class PageOrderedArray extends PageArray {
+  constructor() {
+    super();
+    this.title = 'Ordered Array';
+  }
+
   drawAdditionalControl() {
     return html`
       <label><input type="radio" name="algorithm" class="algorithm algorithm_linear" checked>Linear</label>
