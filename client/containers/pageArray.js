@@ -51,7 +51,7 @@ export class PageArray extends PageBase {
     const lengthFill = 10;
     const arr = [];
     for (let i = 0; i < length; i++) {
-      const item = new Item({index: i, state: i === 0});
+      const item = new Item({index: i});
       if (i < lengthFill) item.setData(Math.floor(Math.random() * 1000));
       arr.push(item);
     }
@@ -79,7 +79,7 @@ export class PageArray extends PageBase {
     yield `Will create empty array with ${length} cells`;
     const arr = [];
     for (let i = 0; i < length; i++) {
-      arr.push(new Item({index: i, state: i === 0}));
+      arr.push(new Item({index: i}));
     }
     this.items = arr;
     this.length = 0;

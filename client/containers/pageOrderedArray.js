@@ -46,7 +46,7 @@ export class PageOrderedArray extends PageArray {
     const arrValues = getUniqueRandomArray(lengthFill, 1000);
     arrValues.sort((a, b) => a - b);
     for (let i = 0; i < length; i++) {
-      const item = new Item({index: i, state: i === 0});
+      const item = new Item({index: i});
       if (i < lengthFill) item.setData(arrValues[i]);
       arr.push(item);
     }
@@ -70,8 +70,7 @@ export class PageOrderedArray extends PageArray {
     for (let i = 0; i < length; i++) {
       arr.push(new Item({
         index: i,
-        data: null,
-        state: i === 0
+        data: null
       }));
     }
     this.items = arr;

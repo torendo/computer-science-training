@@ -8,6 +8,7 @@ export class XApp extends LitElement {
       {path: '/bubbleSort', component: 'page-bubble-sort', title: 'Bubble Sort'},
       {path: '/selectSort', component: 'page-select-sort', title: 'Select Sort'},
       {path: '/insertionSort', component: 'page-insertion-sort', title: 'Insertion Sort'},
+      {path: '/stack', component: 'page-stack', title: 'Stack'},
       {path: '/list', component: 'page-list', title: 'List'}
     ];
     return html`

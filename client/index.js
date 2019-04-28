@@ -13,4 +13,5 @@ import './containers/pageList';
 import './containers/pageBubbleSort';
 import './containers/pageSelectSort';
 import './containers/pageInsertionSort';
+import './containers/pageStack';
 import './containers/footer';

@@ -18,7 +18,7 @@ export class XItemsVertical extends LitElement {
 
   render() {
     return html`
-      ${this.items.map((item, i) => html`
+      ${this.items.map(item => html`
         <div class="item">
           <div class="data_container">
             <div class="data" style="${item.color ? 'background-color:' + item.color + ';' : ''} ${item.data ? 'height:' + item.data + '%;' : ''}">
@@ -28,7 +28,7 @@ export class XItemsVertical extends LitElement {
             ${item.index}
           </div>
           <div class="marker_container">
-            ${this.drawMarker(i)}
+            ${this.drawMarker(item.index)}
           </div>
         </div>
       `)}      

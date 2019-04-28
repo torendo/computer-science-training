@@ -4,7 +4,8 @@ export class XItemsHorizontal extends LitElement {
   static get properties() {
     return {
       items: {type: Array},
-      markers: {type: Array}
+      markers: {type: Array},
+      reverse: {type: Boolean},
     };
   }
 
@@ -15,20 +16,21 @@ export class XItemsHorizontal extends LitElement {
   }
 
   render() {
-    return html`
-      ${this.items.map((item, i) => html`
-        <div class="item">
-          <div class="index">
-            ${item.index}
-          </div>
-          <div class="data" style="${item.color ? 'background-color:' + item.color : ''}">
-            ${item.data}
-          </div>
-          <div class="marker_container ${item.mark ? 'mark' : ''}">
-            ${this.drawMarker(i)}
-          </div>
+    const items = this.items.map(item => html`
+      <div class="item">
+        <div class="index">
+          ${item.index}
         </div>
-      `)}      
+        <div class="data" style="${item.color ? 'background-color:' + item.color : ''}">
+          ${item.data}
+        </div>
+        <div class="marker_container ${item.mark ? 'mark' : ''}">
+          ${this.drawMarker(item.index)}
+        </div>
+      </div>
+    `);
+    return html`
+      ${this.reverse ? items.reverse() : items}      
     `;
   }
 
