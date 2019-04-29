@@ -99,6 +99,9 @@ XItemsHorizontal.styles = css`
     font-size: .8em;
     text-align: center;
   }
+  .marker span {
+    text-shadow: 1px 1px 2px white;
+  }
   .marker:before {
     content: '';
     display: block;

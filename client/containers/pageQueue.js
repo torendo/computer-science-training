@@ -24,7 +24,7 @@ export class PageQueue extends PageStack {
   initMarkers() {
     this.markers = [
       new Marker({position: 0, size: 1, color: 'red', text: 'front'}),
-      new Marker({position: 3, size: 2, color: 'blue', text: 'rear'})
+      new Marker({position: 3, size: 3, color: 'blue', text: 'rear'})
     ];
   }
 

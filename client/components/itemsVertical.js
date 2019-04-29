@@ -111,7 +111,7 @@ XItemsVertical.styles = css`
     position: absolute;
     min-width: 5em;
     transform: translateX(-50%);
-    text-shadow: 1px 1px 0px white;
+    text-shadow: 1px 1px 2px white;
   }
   .marker:before {
     content: '';
