@@ -86,7 +86,7 @@ export class PageOrderedArray extends PageArray {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
-    if (length > this.items.length && length < 0) {
+    if (length > this.items.length || length < 0) {
       return `ERROR: can't fill more than ${this.items.length} items`;
     }
     yield `Will fill in ${length} items`;
@@ -145,7 +145,7 @@ export class PageOrderedArray extends PageArray {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
-    if (key > 999 || key < 0) {
+    if (key > 1000 || key < 0) {
       return 'ERROR: use key between 0 and 999';
     }
     if (this.items.find(i => i.data === key)) {
@@ -187,7 +187,7 @@ export class PageOrderedArray extends PageArray {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
-    if (key > 999 && key < 0) {
+    if (key > 1000 || key < 0) {
       return 'ERROR: use key between 0 and 999';
     }
     yield `Looking for item with key ${key}`;
@@ -217,7 +217,7 @@ export class PageOrderedArray extends PageArray {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
-    if (key > 999 && key < 0) {
+    if (key > 1000 || key < 0) {
       return 'ERROR: use key between 0 and 999';
     }
     yield `Looking for item with key ${key}`;

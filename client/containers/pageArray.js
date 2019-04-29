@@ -123,7 +123,7 @@ export class PageArray extends PageBase {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
-    if (key > 999 && key < 0) {
+    if (key > 1000 || key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }
     if (!this.dups.checked) {
@@ -147,7 +147,7 @@ export class PageArray extends PageBase {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
-    if (key > 999 && key < 0) {
+    if (key > 1000 || key < 0) {
       return 'ERROR: use key between 0 and 999';
     }
     yield `Looking for item with key ${key}`;
@@ -183,7 +183,7 @@ export class PageArray extends PageBase {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
-    if (key > 999 && key < 0) {
+    if (key > 1000 || key < 0) {
       return 'ERROR: use key between 0 and 999';
     }
     yield `Looking for item with key ${key}`;

@@ -18,9 +18,9 @@ export class PageStack extends PageBase {
       <h4>Stack</h4>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorPush)}>Fill</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorPop)}>Ins</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorPeak)}>Find</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorPush)}>Push</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorPop)}>Pop</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorPeek)}>Peak</x-button>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items} .markers=${this.markers} reverse></x-items-horizontal>
@@ -61,19 +61,52 @@ export class PageStack extends PageBase {
     for (let i = 0; i < length; i++) {
       this.items.push(new Item({index: i}));
     }
-    this.markers[0].position = 0;
+    this.length = 0;
+    this.markers[0].position = -1;
   }
 
   * iteratorPush() {
-
+    if (this.length === this.items.length) {
+      return 'ERROR: can\'t push. Stack is full';
+    }
+    let key = 0;
+    yield 'Enter key of item to push';
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (key > 1000 || key < 0) {
+      return 'ERROR: can\'t insert. Need key between 0 and 999';
+    }
+    yield `Will push item with key ${key}`;
+    this.markers[0].position++;
+    yield 'Incremented top';
+    this.items[this.length].setData(key);
+    this.length++;
+    yield `Inserted item with key ${key}`;
   }
 
   * iteratorPop() {
-
+    if (this.length === 0) {
+      return 'ERROR: can\'t pop. Stack is empty';
+    }
+    yield 'Will pop item from top of stack';
+    const item = this.items[this.length - 1];
+    const value = item.data;
+    item.clear();
+    yield `Item removed; Returned value is ${value}`;
+    this.markers[0].position--;
+    this.length--;
+    yield 'Decremented top';
   }
 
-  * iteratorPeak() {
-
+  * iteratorPeek() {
+    if (this.length === 0) {
+      return 'ERROR: can\'t peek. Stack is empty';
+    }
+    yield 'Will peek at item at top of stack';
+    yield `Returned value is ${this.items[this.length - 1].data}`;
   }
 }
 
