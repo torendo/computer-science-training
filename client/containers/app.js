@@ -9,6 +9,7 @@ export class XApp extends LitElement {
       {path: '/selectSort', component: 'page-select-sort', title: 'Select Sort'},
       {path: '/insertionSort', component: 'page-insertion-sort', title: 'Insertion Sort'},
       {path: '/stack', component: 'page-stack', title: 'Stack'},
+      {path: '/queue', component: 'page-queue', title: 'Queue'},
       {path: '/list', component: 'page-list', title: 'List'}
     ];
     return html`

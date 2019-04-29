@@ -20,7 +20,7 @@ export class PageStack extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorPush)}>Push</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorPop)}>Pop</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorPeek)}>Peak</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorPeek)}>Peek</x-button>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items} .markers=${this.markers} reverse></x-items-horizontal>
@@ -77,7 +77,7 @@ export class PageStack extends PageBase {
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
     if (key > 1000 || key < 0) {
-      return 'ERROR: can\'t insert. Need key between 0 and 999';
+      return 'ERROR: can\'t push. Need key between 0 and 999';
     }
     yield `Will push item with key ${key}`;
     this.markers[0].position++;
