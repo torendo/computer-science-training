@@ -11,6 +11,7 @@ export class XApp extends LitElement {
       {path: '/stack', component: 'page-stack', title: 'Stack'},
       {path: '/queue', component: 'page-queue', title: 'Queue'},
       {path: '/priorityQueue', component: 'page-priority-queue', title: 'Prioriy Queue'},
+      {path: '/linkList', component: 'page-link-list', title: 'Link List'},
       {path: '/list', component: 'page-list', title: 'List'}
     ];
     return html`
