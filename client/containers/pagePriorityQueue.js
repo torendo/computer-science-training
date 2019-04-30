@@ -21,9 +21,9 @@ export class PagePriorityQueue extends PageQueue {
 
   initMarkers() {
     this.markers = [
-      new Marker({position: 3, size: 1, color: 'red', text: 'front'}),
+      new Marker({position: this.length - 1, size: 1, color: 'red', text: 'front'}),
       new Marker({position: 0, size: 3, color: 'blue', text: 'rear'}),
-      new Marker({position: -1, size: 1, color: 'black'})
+      new Marker({position: -1, size: 1, color: 'purple'})
     ];
   }
 
@@ -41,13 +41,22 @@ export class PagePriorityQueue extends PageQueue {
     if (key > 1000 || key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }
-    this.markers[3].position = this.markers[0].position;
+    this.markers[2].position = this.markers[0].position;
     yield `Will insert item with key ${key}`;
-
-    //todo:modify it
-    this.items[1].setData(key);
-
-    this.markers[0].position++;
+    for (let i = this.markers[0].position; i >= -1; i--) {
+      if (i === -1 || key <= this.items[i].data) {
+        this.markers[2].position++;
+        yield 'Found place to insert';
+        this.items[i + 1].setData(key);
+        this.markers[0].position++;
+        break;
+      } else {
+        this.items[i + 1].moveDataFrom(this.items[i]);
+        yield 'Searching for place to insert';
+        this.markers[2].position--;
+      }
+    }
+    this.markers[2].position = -1;
     this.length++;
     yield `Inserted item with key ${key}`;
   }

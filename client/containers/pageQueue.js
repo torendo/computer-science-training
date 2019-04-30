@@ -24,7 +24,7 @@ export class PageQueue extends PageStack {
   initMarkers() {
     this.markers = [
       new Marker({position: 0, size: 1, color: 'red', text: 'front'}),
-      new Marker({position: 3, size: 3, color: 'blue', text: 'rear'})
+      new Marker({position: this.length - 1, size: 3, color: 'blue', text: 'rear'})
     ];
   }
 
@@ -36,8 +36,7 @@ export class PageQueue extends PageStack {
       this.items.push(new Item({index: i}));
     }
     this.length = 0;
-    this.markers[0].position = 0;
-    this.markers[1].position = -1;
+    this.initMarkers();
   }
 
   getNextIndex(index) {
