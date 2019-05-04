@@ -1,5 +1,6 @@
-import './components/itemsHorizontal';
 import './components/itemsVertical';
+import './components/itemsHorizontal';
+import './components/itemsHorizontalLinked';
 import './components/router';
 import './components/routerA';
 import './components/console';

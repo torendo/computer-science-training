@@ -2,14 +2,12 @@ import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {PageBase} from './pageBase';
+import {getUniqueRandomArray} from '../utils';
 
 export class PageLinkList extends PageBase {
   constructor() {
     super();
-    this.items = [];
-    this.markers = [];
-    this.length = 0;
-    this.initItems();
+    this.initItems(13);
     this.initMarkers();
   }
 
@@ -18,44 +16,185 @@ export class PageLinkList extends PageBase {
       <h4>Stack</h4>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Push</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Pop</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>Peek</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
+        ${this.drawAdditionalControl()}
       </div>
       <x-console></x-console>
-      <x-items-horizontal .items=${this.items} .markers=${this.markers} reverse></x-items-horizontal>
+      <x-items-horizontal-linked .items=${this.items} .marker=${this.marker}></x-items-horizontal-linked>
       <x-dialog>
         <label>Number: <input name="number" type="number"></label>
       </x-dialog>
     `;
   }
 
+  drawAdditionalControl() {
+    return html`
+      <label><input class="sorted" type="checkbox" disabled>Sorted</label>
+    `;
+  }
+
   firstUpdated() {
     this.console = this.querySelector('x-console');
     this.dialog = this.querySelector('x-dialog');
+    this.sorted = this.querySelector('.sorted');
   }
 
-  initItems() {
-    const length = 10;
-    const lengthFill = 4;
+  initItems(length, sorted) {
     const arr = [];
+    const arrValues = getUniqueRandomArray(length, 1000);
+    if (sorted) arrValues.sort((a, b) => a - b);
     for (let i = 0; i < length; i++) {
-      const item = new Item({index: i});
-      if (i < lengthFill) item.setData(Math.floor(Math.random() * 1000));
-      arr.push(item);
+      arr.push((new Item({})).setData(arrValues[i]));
     }
     this.items = arr;
-    this.length = lengthFill;
   }
 
   initMarkers() {
-    this.markers = [
-      new Marker({position: 3, size: 1, color: 'red', text: 'top'})
-    ];
+    this.marker = new Marker({position: 0});
   }
 
   * iteratorNew() {
+    let length = 0;
+    yield 'Enter size of linked list to create';
+    this.dialog.open().then(formData => {
+      length = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (length > 56 || length < 0) {
+      return 'ERROR: use size between 0 and 60';
+    }
+    yield `Will create list with ${length} links`;
+    this.sorted.disabled = false;
+    yield 'Select: Sorted or not';
+    this.sorted.disabled = true;
+    this.initItems(length, this.sorted.checked);
+  }
 
+  * search(key, isInsertion) {
+    for (let i = 0; i < this.items.length; i++) {
+      this.marker.position = i;
+      if (this.items[i].data === key || isInsertion && this.items[i].data > key) {
+        return i;
+      }
+      if (i !== this.length - 1) {
+        yield `Searching for ${isInsertion ? 'insertion point' : `item with key ${key}`}`;
+      }
+    }
+  }
+
+  * iteratorIns() {
+    if (this.items.length === 56) {
+      return 'ERROR: can\'t insert, list is full';
+    }
+    let key = 0;
+    yield 'Enter key of item to insert';
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (key > 1000 || key < 0) {
+      return 'ERROR: can\'t insert. Need key between 0 and 999';
+    }
+    const item = (new Item({mark: true})).setData(key);
+    let foundAt = 0;
+    if (this.sorted.checked) {
+      yield 'Will search insertion point';
+      const iterator = this.search(key, true);
+      while (true) {
+        const iteration = iterator.next();
+        if (iteration.done) {
+          foundAt = iteration.value;
+          break;
+        }
+        yield iteration.value;
+      }
+      yield 'Have found insertion point';
+      if (foundAt != null) {
+        const part = this.items.splice(foundAt, this.items.length - foundAt, item);
+        this.items = this.items.concat(part);
+      } else {
+        this.items.push(item);
+      }
+    } else {
+      yield `Will insert item with key ${key}`;
+      this.items.unshift(item);
+    }
+    this.marker.position = -1;
+    yield 'Item inserted. Will redraw the list';
+    item.mark = false;
+    this.marker.position = foundAt;
+    yield `Inserted item with key ${key}`;
+    this.marker.position = 0;
+    yield `Insertion completed. Total items = ${this.items.length}`;
+  }
+
+  * iteratorFind() {
+    let key = 0;
+    yield 'Enter key of item to find';
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (key > 1000 || key < 0) {
+      return 'ERROR: use key between 0 and 999';
+    }
+    yield `Looking for item with key ${key}`;
+    let foundAt;
+    const iterator = this.search(key);
+    while (true) {
+      const iteration = iterator.next();
+      if (iteration.done) {
+        foundAt = iteration.value;
+        break;
+      }
+      yield iteration.value;
+    }
+    if (foundAt == null) {
+      yield `No items with key ${key}`;
+    } else {
+      yield `Have found item with key ${key}`;
+    }
+    this.marker.position = 0;
+  }
+
+  * iteratorDel() {
+    let key = 0;
+    yield 'Enter key of item to delete';
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (key > 1000 || key < 0) {
+      return 'ERROR: use key between 0 and 999';
+    }
+    yield `Looking for item with key ${key}`;
+    let foundAt;
+    const iterator = this.search(key);
+    while (true) {
+      const iteration = iterator.next();
+      if (iteration.done) {
+        foundAt = iteration.value;
+        break;
+      }
+      yield iteration.value;
+    }
+    if (foundAt == null) {
+      yield `No items with key ${key}`;
+      this.marker.position = 0;
+    } else {
+      yield `Have found item with key ${key}`;
+      this.items[foundAt].clear();
+      yield 'Deleted item. Will redraw the list';
+      this.items.splice(foundAt, 1);
+      this.marker.position = 0;
+      yield `Deleted item with key ${key}. Total items = ${this.items.length}`;
+    }
   }
 }
 
