@@ -60,7 +60,7 @@ export class PageBubbleSort extends PageBase {
     const arr = [];
     for (let i = 0; i < this.length; i++) {
       const item = new Item({index: i});
-      const value = this.isReverseOrder ? (this.length - i) * (this.length === 10 ? 10 : 1) : Math.floor(Math.random() * 100);
+      const value = this.isReverseOrder ? (this.length - i) * (100 / this.length) : Math.floor(Math.random() * 100);
       item.setData(value, getColor100(value));
       arr.push(item);
     }
@@ -150,7 +150,7 @@ export class PageBubbleSort extends PageBase {
         }
         this.items = [...this.items];
         this.requestUpdate();
-      }, this.length === 10 ? 200 : 40);
+      }, this.length < 20 ? 200 : 40);
       yield 'Press Next to pause';
       clearInterval(interval);
       if (isDone || this.isAborted) break;

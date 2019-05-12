@@ -24,7 +24,7 @@ export class XItemsVertical extends LitElement {
             <div class="data" style="${item.color ? 'background-color:' + item.color + ';' : ''} ${item.data ? 'height:' + item.data + '%;' : ''}">
             </div>
           </div>
-          <div class="index" style="${this.items.length > 10 ? 'display:none;' : ''}">
+          <div class="index" style="${this.items.length > 20 ? 'display:none;' : ''}">
             ${item.index}
           </div>
           <div class="marker_container">
@@ -58,7 +58,7 @@ export class XItemsVertical extends LitElement {
         result = html`
           ${result}
           <div class="marker size_${marker.size} ${marker.color ? 'color_' + marker.color : ''}">
-            <span>${this.items.length > 10 ? '' : marker.text}</span>
+            <span>${this.items.length > 20 ? '' : marker.text}</span>
           </div>
         `;
       }

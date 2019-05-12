@@ -20,6 +20,12 @@ export class Item {
     return this;
   }
 
+  copyDataFrom(item) {
+    this.data = item.data;
+    this.color = item.color;
+    return this;
+  }
+
   moveDataFrom(item) {
     this.data = item.data;
     this.color = item.color;

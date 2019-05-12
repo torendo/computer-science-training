@@ -13,7 +13,7 @@ export class PageLinkList extends PageBase {
 
   render() {
     return html`
-      <h4>Stack</h4>
+      <h4>Link List</h4>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
