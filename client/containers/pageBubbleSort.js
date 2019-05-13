@@ -94,7 +94,7 @@ export class PageBubbleSort extends PageBase {
     this.isReverseOrder = !this.isReverseOrder;
     this.initItems();
     this.initMarkers();
-    yield `Created ${this.isReverseOrder ? 'reverse' : 'ordered'} array`;
+    yield `Created ${this.isReverseOrder ? 'reverse' : 'unordered'} array`;
   }
 
   * iteratorSize() {

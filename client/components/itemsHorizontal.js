@@ -100,7 +100,7 @@ XItemsHorizontal.styles = css`
     text-align: center;
   }
   .marker span {
-    text-shadow: 1px 1px 2px white;
+    text-shadow: white 1px 1px 0;
   }
   .marker:before {
     content: '';
