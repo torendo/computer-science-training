@@ -1,14 +1,11 @@
-import {PageBubbleSort} from './pageBubbleSort';
 import {Marker} from '../classes/marker';
 import {Item} from '../classes/item';
+import {PageBaseSort} from './pageBaseSort';
 
-export class PageMergeSort extends PageBubbleSort {
+export class PageMergeSort extends PageBaseSort {
   constructor() {
     super();
     this.title = 'Merge Sort';
-    this.items = [];
-    this.markers = [];
-    this.isReverseOrder = false;
     this.length = 12;
     this.initItems();
     this.initMarkers();
@@ -59,8 +56,8 @@ export class PageMergeSort extends PageBubbleSort {
     ];
   }
 
-  updateStats(copies = 0, comparsions = 0) {
-    this.consoleStats.setMessage(`Copies: ${copies}, Comparsions: ${comparsions}`);
+  updateStats(copies = 0, comparisons = 0) {
+    this.consoleStats.setMessage(`Copies: ${copies}, Comparisons: ${comparisons}`);
   }
 
   * merge(lower, mid, upper) {
@@ -68,8 +65,7 @@ export class PageMergeSort extends PageBubbleSort {
     let midBound = mid - 1;
     let workSpace = [];
     while (lower <= midBound && mid <= upper) {
-      this.comparsions++;
-      this.updateStats(this.copies, this.comparsions);
+      this.comparisons++;
       if (this.items[lower].data < this.items[mid].data) {
         workSpace.push(new Item(this.items[lower++]));
       } else {
@@ -85,13 +81,12 @@ export class PageMergeSort extends PageBubbleSort {
     this.markers[2].position = -1;
     this.markers[3].position = lowerBound;
     this.copies += workSpace.length;
-    this.updateStats(this.copies, this.comparsions);
+    this.updateStats(this.copies, this.comparisons);
     yield `Merged ${lowerBound}-${midBound} and ${midBound + 1}-${upper} into workSpace`;
     for (let i = 0; i < workSpace.length; i++) {
       this.items[lowerBound + i].copyDataFrom(workSpace[i]);
       this.markers[3].position = lowerBound + i;
-      this.copies++;
-      this.updateStats(this.copies, this.comparsions);
+      this.updateStats(++this.copies, this.comparisons);
       yield `Copied workspace into ${lowerBound + i}`;
     }
   }
@@ -99,8 +94,7 @@ export class PageMergeSort extends PageBubbleSort {
   * iteratorStep() {
     this.beforeSort();
     this.copies = 0;
-    this.comparsions = 0;
-    this.updateStats(0, 0);
+    this.comparisons = 0;
 
     const operations = [];
     const mergeSort = (lower, upper) => {
@@ -116,11 +110,10 @@ export class PageMergeSort extends PageBubbleSort {
         operations.push({type: 'mergeSortEnd', lower: lower, upper: upper});
       }
     };
-    mergeSort(0, this.length - 1);
+    mergeSort(0, this.items.length - 1);
 
     yield 'Initial call to mergeSort';
     for (let i = 0; i < operations.length; i++) {
-      if (this.isAborted) break;
       switch (operations[i].type) {
         case 'mergeSortStart': {
           this.markers[0].position = operations[i].lower;
@@ -149,7 +142,6 @@ export class PageMergeSort extends PageBubbleSort {
           this.markers[1].position = operations[i].upper;
           const iterator = this.merge(operations[i].lower, operations[i].mid, operations[i].upper);
           while (true) {
-            if (this.isAborted) break;
             const iteration = iterator.next();
             if (iteration.done) break;
             yield iteration.value;
@@ -160,7 +152,7 @@ export class PageMergeSort extends PageBubbleSort {
     }
 
     this.afterSort();
-    return `Sort is ${this.isAborted ? 'aborted' : 'complete'}`;
+    return 'Sort is complete';
   }
 }
 

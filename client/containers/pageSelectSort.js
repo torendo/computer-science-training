@@ -1,7 +1,7 @@
-import {PageBubbleSort} from './pageBubbleSort';
 import {Marker} from '../classes/marker';
+import {PageBaseSort} from './pageBaseSort';
 
-export class PageSelectSort extends PageBubbleSort {
+export class PageSelectSort extends PageBaseSort {
   constructor() {
     super();
     this.title = 'Select Sort';
@@ -33,38 +33,32 @@ export class PageSelectSort extends PageBubbleSort {
   * iteratorStep() {
     this.beforeSort();
     let swaps = 0;
-    let comparsions = 0;
+    let comparisons = 0;
     let min = 0;
-    this.updateStats(swaps, comparsions);
-    loopOuter:
     for (let outer = 0; outer < this.length - 1; outer++) {
       min = outer;
       for (let inner = outer + 1; inner < this.length; inner++) {
         yield 'Searching for minimum';
-        comparsions++;
         if (this.items[inner].data < this.items[min].data) {
           min = inner;
           this.markers[2].position = min;
         }
         this.markers[0].position++;
-        this.updateStats(swaps, comparsions);
-        if (this.isAborted) break loopOuter;
+        this.updateStats(swaps, ++comparisons);
       }
       if (min !== outer) {
         yield 'Will swap outer & min';
         this.items[outer].switchDataWith(this.items[min]);
-        swaps++;
+        this.updateStats(++swaps, comparisons);
       } else {
         yield 'Will not be swapped';
       }
       this.markers[0].position = outer + 2;
       this.markers[1].position++;
       this.markers[2].position = outer + 1;
-      this.updateStats(swaps, comparsions);
-      if (this.isAborted) break;
     }
     this.afterSort();
-    return `Sort is ${this.isAborted ? 'aborted' : 'complete'}`;
+    return 'Sort is complete';
   }
 }
 

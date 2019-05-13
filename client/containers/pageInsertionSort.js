@@ -1,8 +1,8 @@
-import {PageBubbleSort} from './pageBubbleSort';
 import {Marker} from '../classes/marker';
 import {Item} from '../classes/item';
+import {PageBaseSort} from './pageBaseSort';
 
-export class PageInsertionSort extends PageBubbleSort {
+export class PageInsertionSort extends PageBaseSort {
   constructor() {
     super();
     this.title = 'Insertion Sort';
@@ -34,8 +34,8 @@ export class PageInsertionSort extends PageBubbleSort {
     ];
   }
 
-  updateStats(copies = 0, comparsions = 0) {
-    this.consoleStats.setMessage(`Copies: ${copies}, Comparsions: ${comparsions}`);
+  updateStats(copies = 0, comparisons = 0) {
+    this.consoleStats.setMessage(`Copies: ${copies}, Comparisons: ${comparisons}`);
   }
 
   afterSort() {
@@ -46,35 +46,29 @@ export class PageInsertionSort extends PageBubbleSort {
   * iteratorStep() {
     this.beforeSort();
     let copies = 0;
-    let comparsions = 0;
-    this.updateStats(copies, comparsions);
-    loopOuter:
+    let comparisons = 0;
     for (let inner, outer = 1; outer < this.length; outer++) {
       yield 'Will copy outer to temp';
       this.items[outer].switchDataWith(this.temp);
       copies++;
       for (inner = outer; inner > 0; inner--) {
-        comparsions++;
+        this.updateStats(copies, ++comparisons);
         if (this.temp.data >= this.items[inner - 1].data) {
           yield 'Have compared inner-1 and temp: no copy necessary';
-          this.updateStats(copies, comparsions);
           break;
         }
         yield 'Have compared inner-1 and temp: will copy inner to inner-1';
         this.items[inner].switchDataWith(this.items[inner - 1]);
-        copies++;
-        this.updateStats(copies, comparsions);
+        this.updateStats(++copies, comparisons);
         this.markers[0].position--;
-        if (this.isAborted) break loopOuter;
       }
       yield 'Will copy temp to inner';
       this.temp.switchDataWith(this.items[inner]);
       this.markers[0].position = outer + 1;
       this.markers[1].position++;
-      if (this.isAborted) break;
     }
     this.afterSort();
-    return `Sort is ${this.isAborted ? 'aborted' : 'complete'}`;
+    return 'Sort is complete';
   }
 }
 
