@@ -13,7 +13,7 @@ export class XApp extends LitElement {
       {path: '/priorityQueue', component: 'page-priority-queue', title: 'Prioriy Queue'},
       {path: '/linkList', component: 'page-link-list', title: 'Link List'},
       {path: '/mergeSort', component: 'page-merge-sort', title: 'Merge Sort'},
-      {path: '/list', component: 'page-list', title: 'List'}
+      {path: '/shellSort', component: 'page-shell-sort', title: 'Shell Sort'}
     ];
     return html`
       <h3>Workshop applications</h3>
