@@ -74,7 +74,7 @@ export class PageBaseSort extends PageBase {
 
   * iteratorNew() {
     this.isReverseOrder = !this.isReverseOrder;
-    this.initItems();
+    this.initItems(this.items.length);
     this.initMarkers();
     yield `Created ${this.isReverseOrder ? 'reverse' : 'unordered'} array`;
   }

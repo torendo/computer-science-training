@@ -21,8 +21,8 @@ export class PageInsertionSort extends PageBaseSort {
 
   * */
 
-  initItems() {
-    super.initItems();
+  initItems(length) {
+    super.initItems(length);
     this.temp = new Item({data: 0});
   }
 

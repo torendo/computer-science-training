@@ -11,11 +11,31 @@ export class PageShellSort extends PageBaseSort {
   /*
   * algorithm:
 
+    let h = 1;
+    //calculate maximum possible h
+    while (h <= (this.items.length - 1) / 3) {
+      h = h * 3 + 1;
+    }
+    //consistent reduce h
+    while (h > 0) {
+      //h-sort
+      for (let outer = h; outer < this.items.length; outer++) {
+        this.items[outer].switchDataWith(this.temp);
+        let inner = outer;
+        while (inner > h - 1 && this.temp.data <= this.items[inner - h].data) {
+          this.items[inner].switchDataWith(this.items[inner - h]);
+          inner -= h;
+        }
+        this.temp.switchDataWith(this.items[inner]);
+      }
+      //reduce h
+      h = (h - 1) / 3;
+    }
 
   * */
 
-  initItems() {
-    super.initItems();
+  initItems(length) {
+    super.initItems(length);
     this.temp = new Item({data: 0});
   }
 
@@ -28,7 +48,7 @@ export class PageShellSort extends PageBaseSort {
     ];
   }
 
-  updateStats(copies = 0, comparisons = 0, h = 0) {
+  updateStats(copies = 0, comparisons = 0, h = 1) {
     this.consoleStats.setMessage(`Copies: ${copies}, Comparisons: ${comparisons}, h=${h}`);
   }
 
@@ -41,34 +61,46 @@ export class PageShellSort extends PageBaseSort {
     this.beforeSort();
     let copies = 0;
     let comparisons = 0;
-    let h = 0;
-
-    //algorithm goes here
-    /*
-    int inner, outer;
-    long temp;
-    int h = 1; // Вычисление исходного значения h
-    while(h <= nElems/3)
-      h = h*3 + 1; // (1, 4, 13, 40, 121, ...)
-    while(h>0) // Последовательное уменьшение h до 1
-    {
-      // h-сортировка файла
-      for(outer=h; outer<nElems; outer++)
-      {
-        temp = theArray[outer];
-        inner = outer;
-        // Первый подмассив (0, 4, 8)
-        while(inner > h-1 && theArray[inner-h] >= temp)
-        {
-          theArray[inner] = theArray[inner-h];
-          inner -= h;
-        }
-        theArray[inner] = temp;
-      }
-      h =(h-1) / 3; // Уменьшение h
+    let h = 1;
+    //calculate maximum possible h
+    while (h <= (this.items.length - 1) / 3) {
+      h = h * 3 + 1;
     }
-    * */
-
+    //consistent reduce h
+    while (h > 0) {
+      //h-sort
+      this.updateStats(copies, comparisons, h);
+      for (let outer = h; outer < this.items.length; outer++) {
+        let inner = outer;
+        this.markers[0].position = outer;
+        this.markers[1].position = inner;
+        this.markers[2].position = inner - h;
+        yield `${h}-sorting array. Will copy outer to temp`;
+        this.updateStats(++copies, comparisons, h);
+        this.items[outer].switchDataWith(this.temp);
+        yield 'Will compare inner-h and temp';
+        this.updateStats(copies, ++comparisons, h);
+        while (inner > h - 1 && this.temp.data <= this.items[inner - h].data) {
+          yield 'inner-h >= temp; Will copy inner-h to inner';
+          this.updateStats(++copies, comparisons, h);
+          this.items[inner].switchDataWith(this.items[inner - h]);
+          inner -= h;
+          this.markers[1].position = inner;
+          this.markers[2].position = inner - h;
+          if (inner <= h - 1) {
+            yield 'There is no inner-h';
+          } else {
+            yield 'Will compare inner-h and temp';
+            this.updateStats(copies, ++comparisons, h);
+          }
+        }
+        yield `${inner <= h - 1 ? '' : 'inner-h < temp; '}Will copy temp to inner`;
+        this.updateStats(++copies, comparisons, h);
+        this.temp.switchDataWith(this.items[inner]);
+      }
+      //reduce h
+      h = (h - 1) / 3;
+    }
     this.afterSort();
     return 'Sort is complete';
   }
