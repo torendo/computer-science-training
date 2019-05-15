@@ -47,7 +47,7 @@ export class PageInsertionSort extends PageBaseSort {
     this.beforeSort();
     let copies = 0;
     let comparisons = 0;
-    for (let inner, outer = 1; outer < this.length; outer++) {
+    for (let inner, outer = 1; outer < this.items.length; outer++) {
       yield 'Will copy outer to temp';
       this.items[outer].switchDataWith(this.temp);
       copies++;

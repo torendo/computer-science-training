@@ -35,9 +35,9 @@ export class PageSelectSort extends PageBaseSort {
     let swaps = 0;
     let comparisons = 0;
     let min = 0;
-    for (let outer = 0; outer < this.length - 1; outer++) {
+    for (let outer = 0; outer < this.items.length - 1; outer++) {
       min = outer;
-      for (let inner = outer + 1; inner < this.length; inner++) {
+      for (let inner = outer + 1; inner < this.items.length; inner++) {
         yield 'Searching for minimum';
         if (this.items[inner].data < this.items[min].data) {
           min = inner;

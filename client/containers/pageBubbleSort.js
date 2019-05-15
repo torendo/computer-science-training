@@ -24,7 +24,7 @@ export class PageBubbleSort extends PageBaseSort {
     this.markers = [
       new Marker({position: 0, size: 1, color: 'blue', text: 'inner'}),
       new Marker({position: 1, size: 1, color: 'blue', text: 'inner+1'}),
-      new Marker({position: this.length - 1, size: 2, color: 'red', text: 'outer'})
+      new Marker({position: this.items.length - 1, size: 2, color: 'red', text: 'outer'})
     ];
   }
 
@@ -32,7 +32,7 @@ export class PageBubbleSort extends PageBaseSort {
     this.beforeSort();
     let swaps = 0;
     let comparisons = 0;
-    for (let outer = this.length - 1; outer > 0; outer--) {
+    for (let outer = this.items.length - 1; outer > 0; outer--) {
       for (let inner = 0; inner < outer; inner++) {
         if (this.items[inner].data > this.items[inner + 1].data) {
           yield 'Will be swapped';
