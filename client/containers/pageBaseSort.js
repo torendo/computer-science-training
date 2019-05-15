@@ -37,7 +37,7 @@ export class PageBaseSort extends PageBase {
     clearInterval(this.interval);
     this.afterSort();
     this.iterator = (function *() {
-      yield 'Aborted';
+      return 'Aborted';
     })();
     this.iterate();
   }
@@ -76,14 +76,14 @@ export class PageBaseSort extends PageBase {
     this.isReverseOrder = !this.isReverseOrder;
     this.initItems(this.items.length);
     this.initMarkers();
-    yield `Created ${this.isReverseOrder ? 'reverse' : 'unordered'} array`;
+    return `Created ${this.isReverseOrder ? 'reverse' : 'unordered'} array`;
   }
 
   * iteratorSize() {
     const length = this.items.length === this.length ? 100 : this.length;
     this.initItems(length);
     this.initMarkers();
-    yield `Created ${length} elements array`;
+    return `Created ${length} elements array`;
   }
 
   * iteratorStep() {
@@ -92,7 +92,7 @@ export class PageBaseSort extends PageBase {
     //sort algorithm goes here
 
     this.afterSort();
-    yield 'Sort is complete';
+    return 'Sort is complete';
   }
 
   * iteratorRun() {

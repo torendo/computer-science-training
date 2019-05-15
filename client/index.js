@@ -10,7 +10,6 @@ import './components/button';
 import './containers/app';
 import './containers/pageArray';
 import './containers/pageOrderedArray';
-import './containers/pageList';
 import './containers/pageBubbleSort';
 import './containers/pageSelectSort';
 import './containers/pageInsertionSort';

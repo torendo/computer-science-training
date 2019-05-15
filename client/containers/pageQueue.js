@@ -62,7 +62,7 @@ export class PageQueue extends PageStack {
     this.items[newIndex].setData(key);
     this.markers[1].position = newIndex;
     this.length++;
-    yield `Inserted item with key ${key}`;
+    return `Inserted item with key ${key}`;
   }
 
   * iteratorRem() {
@@ -76,7 +76,7 @@ export class PageQueue extends PageStack {
     item.clear();
     this.markers[0].position = this.getNextIndex(curIndex);
     this.length--;
-    yield `Item removed; Returned value is ${value}`;
+    return `Item removed; Returned value is ${value}`;
   }
 
   * iteratorPeek() {
@@ -84,7 +84,7 @@ export class PageQueue extends PageStack {
       return 'ERROR: can\'t peek. Queue is empty';
     }
     yield 'Will peek at front of queue';
-    yield `Returned value is ${this.items[this.markers[0].position].data}`;
+    return `Returned value is ${this.items[this.markers[0].position].data}`;
   }
 }
 

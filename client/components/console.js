@@ -9,7 +9,7 @@ export class XConsole extends LitElement {
 
   constructor() {
     super();
-    this.defaultMessage = 'Press any key';
+    this.defaultMessage = 'Press any button';
   }
 
   render() {

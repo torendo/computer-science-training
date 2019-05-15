@@ -86,7 +86,7 @@ export class PageArray extends PageBase {
     this.dups.disabled = false;
     yield 'Select Duplicates Ok or not';
     this.dups.disabled = true;
-    yield 'New array created; total items = 0';
+    return 'New array created; total items = 0';
   }
 
   * iteratorFill() {
@@ -109,7 +109,7 @@ export class PageArray extends PageBase {
       }
     }
     this.length = length;
-    yield `Fill completed; total items = ${length}`;
+    return `Fill completed; total items = ${length}`;
   }
 
   * iteratorIns() {
@@ -136,7 +136,7 @@ export class PageArray extends PageBase {
     yield `Inserted item with key ${key} at index ${this.length}`;
     this.length++;
     this.markers[0].position = 0;
-    yield `Insertion completed; total items ${this.length}`;
+    return `Insertion completed; total items ${this.length}`;
   }
 
   * iteratorFind() {
@@ -208,9 +208,9 @@ export class PageArray extends PageBase {
     this.length -= deletedCount;
     this.markers[0].position = 0;
     if (deletedCount > 0) {
-      yield `Shift${deletedCount > 1 ? 's' : ''} complete; no ${isAdditional ? 'more' : ''} items to delete`;
+      return `Shift${deletedCount > 1 ? 's' : ''} complete; no ${isAdditional ? 'more' : ''} items to delete`;
     } else {
-      yield `No ${isAdditional ? 'additioal' : ''} items with key ${key}`;
+      return `No ${isAdditional ? 'additioal' : ''} items with key ${key}`;
     }
   }
 }

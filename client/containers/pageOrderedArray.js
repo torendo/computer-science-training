@@ -75,7 +75,7 @@ export class PageOrderedArray extends PageArray {
     }
     this.items = arr;
     this.length = 0;
-    yield 'New array created; total items = 0';
+    return 'New array created; total items = 0';
   }
 
   * iteratorFill() {
@@ -96,7 +96,7 @@ export class PageOrderedArray extends PageArray {
       this.items[i].setData(value);
     });
     this.length = length;
-    yield `Fill completed; total items = ${length}`;
+    return `Fill completed; total items = ${length}`;
   }
 
   * linearSearch(key, isInsertion) {
@@ -201,12 +201,12 @@ export class PageOrderedArray extends PageArray {
       }
       yield iteration.value;
     }
-    if (foundAt == null) {
-      yield `No items with key ${key}`;
-    } else {
-      yield `Have found item at index = ${foundAt}`;
-    }
     this.markers[0].position = 0;
+    if (foundAt == null) {
+      return `No items with key ${key}`;
+    } else {
+      return `Have found item at index = ${foundAt}`;
+    }
   }
 
   * iteratorDel() {

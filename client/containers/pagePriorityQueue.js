@@ -58,7 +58,7 @@ export class PagePriorityQueue extends PageQueue {
     }
     this.markers[2].position = -1;
     this.length++;
-    yield `Inserted item with key ${key}`;
+    return `Inserted item with key ${key}`;
   }
 
   * iteratorRem() {
@@ -71,7 +71,7 @@ export class PagePriorityQueue extends PageQueue {
     item.clear();
     this.markers[0].position--;
     this.length--;
-    yield `Item removed; Returned value is ${value}`;
+    return `Item removed; Returned value is ${value}`;
   }
 }
 

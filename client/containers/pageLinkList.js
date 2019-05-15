@@ -129,7 +129,7 @@ export class PageLinkList extends PageBase {
     this.marker.position = foundAt;
     yield `Inserted item with key ${key}`;
     this.marker.position = 0;
-    yield `Insertion completed. Total items = ${this.items.length}`;
+    return `Insertion completed. Total items = ${this.items.length}`;
   }
 
   * iteratorFind() {
@@ -154,12 +154,8 @@ export class PageLinkList extends PageBase {
       }
       yield iteration.value;
     }
-    if (foundAt == null) {
-      yield `No items with key ${key}`;
-    } else {
-      yield `Have found item with key ${key}`;
-    }
     this.marker.position = 0;
+    return `${foundAt == null ? 'No' : 'Have found'} items with key ${key}`;
   }
 
   * iteratorDel() {
@@ -185,15 +181,15 @@ export class PageLinkList extends PageBase {
       yield iteration.value;
     }
     if (foundAt == null) {
-      yield `No items with key ${key}`;
       this.marker.position = 0;
+      return `No items with key ${key}`;
     } else {
       yield `Have found item with key ${key}`;
       this.items[foundAt].clear();
       yield 'Deleted item. Will redraw the list';
       this.items.splice(foundAt, 1);
       this.marker.position = 0;
-      yield `Deleted item with key ${key}. Total items = ${this.items.length}`;
+      return `Deleted item with key ${key}. Total items = ${this.items.length}`;
     }
   }
 }

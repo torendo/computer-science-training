@@ -84,7 +84,7 @@ export class PageStack extends PageBase {
     yield 'Incremented top';
     this.items[this.length].setData(key);
     this.length++;
-    yield `Inserted item with key ${key}`;
+    return `Inserted item with key ${key}`;
   }
 
   * iteratorPop() {
@@ -98,7 +98,7 @@ export class PageStack extends PageBase {
     yield `Item removed; Returned value is ${value}`;
     this.markers[0].position--;
     this.length--;
-    yield 'Decremented top';
+    return 'Decremented top';
   }
 
   * iteratorPeek() {
@@ -106,7 +106,7 @@ export class PageStack extends PageBase {
       return 'ERROR: can\'t peek. Stack is empty';
     }
     yield 'Will peek at item at top of stack';
-    yield `Returned value is ${this.items[this.length - 1].data}`;
+    return `Returned value is ${this.items[this.length - 1].data}`;
   }
 }
 
