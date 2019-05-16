@@ -6,7 +6,8 @@ export class XItemsVertical extends LitElement {
     return {
       items: {type: Array},
       temp: {type: Object},
-      markers: {type: Array}
+      markers: {type: Array},
+      pivot: {type: Number}
     };
   }
 
@@ -20,41 +21,47 @@ export class XItemsVertical extends LitElement {
     return html`
       ${this.items.map(item => html`
         <div class="item">
-          <div class="data_container">
-            <div class="data" style="${item.color ? 'background-color:' + item.color + ';' : ''} ${item.data ? 'height:' + item.data + '%;' : ''}">
+          <div class="value_container">
+            <div class="value" style="${item.color ? 'background-color:' + item.color + ';' : ''} ${item.value ? 'height:' + item.value + '%;' : ''}">
             </div>
           </div>
           <div class="index" style="${this.items.length > 20 ? 'display:none;' : ''}">
             ${item.index}
           </div>
           <div class="marker_container">
-            ${this.drawMarker(item.index)}
+            ${this.renderMarker(item.index)}
           </div>
         </div>
       `)}      
-      ${this.drawTemp()}
+      ${this.renderPivot()}
+      ${this.renderTemp()}
     `;
   }
 
-  drawTemp() {
+  renderPivot() {
+
+  }
+
+  renderTemp() {
     if (this.temp instanceof Item) {
       return html`
         <div class="item temp">
-          <div class="data_container">
-            <div class="data" style="${this.temp.color ? 'background-color:' + this.temp.color + ';' : ''} ${this.temp.data ? 'height:' + this.temp.data + '%;' : ''}">
+          <div class="value_container">
+            <div class="value" style="${this.temp.color ? 'background-color:' + this.temp.color + ';' : ''} ${this.temp.value ? 'height:' + this.temp.value + '%;' : ''}">
             </div>
           </div>
           <div class="marker_container">
-            ${this.drawMarker('temp')}
+            ${this.renderMarker('temp')}
           </div>
         </div>
       `;
     }
   }
-  drawMarker(i) {
+  renderMarker(i) {
     let result = '';
     this.markers.forEach(marker => {
       if (marker.position === i) {
+        //TODO: move color to style attr and remove css definitions of colors
         result = html`
           ${result}
           <div class="marker size_${marker.size} ${marker.color ? 'color_' + marker.color : ''}">
@@ -87,13 +94,13 @@ XItemsVertical.styles = css`
     text-align: center;
     margin-bottom: 5px;
   }
-  .data_container {
+  .value_container {
     display: flex;
     flex-direction: column-reverse;
     height: 400px;
     margin-bottom: 5px;
   }
-  .data {
+  .value {
     border: 1px solid lightgray;
   }
   .marker_container {

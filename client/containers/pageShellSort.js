@@ -20,13 +20,13 @@ export class PageShellSort extends PageBaseSort {
     while (h > 0) {
       //h-sort
       for (let outer = h; outer < this.items.length; outer++) {
-        this.items[outer].switchDataWith(this.temp);
+        this.items[outer].switchValueWith(this.temp);
         let inner = outer;
-        while (inner > h - 1 && this.temp.data <= this.items[inner - h].data) {
-          this.items[inner].switchDataWith(this.items[inner - h]);
+        while (inner > h - 1 && this.temp.value <= this.items[inner - h].value) {
+          this.items[inner].switchValueWith(this.items[inner - h]);
           inner -= h;
         }
-        this.temp.switchDataWith(this.items[inner]);
+        this.temp.switchValueWith(this.items[inner]);
       }
       //reduce h
       h = (h - 1) / 3;
@@ -36,7 +36,7 @@ export class PageShellSort extends PageBaseSort {
 
   initItems(length) {
     super.initItems(length);
-    this.temp = new Item({data: 0});
+    this.temp = new Item({value: 0});
   }
 
   initMarkers() {
@@ -54,7 +54,7 @@ export class PageShellSort extends PageBaseSort {
 
   afterSort() {
     super.afterSort();
-    this.temp = new Item({data: 0});
+    this.temp = new Item({value: 0});
   }
 
   * iteratorStep() {
@@ -77,13 +77,13 @@ export class PageShellSort extends PageBaseSort {
         this.markers[2].position = inner - h;
         yield `${h}-sorting array. Will copy outer to temp`;
         this.updateStats(++copies, comparisons, h);
-        this.items[outer].switchDataWith(this.temp);
+        this.items[outer].switchValueWith(this.temp);
         yield 'Will compare inner-h and temp';
         this.updateStats(copies, ++comparisons, h);
-        while (inner > h - 1 && this.temp.data <= this.items[inner - h].data) {
+        while (inner > h - 1 && this.temp.value <= this.items[inner - h].value) {
           yield 'inner-h >= temp; Will copy inner-h to inner';
           this.updateStats(++copies, comparisons, h);
-          this.items[inner].switchDataWith(this.items[inner - h]);
+          this.items[inner].switchValueWith(this.items[inner - h]);
           inner -= h;
           this.markers[1].position = inner;
           this.markers[2].position = inner - h;
@@ -96,7 +96,7 @@ export class PageShellSort extends PageBaseSort {
         }
         yield `${inner <= h - 1 ? '' : 'inner-h < temp; '}Will copy temp to inner`;
         this.updateStats(++copies, comparisons, h);
-        this.temp.switchDataWith(this.items[inner]);
+        this.temp.switchValueWith(this.items[inner]);
       }
       //reduce h
       h = (h - 1) / 3;

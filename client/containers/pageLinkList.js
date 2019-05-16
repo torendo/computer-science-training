@@ -19,7 +19,7 @@ export class PageLinkList extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
-        ${this.drawAdditionalControl()}
+        ${this.renderAdditionalControl()}
       </div>
       <x-console></x-console>
       <x-items-horizontal-linked .items=${this.items} .marker=${this.marker}></x-items-horizontal-linked>
@@ -29,7 +29,7 @@ export class PageLinkList extends PageBase {
     `;
   }
 
-  drawAdditionalControl() {
+  renderAdditionalControl() {
     return html`
       <label><input class="sorted" type="checkbox" disabled>Sorted</label>
     `;
@@ -46,7 +46,7 @@ export class PageLinkList extends PageBase {
     const arrValues = getUniqueRandomArray(length, 1000);
     if (sorted) arrValues.sort((a, b) => a - b);
     for (let i = 0; i < length; i++) {
-      arr.push((new Item({})).setData(arrValues[i]));
+      arr.push((new Item({})).setValue(arrValues[i]));
     }
     this.items = arr;
   }
@@ -76,7 +76,7 @@ export class PageLinkList extends PageBase {
   * search(key, isInsertion) {
     for (let i = 0; i < this.items.length; i++) {
       this.marker.position = i;
-      if (this.items[i].data === key || isInsertion && this.items[i].data > key) {
+      if (this.items[i].value === key || isInsertion && this.items[i].value > key) {
         return i;
       }
       if (i !== this.length - 1) {
@@ -99,7 +99,7 @@ export class PageLinkList extends PageBase {
     if (key > 1000 || key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }
-    const item = (new Item({mark: true})).setData(key);
+    const item = (new Item({mark: true})).setValue(key);
     let foundAt = 0;
     if (this.sorted.checked) {
       yield 'Will search insertion point';

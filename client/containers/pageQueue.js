@@ -59,7 +59,7 @@ export class PageQueue extends PageStack {
     }
     yield `Will insert item with key ${key}`;
     const newIndex = this.getNextIndex(this.markers[1].position);
-    this.items[newIndex].setData(key);
+    this.items[newIndex].setValue(key);
     this.markers[1].position = newIndex;
     this.length++;
     return `Inserted item with key ${key}`;
@@ -72,7 +72,7 @@ export class PageQueue extends PageStack {
     yield 'Will remove item from front of queue';
     const curIndex = this.markers[0].position;
     const item = this.items[curIndex];
-    const value = item.data;
+    const value = item.value;
     item.clear();
     this.markers[0].position = this.getNextIndex(curIndex);
     this.length--;
@@ -84,7 +84,7 @@ export class PageQueue extends PageStack {
       return 'ERROR: can\'t peek. Queue is empty';
     }
     yield 'Will peek at front of queue';
-    return `Returned value is ${this.items[this.markers[0].position].data}`;
+    return `Returned value is ${this.items[this.markers[0].position].value}`;
   }
 }
 

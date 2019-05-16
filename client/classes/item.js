@@ -1,45 +1,45 @@
 import {getRandomColor100} from '../utils';
 
 export class Item {
-  constructor({index, data, color, mark = false}) {
+  constructor({index, value, color, mark = false}) {
     this.index = index;
-    this.data = data;
+    this.value = value;
     this.color = color;
     this.mark = mark;
   }
 
   clear() {
-    this.data = null;
+    this.value = null;
     this.color = null;
     return this;
   }
 
-  setData(value, color = getRandomColor100()) {
-    this.data = value;
+  setValue(value, color = getRandomColor100()) {
+    this.value = value;
     this.color = color;
     return this;
   }
 
-  copyDataFrom(item) {
-    this.data = item.data;
+  copyValueFrom(item) {
+    this.value = item.value;
     this.color = item.color;
     return this;
   }
 
-  moveDataFrom(item) {
-    this.data = item.data;
+  moveValueFrom(item) {
+    this.value = item.value;
     this.color = item.color;
-    item.data = null;
+    item.value = null;
     item.color = null;
     return this;
   }
 
-  switchDataWith(item) {
-    const cacheData = this.data;
+  switchValueWith(item) {
+    const cacheValue = this.value;
     const cacheColor = this.color;
-    this.data = item.data;
+    this.value = item.value;
     this.color = item.color;
-    item.data = cacheData;
+    item.value = cacheValue;
     item.color = cacheColor;
     return this;
   }

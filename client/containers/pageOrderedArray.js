@@ -9,7 +9,7 @@ export class PageOrderedArray extends PageArray {
     this.title = 'Ordered Array';
   }
 
-  drawAdditionalControl() {
+  renderAdditionalControl() {
     return html`
       <label><input type="radio" name="algorithm" class="algorithm algorithm_linear" checked>Linear</label>
       <label><input type="radio" name="algorithm" class="algorithm algorithm_binary">Binary</label>
@@ -47,7 +47,7 @@ export class PageOrderedArray extends PageArray {
     arrValues.sort((a, b) => a - b);
     for (let i = 0; i < length; i++) {
       const item = new Item({index: i});
-      if (i < lengthFill) item.setData(arrValues[i]);
+      if (i < lengthFill) item.setValue(arrValues[i]);
       arr.push(item);
     }
     this.items = arr;
@@ -70,7 +70,7 @@ export class PageOrderedArray extends PageArray {
     for (let i = 0; i < length; i++) {
       arr.push(new Item({
         index: i,
-        data: null
+        value: null
       }));
     }
     this.items = arr;
@@ -93,7 +93,7 @@ export class PageOrderedArray extends PageArray {
     const arrValues = getUniqueRandomArray(length, 1000);
     arrValues.sort((a, b) => a - b);
     arrValues.forEach((value, i) => {
-      this.items[i].setData(value);
+      this.items[i].setValue(value);
     });
     this.length = length;
     return `Fill completed; total items = ${length}`;
@@ -102,7 +102,7 @@ export class PageOrderedArray extends PageArray {
   * linearSearch(key, isInsertion) {
     for (let i = 0; i < this.length; i++) {
       this.markers[0].position = i;
-      if (this.items[i].data === key || isInsertion && this.items[i].data > key) {
+      if (this.items[i].value === key || isInsertion && this.items[i].value > key) {
         return i;
       }
       if (i !== this.length - 1) {
@@ -121,12 +121,12 @@ export class PageOrderedArray extends PageArray {
       }
       this.markers[0].position = i;
       this.markItems(range);
-      if (this.items[i].data === key) {
+      if (this.items[i].value === key) {
         return i;
       } else {
         yield `Checking index ${i}; range = ${range.start} to ${range.end}`;
       }
-      if (this.items[i].data > key) {
+      if (this.items[i].value > key) {
         range.end = i - 1;
       } else {
         range.start = i + 1;
@@ -148,7 +148,7 @@ export class PageOrderedArray extends PageArray {
     if (key > 1000 || key < 0) {
       return 'ERROR: use key between 0 and 999';
     }
-    if (this.items.find(i => i.data === key)) {
+    if (this.items.find(i => i.value === key)) {
       return 'ERROR: can\'t insert, duplicate found';
     }
     yield `Will insert item with key ${key}`;
@@ -168,11 +168,11 @@ export class PageOrderedArray extends PageArray {
       yield 'Will shift cells to make room';
     }
     for (let i = this.length; i > insertAt; i--) {
-      this.items[i].moveDataFrom(this.items[i - 1]);
+      this.items[i].moveValueFrom(this.items[i - 1]);
       this.markers[0].position = i - 1;
       yield `Shifted item from index ${i - 1}`;
     }
-    this.items[insertAt].setData(key);
+    this.items[insertAt].setValue(key);
     yield `Have inserted item ${key} at index ${insertAt}`;
     this.length++;
     this.markers[0].position = 0;
@@ -243,7 +243,7 @@ export class PageOrderedArray extends PageArray {
     }
     for (let i = foundAt + 1; i < this.length; i++) {
       this.markers[0].position = i;
-      this.items[i - 1].moveDataFrom(this.items[i]);
+      this.items[i - 1].moveValueFrom(this.items[i]);
       yield `Shifted item from index ${i}`;
     }
     this.length--;

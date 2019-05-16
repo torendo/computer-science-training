@@ -23,7 +23,7 @@ export class PageBaseSort extends PageBase {
       </div>
       <x-console class="console_verbose"></x-console>
       <x-console class="console_stats" defaultMessage="—"></x-console>
-      <x-items-vertical .items=${this.items} .markers=${this.markers} .temp=${this.temp}></x-items-vertical>
+      <x-items-vertical .items=${this.items} .markers=${this.markers} .temp=${this.temp} pivot="${this.pivot}"></x-items-vertical>
     `;
   }
 
@@ -47,7 +47,7 @@ export class PageBaseSort extends PageBase {
     for (let i = 0; i < length; i++) {
       const item = new Item({index: i});
       const value = this.isReverseOrder ? (length - i) * (100 / length) : Math.floor(Math.random() * 100);
-      item.setData(value, getColor100(value));
+      item.setValue(value, getColor100(value));
       arr.push(item);
     }
     this.items = arr;

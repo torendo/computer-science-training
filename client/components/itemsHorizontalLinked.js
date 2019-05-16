@@ -17,9 +17,9 @@ export class XItemsHorizontalLinked extends LitElement {
   render() {
     return html`
       ${this.items.map((item, i) => html`
-        <div class="item ${item.mark ? 'mark' : ''} ${item.data == null ? 'no-data': ''}">
-          <div class="data" style="${item.color ? 'background-color:' + item.color : ''}">
-            ${item.data}
+        <div class="item ${item.mark ? 'mark' : ''} ${item.value == null ? 'no-data': ''}">
+          <div class="value" style="${item.color ? 'background-color:' + item.color : ''}">
+            ${item.value}
           </div>
           <div class="marker_container">
             ${this.marker.position === (item.index != null ? item.index : i) ? html`<div class="marker"></div>` : ''}
@@ -112,7 +112,7 @@ XItemsHorizontalLinked.styles = css`
     transform: translate(-2px, 2px);
     background-color: transparent;
   }
-  .data {
+  .value {
     z-index: 1;
     min-width: 1.7em;
     min-height: 1.7em;

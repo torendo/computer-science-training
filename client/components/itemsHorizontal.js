@@ -21,11 +21,11 @@ export class XItemsHorizontal extends LitElement {
         <div class="index">
           ${item.index}
         </div>
-        <div class="data" style="${item.color ? 'background-color:' + item.color : ''}">
-          ${item.data}
+        <div class="value" style="${item.color ? 'background-color:' + item.color : ''}">
+          ${item.value}
         </div>
         <div class="marker_container ${item.mark ? 'mark' : ''}">
-          ${this.drawMarker(item.index)}
+          ${this.renderMarker(item.index)}
         </div>
       </div>
     `);
@@ -34,7 +34,7 @@ export class XItemsHorizontal extends LitElement {
     `;
   }
 
-  drawMarker(i) {
+  renderMarker(i) {
     let result = '';
     this.markers.forEach(marker => {
       if (marker.position === i) {
@@ -61,7 +61,7 @@ XItemsHorizontal.styles = css`
   .item {
     display: flex;
   }
-  .index, .data, .state {
+  .index, .value, .state {
     align-self: center;
   }
   .index {
@@ -69,7 +69,7 @@ XItemsHorizontal.styles = css`
     padding-right: 4px;
     text-align: right;
   }
-  .data {
+  .value {
     min-width: 1.7em;
     min-height: 1.7em;
     padding: 0 10px;

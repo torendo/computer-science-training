@@ -12,7 +12,7 @@ export class PagePriorityQueue extends PageQueue {
     arrValues.sort((a, b) => b - a);
     for (let i = 0; i < length; i++) {
       const item = new Item({index: i});
-      if (i < lengthFill) item.setData(arrValues[i]);
+      if (i < lengthFill) item.setValue(arrValues[i]);
       arr.push(item);
     }
     this.items = arr;
@@ -44,14 +44,14 @@ export class PagePriorityQueue extends PageQueue {
     this.markers[2].position = this.markers[0].position;
     yield `Will insert item with key ${key}`;
     for (let i = this.markers[0].position; i >= -1; i--) {
-      if (i === -1 || key <= this.items[i].data) {
+      if (i === -1 || key <= this.items[i].value) {
         this.markers[2].position++;
         yield 'Found place to insert';
-        this.items[i + 1].setData(key);
+        this.items[i + 1].setValue(key);
         this.markers[0].position++;
         break;
       } else {
-        this.items[i + 1].moveDataFrom(this.items[i]);
+        this.items[i + 1].moveValueFrom(this.items[i]);
         yield 'Searching for place to insert';
         this.markers[2].position--;
       }
@@ -67,7 +67,7 @@ export class PagePriorityQueue extends PageQueue {
     }
     yield 'Will remove item from front of queue';
     const item = this.items[this.markers[0].position];
-    const value = item.data;
+    const value = item.value;
     item.clear();
     this.markers[0].position--;
     this.length--;

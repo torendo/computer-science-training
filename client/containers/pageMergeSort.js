@@ -28,7 +28,7 @@ export class PageMergeSort extends PageBaseSort {
     let midBound = mid - 1;
     let workSpace = [];
     while (lower <= midBound && mid <= upper) {
-      if (this.items[lower].data < this.items[mid].data) {
+      if (this.items[lower].value < this.items[mid].value) {
         workSpace.push(new Item(this.items[lower++]));
       } else {
         workSpace.push(new Item(this.items[mid++]));
@@ -41,7 +41,7 @@ export class PageMergeSort extends PageBaseSort {
       workSpace.push(new Item(this.items[mid++]));
     }
     workSpace.forEach((item, i) => {
-      this.items[lowerBound + i].copyDataFrom(item);
+      this.items[lowerBound + i].copyValueFrom(item);
     });
   }
 
@@ -66,7 +66,7 @@ export class PageMergeSort extends PageBaseSort {
     let workSpace = [];
     while (lower <= midBound && mid <= upper) {
       this.comparisons++;
-      if (this.items[lower].data < this.items[mid].data) {
+      if (this.items[lower].value < this.items[mid].value) {
         workSpace.push(new Item(this.items[lower++]));
       } else {
         workSpace.push(new Item(this.items[mid++]));
@@ -84,7 +84,7 @@ export class PageMergeSort extends PageBaseSort {
     this.updateStats(this.copies, this.comparisons);
     yield `Merged ${lowerBound}-${midBound} and ${midBound + 1}-${upper} into workSpace`;
     for (let i = 0; i < workSpace.length; i++) {
-      this.items[lowerBound + i].copyDataFrom(workSpace[i]);
+      this.items[lowerBound + i].copyValueFrom(workSpace[i]);
       this.markers[3].position = lowerBound + i;
       this.updateStats(++this.copies, this.comparisons);
       yield `Copied workspace into ${lowerBound + i}`;

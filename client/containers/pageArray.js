@@ -24,7 +24,7 @@ export class PageArray extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
-        ${this.drawAdditionalControl()}
+        ${this.renderAdditionalControl()}
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items} .markers=${this.markers}></x-items-horizontal>
@@ -34,7 +34,7 @@ export class PageArray extends PageBase {
     `;
   }
 
-  drawAdditionalControl() {
+  renderAdditionalControl() {
     return html`
       <label><input class="dups" type="checkbox" checked disabled>Dups OK</label>
     `;
@@ -52,7 +52,7 @@ export class PageArray extends PageBase {
     const arr = [];
     for (let i = 0; i < length; i++) {
       const item = new Item({index: i});
-      if (i < lengthFill) item.setData(Math.floor(Math.random() * 1000));
+      if (i < lengthFill) item.setValue(Math.floor(Math.random() * 1000));
       arr.push(item);
     }
     this.items = arr;
@@ -103,9 +103,9 @@ export class PageArray extends PageBase {
     yield `Will fill in ${length} items`;
     for (let i = 0; i < length; i++) {
       if (this.dups.checked) {
-        this.items[i].setData(Math.floor(Math.random() * 1000));
+        this.items[i].setValue(Math.floor(Math.random() * 1000));
       } else {
-        this.items[i].setData(getUniqueRandomNumber(this.items, 1000));
+        this.items[i].setValue(getUniqueRandomNumber(this.items, 1000));
       }
     }
     this.length = length;
@@ -127,11 +127,11 @@ export class PageArray extends PageBase {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }
     if (!this.dups.checked) {
-      const found =  this.items.find(i => i.data === key);
+      const found =  this.items.find(i => i.value === key);
       if (found) yield `ERROR: you already have item with key ${key} at index ${found.index}`;
     }
     yield `Will insert item with key ${key}`;
-    this.items[this.length].setData(key);
+    this.items[this.length].setValue(key);
     this.markers[0].position = this.length;
     yield `Inserted item with key ${key} at index ${this.length}`;
     this.length++;
@@ -155,7 +155,7 @@ export class PageArray extends PageBase {
     let isAdditional = false;
     for (let i = 0; i < this.length; i++) {
       this.markers[0].position = i;
-      if (this.items[i].data === key) {
+      if (this.items[i].value === key) {
         foundAt = i;
         yield `Have found ${isAdditional ? 'additioal' : ''} item at index = ${foundAt}`;
         if (this.dups.checked) {
@@ -192,7 +192,7 @@ export class PageArray extends PageBase {
     let isAdditional = false;
     for (let i = 0; i < this.length; i++) {
       this.markers[0].position = i;
-      if (this.items[i].data === key) {
+      if (this.items[i].value === key) {
         foundAt = i;
         deletedCount++;
         this.items[i].clear();
@@ -200,7 +200,7 @@ export class PageArray extends PageBase {
         if (this.dups.checked) isAdditional = true;
       } else if (deletedCount > 0) {
         yield `Will shift item ${deletedCount} spaces`;
-        this.items[i - deletedCount].moveDataFrom(this.items[i]);
+        this.items[i - deletedCount].moveValueFrom(this.items[i]);
       } else {
         yield `Checking ${isAdditional ? 'for additioal matches' : 'next cell'}; index = ${i + 1}`;
       }

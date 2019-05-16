@@ -39,7 +39,7 @@ export class PageSelectSort extends PageBaseSort {
       min = outer;
       for (let inner = outer + 1; inner < this.items.length; inner++) {
         yield 'Searching for minimum';
-        if (this.items[inner].data < this.items[min].data) {
+        if (this.items[inner].value < this.items[min].value) {
           min = inner;
           this.markers[2].position = min;
         }
@@ -48,7 +48,7 @@ export class PageSelectSort extends PageBaseSort {
       }
       if (min !== outer) {
         yield 'Will swap outer & min';
-        this.items[outer].switchDataWith(this.items[min]);
+        this.items[outer].switchValueWith(this.items[min]);
         this.updateStats(++swaps, comparisons);
       } else {
         yield 'Will not be swapped';

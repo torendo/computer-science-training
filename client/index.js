@@ -19,4 +19,5 @@ import './containers/pagePriorityQueue';
 import './containers/pageLinkList';
 import './containers/pageMergeSort';
 import './containers/pageShellSort';
+import './containers/pagePartition';
 import './containers/footer';

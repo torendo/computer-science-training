@@ -41,7 +41,7 @@ export class PageStack extends PageBase {
     const arr = [];
     for (let i = 0; i < length; i++) {
       const item = new Item({index: i});
-      if (i < lengthFill) item.setData(Math.floor(Math.random() * 1000));
+      if (i < lengthFill) item.setValue(Math.floor(Math.random() * 1000));
       arr.push(item);
     }
     this.items = arr;
@@ -82,7 +82,7 @@ export class PageStack extends PageBase {
     yield `Will push item with key ${key}`;
     this.markers[0].position++;
     yield 'Incremented top';
-    this.items[this.length].setData(key);
+    this.items[this.length].setValue(key);
     this.length++;
     return `Inserted item with key ${key}`;
   }
@@ -93,7 +93,7 @@ export class PageStack extends PageBase {
     }
     yield 'Will pop item from top of stack';
     const item = this.items[this.length - 1];
-    const value = item.data;
+    const value = item.value;
     item.clear();
     yield `Item removed; Returned value is ${value}`;
     this.markers[0].position--;
@@ -106,7 +106,7 @@ export class PageStack extends PageBase {
       return 'ERROR: can\'t peek. Stack is empty';
     }
     yield 'Will peek at item at top of stack';
-    return `Returned value is ${this.items[this.length - 1].data}`;
+    return `Returned value is ${this.items[this.length - 1].value}`;
   }
 }
 
