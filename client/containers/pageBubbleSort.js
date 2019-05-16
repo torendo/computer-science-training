@@ -36,7 +36,7 @@ export class PageBubbleSort extends PageBaseSort {
       for (let inner = 0; inner < outer; inner++) {
         if (this.items[inner].value > this.items[inner + 1].value) {
           yield 'Will be swapped';
-          this.items[inner].switchValueWith(this.items[inner + 1]);
+          this.items[inner].swapWith(this.items[inner + 1]);
           swaps++;
         } else {
           yield 'Will not be swapped';

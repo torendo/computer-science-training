@@ -20,13 +20,13 @@ export class Item {
     return this;
   }
 
-  copyValueFrom(item) {
+  copyFrom(item) {
     this.value = item.value;
     this.color = item.color;
     return this;
   }
 
-  moveValueFrom(item) {
+  moveFrom(item) {
     this.value = item.value;
     this.color = item.color;
     item.value = null;
@@ -34,7 +34,7 @@ export class Item {
     return this;
   }
 
-  switchValueWith(item) {
+  swapWith(item) {
     const cacheValue = this.value;
     const cacheColor = this.color;
     this.value = item.value;

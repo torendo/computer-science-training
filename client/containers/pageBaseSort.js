@@ -23,7 +23,7 @@ export class PageBaseSort extends PageBase {
       </div>
       <x-console class="console_verbose"></x-console>
       <x-console class="console_stats" defaultMessage="—"></x-console>
-      <x-items-vertical .items=${this.items} .markers=${this.markers} .temp=${this.temp} pivot="${this.pivot}"></x-items-vertical>
+      <x-items-vertical .items=${this.items} .markers=${this.markers} .temp=${this.temp} .pivot=${this.pivot}></x-items-vertical>
     `;
   }
 

@@ -168,7 +168,7 @@ export class PageOrderedArray extends PageArray {
       yield 'Will shift cells to make room';
     }
     for (let i = this.length; i > insertAt; i--) {
-      this.items[i].moveValueFrom(this.items[i - 1]);
+      this.items[i].moveFrom(this.items[i - 1]);
       this.markers[0].position = i - 1;
       yield `Shifted item from index ${i - 1}`;
     }
@@ -243,7 +243,7 @@ export class PageOrderedArray extends PageArray {
     }
     for (let i = foundAt + 1; i < this.length; i++) {
       this.markers[0].position = i;
-      this.items[i - 1].moveValueFrom(this.items[i]);
+      this.items[i - 1].moveFrom(this.items[i]);
       yield `Shifted item from index ${i}`;
     }
     this.length--;

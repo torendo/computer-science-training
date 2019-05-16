@@ -51,7 +51,7 @@ export class PagePriorityQueue extends PageQueue {
         this.markers[0].position++;
         break;
       } else {
-        this.items[i + 1].moveValueFrom(this.items[i]);
+        this.items[i + 1].moveFrom(this.items[i]);
         yield 'Searching for place to insert';
         this.markers[2].position--;
       }

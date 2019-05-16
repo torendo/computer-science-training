@@ -48,7 +48,7 @@ export class PageSelectSort extends PageBaseSort {
       }
       if (min !== outer) {
         yield 'Will swap outer & min';
-        this.items[outer].switchValueWith(this.items[min]);
+        this.items[outer].swapWith(this.items[min]);
         this.updateStats(++swaps, comparisons);
       } else {
         yield 'Will not be swapped';

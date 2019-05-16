@@ -200,7 +200,7 @@ export class PageArray extends PageBase {
         if (this.dups.checked) isAdditional = true;
       } else if (deletedCount > 0) {
         yield `Will shift item ${deletedCount} spaces`;
-        this.items[i - deletedCount].moveValueFrom(this.items[i]);
+        this.items[i - deletedCount].moveFrom(this.items[i]);
       } else {
         yield `Checking ${isAdditional ? 'for additioal matches' : 'next cell'}; index = ${i + 1}`;
       }

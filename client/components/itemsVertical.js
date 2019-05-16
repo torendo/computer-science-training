@@ -33,13 +33,17 @@ export class XItemsVertical extends LitElement {
           </div>
         </div>
       `)}      
-      ${this.renderPivot()}
       ${this.renderTemp()}
+      ${this.renderPivot()}
     `;
   }
 
   renderPivot() {
-
+    if (this.pivot != null) {
+      return html`
+        <div class="pivot" style="height: ${400 * (1 - this.pivot / 100) + 2}px"></div>
+      `;
+    }
   }
 
   renderTemp() {
@@ -61,7 +65,6 @@ export class XItemsVertical extends LitElement {
     let result = '';
     this.markers.forEach(marker => {
       if (marker.position === i) {
-        //TODO: move color to style attr and remove css definitions of colors
         result = html`
           ${result}
           <div class="marker size_${marker.size} ${marker.color ? 'color_' + marker.color : ''}">
@@ -76,6 +79,7 @@ export class XItemsVertical extends LitElement {
 
 XItemsVertical.styles = css`
   :host {
+    position: relative;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -102,6 +106,13 @@ XItemsVertical.styles = css`
   }
   .value {
     border: 1px solid lightgray;
+  }
+  .pivot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border-bottom: 1px solid black;
   }
   .marker_container {
     position: relative;

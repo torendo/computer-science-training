@@ -49,7 +49,7 @@ export class PageInsertionSort extends PageBaseSort {
     let comparisons = 0;
     for (let inner, outer = 1; outer < this.items.length; outer++) {
       yield 'Will copy outer to temp';
-      this.items[outer].switchValueWith(this.temp);
+      this.items[outer].swapWith(this.temp);
       copies++;
       for (inner = outer; inner > 0; inner--) {
         this.updateStats(copies, ++comparisons);
@@ -58,12 +58,12 @@ export class PageInsertionSort extends PageBaseSort {
           break;
         }
         yield 'Have compared inner-1 and temp: will copy inner to inner-1';
-        this.items[inner].switchValueWith(this.items[inner - 1]);
+        this.items[inner].swapWith(this.items[inner - 1]);
         this.updateStats(++copies, comparisons);
         this.markers[0].position--;
       }
       yield 'Will copy temp to inner';
-      this.temp.switchValueWith(this.items[inner]);
+      this.temp.swapWith(this.items[inner]);
       this.markers[0].position = outer + 1;
       this.markers[1].position++;
     }
