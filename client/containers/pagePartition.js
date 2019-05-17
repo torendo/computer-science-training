@@ -37,6 +37,11 @@ export class PagePartition extends PageBaseSort {
 
   * */
 
+  afterSort() {
+    super.afterSort();
+    this.pivots = [];
+  }
+
   initMarkers() {
     this.markers = [
       new Marker({position: -1, size: 1, color: 'blue', text: 'leftScan'}),
@@ -51,10 +56,14 @@ export class PagePartition extends PageBaseSort {
     let swaps = 0;
     let comparisons = 0;
 
-    this.pivot = 40 + Math.floor(Math.random() * 20);
-    yield `Pivot value is ${this.pivot}`;
     let left = 0;
     let right = this.items.length - 1;
+    this.pivots = [{
+      start: left,
+      end: right,
+      value: 40 + Math.floor(Math.random() * 20)
+    }];
+    yield `Pivot value is ${this.pivots[0].value}`;
 
     let leftPtr = left - 1;
     let rightPtr = right + 1;
@@ -62,7 +71,7 @@ export class PagePartition extends PageBaseSort {
       yield `Will scan ${leftPtr > -1 ? 'again' : ''} from left`;
       this.markers[0].position = leftPtr + 1;
       this.updateStats(swaps, ++comparisons);
-      while (leftPtr < right && this.items[++leftPtr].value < this.pivot) {
+      while (leftPtr < right && this.items[++leftPtr].value < this.pivots[0].value) {
         if (leftPtr < right) {
           yield 'Continue left scan';
           this.markers[0].position = leftPtr + 1;
@@ -72,7 +81,7 @@ export class PagePartition extends PageBaseSort {
       yield 'Will scan from right';
       this.markers[1].position = rightPtr - 1;
       this.updateStats(swaps, ++comparisons);
-      while (rightPtr > left && this.items[--rightPtr].value > this.pivot) {
+      while (rightPtr > left && this.items[--rightPtr].value > this.pivots[0].value) {
         if (rightPtr > left) {
           yield 'Continue right scan';
           this.markers[1].position = rightPtr - 1;

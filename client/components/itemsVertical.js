@@ -7,7 +7,7 @@ export class XItemsVertical extends LitElement {
       items: {type: Array},
       temp: {type: Object},
       markers: {type: Array},
-      pivot: {type: Number}
+      pivots: {type: Array}
     };
   }
 
@@ -15,6 +15,7 @@ export class XItemsVertical extends LitElement {
     super();
     this.items = [];
     this.markers = [];
+    this.pivots = [];
   }
 
   render() {
@@ -31,19 +32,25 @@ export class XItemsVertical extends LitElement {
           <div class="marker_container">
             ${this.renderMarker(item.index)}
           </div>
+          ${this.renderPivots(item)}
         </div>
       `)}      
       ${this.renderTemp()}
-      ${this.renderPivot()}
     `;
   }
 
-  renderPivot() {
-    if (this.pivot != null) {
-      return html`
-        <div class="pivot" style="height: ${400 * (1 - this.pivot / 100) + 2}px"></div>
-      `;
-    }
+  renderPivots(item) {
+    let result = '';
+    this.pivots.forEach((pivot, i) => {
+      if (pivot.start <= item.index && pivot.end >= item.index) {
+        const isDimmed = this.pivots.length > 1 && this.pivots.length === i + 1;
+        result = html`
+          ${result}
+          <div class="pivot ${isDimmed ? 'dimmed' : ''}" style="height: ${400 * (1 - pivot.value / 100) + 2}px"></div>
+        `;
+      }
+    });
+    return result;
   }
 
   renderTemp() {
@@ -79,17 +86,18 @@ export class XItemsVertical extends LitElement {
 
 XItemsVertical.styles = css`
   :host {
-    position: relative;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     max-width: 600px;
   }
   .item {
+    position: relative;
     display: flex;
     flex-direction: column;
     min-width: 5px;
     flex-grow: 1;
+    flex-basis: 0;
   }
   .temp {
     margin-left: 2em;
@@ -113,6 +121,9 @@ XItemsVertical.styles = css`
     left: 0;
     width: 100%;
     border-bottom: 1px solid black;
+  }
+  .pivot.dimmed {
+    border-bottom-style: dotted;
   }
   .marker_container {
     position: relative;

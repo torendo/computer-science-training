@@ -20,4 +20,5 @@ import './containers/pageLinkList';
 import './containers/pageMergeSort';
 import './containers/pageShellSort';
 import './containers/pagePartition';
+import './containers/pageQuickSort1';
 import './containers/footer';

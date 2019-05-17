@@ -14,7 +14,8 @@ export class XApp extends LitElement {
       {path: '/linkList', component: 'page-link-list', title: 'Link List'},
       {path: '/mergeSort', component: 'page-merge-sort', title: 'Merge Sort'},
       {path: '/shellSort', component: 'page-shell-sort', title: 'Shell Sort'},
-      {path: '/partition', component: 'page-partition', title: 'Partition'}
+      {path: '/partition', component: 'page-partition', title: 'Partition'},
+      {path: '/quickSort1', component: 'page-quick-sort-1', title: 'Quick Sort 1'}
     ];
     return html`
       <h3>Workshop applications</h3>
