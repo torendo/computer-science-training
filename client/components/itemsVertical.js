@@ -43,10 +43,10 @@ export class XItemsVertical extends LitElement {
     let result = '';
     this.pivots.forEach((pivot, i) => {
       if (pivot.start <= item.index && pivot.end >= item.index) {
-        const isDimmed = this.pivots.length > 1 && this.pivots.length === i + 1;
+        const isDimmed = this.pivots.length > 1 && this.pivots.length !== i + 1;
         result = html`
           ${result}
-          <div class="pivot ${isDimmed ? 'dimmed' : ''}" style="height: ${400 * (1 - pivot.value / 100) + 2}px"></div>
+          <div class="pivot ${isDimmed ? 'dimmed' : ''}" style="height: ${400 * (1 - pivot.value / 100) - 2}px"></div>
         `;
       }
     });

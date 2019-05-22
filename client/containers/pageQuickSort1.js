@@ -15,7 +15,7 @@ export class PageQuickSort1 extends PageBaseSort {
 
     const quickSort = (left, right) => {
       if (right - left < 1) return;
-      const pivot = this.items[right].value;
+      const pivot = right;
       partition(left, right, pivot);
       quickSort(left, pivot - 1);
       quickSort(pivot + 1, right);
@@ -25,6 +25,7 @@ export class PageQuickSort1 extends PageBaseSort {
   * */
 
   initMarkers() {
+    this.pivots = [];
     this.markers = [
       new Marker({position: 0, size: 1, color: 'red', text: 'left'}),
       new Marker({position: 0, size: 2, color: 'blue', text: 'leftScan'}),
@@ -46,11 +47,11 @@ export class PageQuickSort1 extends PageBaseSort {
         yield `leftScan = ${leftPtr}, rightScan = ${rightPtr}; Will scan`;
       }
       this.comparisons++;
-      while (leftPtr < right && this.items[++leftPtr].value < pivot) {
-        this.comparisons++;
+      while (this.items[++leftPtr].value < this.items[pivot].value) {
+        if (leftPtr < right) this.comparisons++;
       }
       this.comparisons++;
-      while (rightPtr > left && this.items[--rightPtr].value > pivot) {
+      while (rightPtr > 0 && this.items[--rightPtr].value > this.items[pivot].value) {
         this.comparisons++;
       }
       this.markers[1].position = leftPtr;
@@ -59,7 +60,7 @@ export class PageQuickSort1 extends PageBaseSort {
         yield 'Scans have met. Will swap pivot and leftScan';
         this.updateStats(++this.swaps, this.comparisons);
         this.items[leftPtr].swapWith(this.items[pivot]);
-        yield `Array partitioned: left (${left}-${leftPtr - 1}), right (${leftPtr + 1}-${right}) `;
+        yield `Array partitioned: left (${left}-${leftPtr - 1}), right (${leftPtr + 1}-${right + 1}) `;
         break;
       } else {
         yield 'Will swap leftScan and rightScan';
@@ -67,6 +68,7 @@ export class PageQuickSort1 extends PageBaseSort {
         this.items[leftPtr].swapWith(this.items[rightPtr]);
       }
     }
+    return leftPtr;
   }
 
   * iteratorStep() {
@@ -74,93 +76,38 @@ export class PageQuickSort1 extends PageBaseSort {
     this.swaps = 0;
     this.comparisons = 0;
 
-    let left = 0;
-    let right = this.items.length - 1;
-    let pivot;
-    let useStack = false;
-    const stack = [];
-    while (true) {
-      if (right - left < 1) {
-        //operations.push({type: 'quickSortEnd', left, right});
-        useStack = true;
-        return;
+    const callStack = [{state: 'initial', left: 0, right: this.items.length - 1}];
+    while (callStack.length > 0) {
+      let {state, left, right} = callStack.pop();
+      if (state !== 'initial') {
+        this.markers[0].position = left;
+        this.markers[1].position = left;
+        this.markers[2].position = right;
+        this.markers[3].position = right - 1;
+        this.markers[4].position = right;
+        yield `Will sort ${state} partition (${left}-${right})`;
       }
-      pivot = right;
-      // operations.push({type: 'quickSortStart', left, right, pivot});
-      // operations.push({type: 'partition', left, right, pivot});
-      if (useStack) {
-        // operations.push({type: 'quickSortRight', left: pivot + 1, right});
-        // quickSort(pivot + 1, right);
-        const borders = stack.unshift();
-        left = borders.left;
-        right = borders.right;
+      if (right - left < 1) {
+        yield `Entering quickSort; Partition (${left}-${right}) is too small to sort`;
       } else {
-        // operations.push({type: 'quickSortLeft', left, right: pivot - 1});
-        // quickSort(left, pivot - 1);
-        right = pivot - 1;
-        stack.push({left: pivot + 1, right});
-      }
-    }
-
-    const operations = [];
-    const quickSort = (left, right) => {
-      if (right - left < 1) {
-        operations.push({type: 'quickSortEnd', left, right});
-        return;
-      }
-      const pivot = right;
-      operations.push({type: 'quickSortStart', left, right, pivot});
-      operations.push({type: 'partition', left, right, pivot});
-
-      operations.push({type: 'quickSortLeft', left, right: pivot - 1});
-      quickSort(left, pivot - 1);
-      operations.push({type: 'quickSortRight', left: pivot + 1, right});
-      quickSort(pivot + 1, right);
-    };
-    quickSort(0, this.items.length - 1);
-
-    yield 'Initial call to quickSort';
-    for (let i = 0; i < operations.length; i++) {
-      switch (operations[i].type) {
-        case 'quickSortStart': {
-          this.pivots.push({
-            start: operations[i].left,
-            end: operations[i].right,
-            value: this.items[operations[i].pivot].value
-          });
-          yield `Entering quickSort; Will partition (${operations[i].left}-${operations[i].right})`;
-          break;
-        }
-        case 'quickSortEnd': {
-          yield `Entering quickSort; Partition (${operations[i].left}-${operations[i].right}) is too small to sort`;
-          break;
-        }
-        case 'quickSortLeft': {
-          this.markers[0].position = operations[i].left;
-          this.markers[1].position = operations[i].left;
-          this.markers[2].position = operations[i].right;
-          this.markers[3].position = operations[i].right - 1;
-          this.markers[4].position = operations[i].right;
-          yield `Will sort left partition (${operations[i].left}-${operations[i].right})`;
-          break;
-        }
-        case 'quickSortRight': {
-          this.markers[0].position = operations[i].left;
-          this.markers[1].position = operations[i].left;
-          this.markers[2].position = operations[i].right;
-          this.markers[3].position = operations[i].right - 1;
-          this.markers[4].position = operations[i].right;
-          yield `Will sort right partition (${operations[i].left}-${operations[i].right})`;
-          break;
-        }
-        case 'partition': {
-          const iterator = this.partition(operations[i].left, operations[i].pivot, operations[i].right);
-          while (true) {
-            const iteration = iterator.next();
-            if (iteration.done) break;
-            yield iteration.value;
+        this.pivots.push({
+          start: left,
+          end: right,
+          value: this.items[right].value
+        });
+        yield `Entering quickSort; Will partition (${left}-${right})`;
+        const iterator = this.partition(left, right - 1, right);
+        let pivot;
+        while (true) {
+          const iteration = iterator.next();
+          if (iteration.done) {
+            pivot = iteration.value;
+            break;
           }
+          yield iteration.value;
         }
+        callStack.push({state: 'right', left: pivot + 1, right: right});
+        callStack.push({state: 'left', left: left, right: pivot - 1});
       }
     }
 
