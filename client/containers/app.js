@@ -15,7 +15,8 @@ export class XApp extends LitElement {
       {path: '/mergeSort', component: 'page-merge-sort', title: 'Merge Sort'},
       {path: '/shellSort', component: 'page-shell-sort', title: 'Shell Sort'},
       {path: '/partition', component: 'page-partition', title: 'Partition'},
-      {path: '/quickSort1', component: 'page-quick-sort-1', title: 'Quick Sort 1'}
+      {path: '/quickSort1', component: 'page-quick-sort-1', title: 'Quick Sort 1'},
+      {path: '/quickSort2', component: 'page-quick-sort-2', title: 'Quick Sort 2'}
     ];
     return html`
       <h3>Workshop applications</h3>
