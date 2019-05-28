@@ -1,3 +1,4 @@
+import './components/itemsTree';
 import './components/itemsVertical';
 import './components/itemsHorizontal';
 import './components/itemsHorizontalLinked';
@@ -22,4 +23,5 @@ import './containers/pageShellSort';
 import './containers/pagePartition';
 import './containers/pageQuickSort1';
 import './containers/pageQuickSort2';
+import './containers/pageBinaryTree';
 import './containers/footer';
