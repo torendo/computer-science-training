@@ -10,7 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="@types/css-modules" level="application" />
     <orderEntry type="library" name="@types/css-modules-require-hook" level="application" />
-    <orderEntry type="library" name="@types/react" level="application" />
     <orderEntry type="library" name="@types/react-css-modules" level="application" />
     <orderEntry type="library" name="@types/webpack" level="application" />
   </component>

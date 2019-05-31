@@ -7,7 +7,7 @@ import {getUniqueRandomArray} from '../utils';
 export class PageBinaryTree extends PageBase {
   constructor() {
     super();
-    this.initItems(10);
+    this.initItems(12);
     this.initMarkers();
   }
 
@@ -32,7 +32,11 @@ export class PageBinaryTree extends PageBase {
 
   initItems(length, sorted) {
     const arr = [];
-    const arrValues = getUniqueRandomArray(length, 1000);
+    const arrValues = getUniqueRandomArray(length, 100);
+
+
+
+
     if (sorted) arrValues.sort((a, b) => a - b);
     for (let i = 0; i < length; i++) {
       arr.push((new Item({})).setValue(arrValues[i]));
