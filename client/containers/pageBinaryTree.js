@@ -77,7 +77,6 @@ export class PageBinaryTree extends PageBase {
       return 'ERROR: use key between 0 and 99';
     }
     yield `Looking for item with key ${key}`;
-
     let i = 0;
     while(this.items[i] && this.items[i].value != null) {
       this.marker.position = i;
@@ -92,7 +91,28 @@ export class PageBinaryTree extends PageBase {
   }
 
   * iteratorIns() {
-
+    let key = 0;
+    yield 'Enter key of item to insert';
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (key > 99 || key < 0) {
+      return 'ERROR: can\'t insert. Need key between 0 and 999';
+    }
+    yield `Will insert item with key ${key}`;
+    let i = 0;
+    while(this.items[i] && this.items[i].value != null) {
+      this.marker.position = i;
+      yield 'Search in progress';
+      if (this.items[i].value === key) {
+        yield 'Found!';
+        break;
+      }
+      i = 2 * i + (this.items[i].value > key ? 1 : 2);
+    }
+    this.initMarkers();
   }
 
   * iteratorTrav() {
