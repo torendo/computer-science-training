@@ -39,6 +39,7 @@ export class XItemsTree extends LitElement {
           <circle class="item" cx="${coords.x}" cy="${coords.y}" r="12"></circle>
           <text class="value" x="${coords.x}" y="${coords.y + 2}" text-anchor="middle" alignment-baseline="middle">${item.value}</text>
         </g>
+        ${this.renderMarker(i, coords)}
       ` : '';
     });
     return svg`
@@ -48,11 +49,15 @@ export class XItemsTree extends LitElement {
     `;
   }
 
-  renderMarker(i) {
+  renderMarker(i ,coords) {
     let result = '';
     if (this.marker && this.marker.position === i) {
-      result = html`
-        <div class="marker"></div>
+      result = svg`
+        <g class="marker">
+          <line x1="${coords.x}" y1="${coords.y - 13}" x2="${coords.x}" y2="${coords.y - 35}"></line>        
+          <line x1="${coords.x}" y1="${coords.y - 13}" x2="${coords.x - 4}" y2="${coords.y - 20}"></line>       
+          <line x1="${coords.x}" y1="${coords.y - 13}" x2="${coords.x + 4}" y2="${coords.y - 20}"></line>        
+        </g>
       `;
     }
     return result;
@@ -79,6 +84,9 @@ XItemsTree.styles = css`
   }
   .line {
     stroke: black;
+  }
+  .marker line {
+    stroke: red;
   }
 `;
 

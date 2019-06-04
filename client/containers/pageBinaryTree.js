@@ -2,7 +2,6 @@ import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {PageBase} from './pageBase';
-import {getUniqueRandomArray} from '../utils';
 
 export class PageBinaryTree extends PageBase {
   constructor() {
@@ -15,7 +14,11 @@ export class PageBinaryTree extends PageBase {
     return html`
       <h4>Link List</h4>
       <div class="controlpanel">
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorTrav)}>Trav</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
       </div>
       <x-console></x-console>
       <x-items-tree .items=${this.items} .marker=${this.marker}></x-items-tree>
@@ -31,17 +34,15 @@ export class PageBinaryTree extends PageBase {
   }
 
   initItems(length) {
-    const arrValues = getUniqueRandomArray(length, 100);
-    const arr = (new Array(length)).fill().map(() => new Item({}));
-
-    arrValues.forEach(value => {
+    const arr = (new Array(length)).fill().map((_, i) => new Item({index: i}));
+    for (let i = 0; i <= length; i++) {
       let i = 0;
+      const value = Math.floor(Math.random() * 100);
       while(arr[i] && arr[i].value != null) {
         i = 2 * i + (arr[i].value > value ? 1 : 2);
       }
       if(arr[i]) arr[i].setValue(value);
-    });
-
+    }
     this.items = arr;
   }
 
@@ -49,7 +50,7 @@ export class PageBinaryTree extends PageBase {
     this.marker = new Marker({position: 0});
   }
 
-  * iteratorNew() {
+  * iteratorFill() {
     let length = 0;
     yield 'Enter size of linked list to create';
     this.dialog.open().then(formData => {
@@ -57,11 +58,49 @@ export class PageBinaryTree extends PageBase {
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
-    if (length > 56 || length < 0) {
-      return 'ERROR: use size between 0 and 60';
+    if (length > 31 || length < 1) {
+      return 'ERROR: use size between 1 and 31';
     }
     yield `Will create list with ${length} links`;
-    this.initItems(length, this.sorted.checked);
+    this.initItems(length);
+  }
+
+  * iteratorFind() {
+    let key = 0;
+    yield 'Enter key of item to find';
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (key > 1000 || key < 0) {
+      return 'ERROR: use key between 0 and 99';
+    }
+    yield `Looking for item with key ${key}`;
+
+    let i = 0;
+    while(this.items[i] && this.items[i].value != null) {
+      this.marker.position = i;
+      yield 'Search in progress';
+      if (this.items[i].value === key) {
+        yield 'Found!';
+        break;
+      }
+      i = 2 * i + (this.items[i].value > key ? 1 : 2);
+    }
+    this.initMarkers();
+  }
+
+  * iteratorIns() {
+
+  }
+
+  * iteratorTrav() {
+
+  }
+
+  * iteratorDel() {
+
   }
 }
 
