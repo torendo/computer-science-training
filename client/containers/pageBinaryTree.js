@@ -37,8 +37,7 @@ export class PageBinaryTree extends PageBase {
     arrValues.forEach(value => {
       let i = 0;
       while(arr[i] && arr[i].value != null) {
-        const level = Math.floor(Math.log2(i + 1));
-        i += arr[i].value > value ? 2 ** level : 2 ** level + 1;
+        i = 2 * i + (arr[i].value > value ? 1 : 2);
       }
       if(arr[i]) arr[i].setValue(value);
     });
