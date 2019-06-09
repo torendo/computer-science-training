@@ -1,4 +1,4 @@
-import {LitElement, html, svg, css} from 'lit-element';
+import {LitElement, svg, css} from 'lit-element';
 
 export class XItemsTree extends LitElement {
   static get properties() {
@@ -16,7 +16,7 @@ export class XItemsTree extends LitElement {
   getCoords(i) {
     const level = Math.floor(Math.log2(i + 1));
     const part = 600 / (2 ** (level + 1));
-    const y = (level + 1) * 50;
+    const y = (level + 1) * 60;
     const x = 2 * part * (i + 1 - 2 ** level) + part;
     return {x, y};
   }
@@ -43,7 +43,7 @@ export class XItemsTree extends LitElement {
       ` : '';
     });
     return svg`
-      <svg viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
         ${items}
       </svg>
     `;
@@ -67,7 +67,7 @@ export class XItemsTree extends LitElement {
 XItemsTree.styles = css`
   :host {
     display: block;
-    height: 500px;
+    height: 400px;
     width: 600px;    
   }
   svg {
@@ -87,6 +87,7 @@ XItemsTree.styles = css`
   }
   .marker line {
     stroke: red;
+    stroke-width: 2;
   }
 `;
 

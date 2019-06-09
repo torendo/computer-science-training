@@ -20,7 +20,8 @@ export class PageBinaryTree extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorTrav)}>Trav</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
       </div>
-      <x-console></x-console>
+      <x-console class="main-console"></x-console>
+      <x-console class="trav-console" defaultMessage="—"></x-console>
       <x-items-tree .items=${this.items} .marker=${this.marker}></x-items-tree>
       <x-dialog>
         <label>Number: <input name="number" type="number"></label>
@@ -29,7 +30,8 @@ export class PageBinaryTree extends PageBase {
   }
 
   firstUpdated() {
-    this.console = this.querySelector('x-console');
+    this.console = this.querySelector('.main-console');
+    this.travConsole = this.querySelector('.trav-console');
     this.dialog = this.querySelector('x-dialog');
   }
 
@@ -52,7 +54,7 @@ export class PageBinaryTree extends PageBase {
 
   * iteratorFill() {
     let length = 0;
-    yield 'Enter size of linked list to create';
+    yield 'Enter number of nodes (1 to 31)';
     this.dialog.open().then(formData => {
       length = Number(formData.get('number'));
       this.iterate();
@@ -61,13 +63,13 @@ export class PageBinaryTree extends PageBase {
     if (length > 31 || length < 1) {
       return 'ERROR: use size between 1 and 31';
     }
-    yield `Will create list with ${length} links`;
+    yield `Will create tree with ${length} nodes`;
     this.initItems(length);
   }
 
   * iteratorFind() {
     let key = 0;
-    yield 'Enter key of item to find';
+    yield 'Enter key of node to find';
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
@@ -76,23 +78,27 @@ export class PageBinaryTree extends PageBase {
     if (key > 1000 || key < 0) {
       return 'ERROR: use key between 0 and 99';
     }
-    yield `Looking for item with key ${key}`;
+    yield `Will try to find node with key ${key}`;
     let i = 0;
+    let isFound = false;
     while(this.items[i] && this.items[i].value != null) {
       this.marker.position = i;
-      yield 'Search in progress';
       if (this.items[i].value === key) {
-        yield 'Found!';
+        isFound = true;
         break;
       }
-      i = 2 * i + (this.items[i].value > key ? 1 : 2);
+      const isLeft = this.items[i].value > key;
+      i = 2 * i + (isLeft ? 1 : 2);
+      yield `Going to ${isLeft ? 'left' : 'right'} child`;
     }
+    yield `${isFound ? 'Have found' : 'Can\'t find'} node ${key}`;
+    yield 'Search is complete';
     this.initMarkers();
   }
 
   * iteratorIns() {
     let key = 0;
-    yield 'Enter key of item to insert';
+    yield 'Enter key of node to insert';
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
@@ -101,22 +107,68 @@ export class PageBinaryTree extends PageBase {
     if (key > 99 || key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }
-    yield `Will insert item with key ${key}`;
+    yield `Will insert node with key ${key}`;
     let i = 0;
     while(this.items[i] && this.items[i].value != null) {
       this.marker.position = i;
-      yield 'Search in progress';
-      if (this.items[i].value === key) {
-        yield 'Found!';
-        break;
-      }
-      i = 2 * i + (this.items[i].value > key ? 1 : 2);
+      const isLeft = this.items[i].value > key;
+      i = 2 * i + (isLeft ? 1 : 2);
+      yield `Going to ${isLeft ? 'left' : 'right'} child`;
+    }
+    if (this.items[i]) {
+      this.marker.position = i;
+      this.items[i].setValue(key);
+      yield `Have inserted node with key ${key}`;
+      yield 'Insertion completed';
+    } else {
+      yield 'Can\'t insert: Level is too great';
     }
     this.initMarkers();
   }
 
   * iteratorTrav() {
-
+    yield 'Will traverse tree in "inorder"';
+    this.travConsole.setMessage('');
+    const operations = [];
+    function traverse(i, items) {
+      if (!items[i] || items[i].value == null) return;
+      const left = 2 * i + 1;
+      const right = 2 * i + 2;
+      operations.push({type: 'left', index: left});
+      traverse(left, items); //left
+      operations.push({type: 'self', index: i, value: items[i].value});
+      operations.push({type: 'right', index: right});
+      traverse(right, items); //right
+      operations.push({type: 'exit', index: i});
+    }
+    traverse(0, this.items);
+    while (operations.length > 0) {
+      const operation = operations.shift();
+      if (this.items[operation.index] && this.items[operation.index].value != null) {
+        this.marker.position = operation.index;
+      }
+      switch (operation.type) {
+        case 'self': {
+          yield 'Will visit this node';
+          this.travConsole.setMessage(this.travConsole.message + ' ' + operation.value);
+          break;
+        }
+        case 'left': {
+          yield 'Will check for left child';
+          break;
+        }
+        case 'right': {
+          yield 'Will check for right child';
+          break;
+        }
+        case 'exit': {
+          yield 'Will go to root of last subtree';
+          break;
+        }
+      }
+    }
+    yield 'Finish traverse';
+    this.travConsole.setMessage('');
   }
 
   * iteratorDel() {
