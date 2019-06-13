@@ -209,38 +209,31 @@ export class PageBinaryTree extends PageBase {
       current.clear();
       yield 'Deleted';
     } else if (!rightChild || rightChild.value == null) { //if node has no right child
-      current.moveFrom(leftChild);
-      //TODO: move all children
+      this.moveSubtree(leftChild.index, current.index);
     } else if (!leftChild || leftChild.value == null) { //if node has no left child
-      current.moveFrom(rightChild);
-      //TODO: move all children
+      this.moveSubtree(rightChild.index, current.index);
     } else { //node has two children, find successor
-      const successor = this.getSuccessor(current);
-      current.moveFrom(successor);
+      this.getSuccessor(current.index);
     }
   }
 
-  // Метод возвращает узел со следующим значением после delNode.
-  // Для этого он сначала переходит к правому потомку, а затем
-  // отслеживает цепочку левых потомков этого узла.
-  getSuccessor(delNode)
-  {
-    let successorParent = delNode;
-    let successor = delNode;
-    let current = delNode.rightChild; // Переход к правому потомку
-    while(current != null) // Пока остаются левые потомки
-    {
-      successorParent = successor;
+  getSuccessor(index) {
+    let successor = index;
+    let current = 2 * index + 2; //right child
+    while(this.items[current] && this.items[current].value != null) {
       successor = current;
-      current = current.leftChild; // Переход к левому потомку
+      current = 2 * current + 1; //left child
     }
-    // Если преемник не является
-    if(successor != delNode.rightChild) // правым потомком,
-    { // создать связи между узлами
-      successorParent.leftChild = successor.rightChild;
-      successor.rightChild = delNode.rightChild;
-    }
-    return successor;
+    this.items[index].moveFrom(this.items[successor]);
+    this.moveSubtree(2 * successor + 2, successor);
+  }
+
+  //TODO: fix this!!
+  moveSubtree(from, to) {
+    if (!this.items[from] || this.items[from].value == null) return;
+    this.items[to].moveFrom(this.items[from]);
+    this.moveSubtree(2 * from + 1, 2 * to + 1); //left
+    this.moveSubtree(2 * from + 2, 2 * to + 2); //right
   }
 }
 
