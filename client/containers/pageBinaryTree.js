@@ -171,6 +171,55 @@ export class PageBinaryTree extends PageBase {
     this.travConsole.setMessage('');
   }
 
+  * iteratorDel() {
+    let key = 0;
+    yield 'Enter key of node to find';
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (key > 1000 || key < 0) {
+      return 'ERROR: use key between 0 and 99';
+    }
+    yield `Will try to find node with key ${key}`;
+    let i = 0;
+    let isFound = false;
+    while (this.items[i] && this.items[i].value != null) {
+      this.marker.position = i;
+      if (this.items[i].value === key) {
+        isFound = true;
+        break;
+      }
+      const isLeft = this.items[i].value > key;
+      i = 2 * i + (isLeft ? 1 : 2);
+      yield `Going to ${isLeft ? 'left' : 'right'} child`;
+    }
+    if (isFound) {
+      yield 'Have found node to delete';
+    } else {
+      return 'Can\'t find node to delete';
+    }
+
+    const current = this.items[i];
+    const leftChild = this.items[2 * i + 1];
+    const rightChild = this.items[2 * i + 2];
+    //if node has no children
+    if ((!leftChild || leftChild.value == null) && (!rightChild || rightChild.value == null)) {
+      current.clear();
+      yield 'Deleted';
+    } else if (!rightChild || rightChild.value == null) { //if node has no right child
+      current.moveFrom(leftChild);
+      //TODO: move all children
+    } else if (!leftChild || leftChild.value == null) { //if node has no left child
+      current.moveFrom(rightChild);
+      //TODO: move all children
+    } else { //node has two children, find successor
+      const successor = this.getSuccessor(current);
+      current.moveFrom(successor);
+    }
+  }
+
   // Метод возвращает узел со следующим значением после delNode.
   // Для этого он сначала переходит к правому потомку, а затем
   // отслеживает цепочку левых потомков этого узла.
@@ -192,104 +241,6 @@ export class PageBinaryTree extends PageBase {
       successor.rightChild = delNode.rightChild;
     }
     return successor;
-  }
-
-  * iteratorDel() {
-    let key = 0;
-    yield 'Enter key of node to find';
-    this.dialog.open().then(formData => {
-      key = Number(formData.get('number'));
-      this.iterate();
-    }, () => this.iterate());
-    yield 'Dialog opened'; //skip in promise
-    if (key > 1000 || key < 0) {
-      return 'ERROR: use key between 0 and 99';
-    }
-    yield `Will try to find node with key ${key}`;
-    let i = 0;
-    let isFound = false;
-    while(this.items[i] && this.items[i].value != null) {
-      this.marker.position = i;
-      if (this.items[i].value === key) {
-        isFound = true;
-        break;
-      }
-      const isLeft = this.items[i].value > key;
-      i = 2 * i + (isLeft ? 1 : 2);
-      yield `Going to ${isLeft ? 'left' : 'right'} child`;
-    }
-    if (isFound) {
-      yield 'Have found node to delete';
-    } else {
-      return 'Can\'t find node to delete';
-    }
-
-
-
-    function del(key) // Удаление узла с заданным ключом
-    { // (предполагается, что дерево не пусто)
-      let current = root;
-      let parent = root;
-      let isLeftChild = true;
-      while(current.iData != key) // Поиск узла
-      {
-        parent = current;
-        if(key < current.iData) // Двигаться налево?
-        {
-          isLeftChild = true;
-          current = current.leftChild;
-        }
-        else // Или направо?
-        {
-          isLeftChild = false;
-          current = current.rightChild;
-        }
-        if(current == null) // Конец цепочки
-          return false; // Узел не найден
-      }
-      // Удаляемый узел найден
-      // Если узел не имеет потомков, он просто удаляется.
-      if(current.leftChild==null &&
-        current.rightChild==null)
-      {
-        if(current == root) // Если узел является корневым,
-          root = null; // дерево очищается
-        else if(isLeftChild)
-          parent.leftChild = null; // Узел отсоединяется
-        else // от родителя
-          parent.rightChild = null;
-      }
-      // Если нет правого потомка, узел заменяется левым поддеревом
-      else if(current.rightChild==null)
-        if(current == root)
-          root = current.leftChild;
-        else if(isLeftChild)
-          parent.leftChild = current.leftChild;
-        else
-          parent.rightChild = current.leftChild;
-      // Если нет левого потомка, узел заменяется правым поддеревом
-      else if(current.leftChild==null)
-        if(current == root)
-          root = current.rightChild;
-        else if(isLeftChild)
-          parent.leftChild = current.rightChild;
-        else
-          parent.rightChild = current.rightChild;
-      else // Два потомка, узел заменяется преемником
-      {
-        // Поиск преемника для удаляемого узла (current)
-        let successor = getSuccessor(current);
-        // Родитель current связывается с посредником
-        if(current == root)
-          root = successor;
-        else if(isLeftChild)
-          parent.leftChild = successor;
-        else
-          parent.rightChild = successor;
-        // Преемник связывается с левым потомком current
-        return true; // Признак успешного завершения
-      }
-
   }
 }
 
