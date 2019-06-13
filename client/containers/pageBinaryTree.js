@@ -248,7 +248,7 @@ export class PageBinaryTree extends PageBase {
           return false; // Узел не найден
       }
       // Удаляемый узел найден
-      // Если узел не имеет потомков, он просто удаляется.
+      // Если узел не имеет потомков, он просто удаляется. kk
       if(current.leftChild==null &&
         current.rightChild==null)
       {
