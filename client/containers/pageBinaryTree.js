@@ -213,7 +213,9 @@ export class PageBinaryTree extends PageBase {
     } else if (!leftChild || leftChild.value == null) { //if node has no left child
       this.moveSubtree(rightChild.index, current.index);
     } else { //node has two children, find successor
-      this.getSuccessor(current.index);
+      const successor = this.getSuccessor(current.index);
+      current.moveFrom(this.items[successor]);
+      this.moveSubtree(2 * successor + 2, successor);
     }
   }
 
@@ -224,16 +226,23 @@ export class PageBinaryTree extends PageBase {
       successor = current;
       current = 2 * current + 1; //left child
     }
-    this.items[index].moveFrom(this.items[successor]);
-    this.moveSubtree(2 * successor + 2, successor);
+    return successor;
   }
 
-  //TODO: fix this!!
   moveSubtree(from, to) {
-    if (!this.items[from] || this.items[from].value == null) return;
-    this.items[to].moveFrom(this.items[from]);
-    this.moveSubtree(2 * from + 1, 2 * to + 1); //left
-    this.moveSubtree(2 * from + 2, 2 * to + 2); //right
+    const tempItems = [];
+    const items = this.items;
+    function recursiveMoveToTemp(from, to) {
+      if (!items[from] || items[from].value == null) return;
+      tempItems[to] = new Item(items[from]);
+      items[from].clear();
+      recursiveMoveToTemp(2 * from + 1, 2 * to + 1); //left
+      recursiveMoveToTemp(2 * from + 2, 2 * to + 2); //right
+    }
+    recursiveMoveToTemp(from, to);
+    tempItems.forEach((item, index) => { //restore from temp
+      this.items[index].moveFrom(item);
+    });
   }
 }
 
