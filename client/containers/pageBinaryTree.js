@@ -6,7 +6,7 @@ import {PageBase} from './pageBase';
 export class PageBinaryTree extends PageBase {
   constructor() {
     super();
-    this.initItems(20);
+    this.initItems(29);
     this.initMarkers();
   }
 
@@ -36,7 +36,7 @@ export class PageBinaryTree extends PageBase {
   }
 
   initItems(length) {
-    const arr = (new Array(length)).fill().map((_, i) => new Item({index: i}));
+    const arr = (new Array(31)).fill().map((_, i) => new Item({index: i}));
     for (let i = 0; i <= length; i++) {
       let i = 0;
       const value = Math.floor(Math.random() * 100);
@@ -207,16 +207,31 @@ export class PageBinaryTree extends PageBase {
     //if node has no children
     if ((!leftChild || leftChild.value == null) && (!rightChild || rightChild.value == null)) {
       current.clear();
-      yield 'Deleted';
+      yield 'Node was deleted';
     } else if (!rightChild || rightChild.value == null) { //if node has no right child
+      yield 'Will replace node with its left subtree';
       this.moveSubtree(leftChild.index, current.index);
+      yield 'Node was replaced by its left subtree';
     } else if (!leftChild || leftChild.value == null) { //if node has no left child
+      yield 'Will replace node with its right subtree';
       this.moveSubtree(rightChild.index, current.index);
+      yield 'Node was replaced by its right subtree';
     } else { //node has two children, find successor
       const successor = this.getSuccessor(current.index);
+      yield `Will replace node with ${this.items[successor].value}`;
+      const hasRightChild = this.items[2 * successor + 2] && this.items[2 * successor + 2].value != null;
+      if (hasRightChild) {
+        yield `and replace ${this.items[successor].value} with its right subtree`;
+      }
       current.moveFrom(this.items[successor]);
-      this.moveSubtree(2 * successor + 2, successor);
+      if (hasRightChild) {
+        this.moveSubtree(2 * successor + 2, successor);
+        yield 'Removed node in 2-step process';
+      } else {
+        yield 'Node was replaced by successor';
+      }
     }
+    this.initMarkers();
   }
 
   getSuccessor(index) {
