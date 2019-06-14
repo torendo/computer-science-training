@@ -17,7 +17,8 @@ export class XApp extends LitElement {
       {path: '/partition', component: 'page-partition', title: 'Partition'},
       {path: '/quickSort1', component: 'page-quick-sort-1', title: 'Quick Sort 1'},
       {path: '/quickSort2', component: 'page-quick-sort-2', title: 'Quick Sort 2'},
-      {path: '/binaryTree', component: 'page-binary-tree', title: 'Binary Tree'}
+      {path: '/binaryTree', component: 'page-binary-tree', title: 'Binary Tree'},
+      {path: '/redBlackTree', component: 'page-redblack-tree', title: 'Red-Black Tree'}
     ];
     return html`
       <h3>Workshop applications</h3>
