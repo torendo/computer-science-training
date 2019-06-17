@@ -7,7 +7,7 @@ export class PageBinaryTree extends PageBase {
   constructor() {
     super();
     this.initItems(29);
-    this.initMarkers();
+    this.initMarker();
   }
 
   render() {
@@ -48,7 +48,7 @@ export class PageBinaryTree extends PageBase {
     this.items = arr;
   }
 
-  initMarkers() {
+  initMarker() {
     this.marker = new Marker({position: 0});
   }
 
@@ -93,7 +93,7 @@ export class PageBinaryTree extends PageBase {
     }
     yield `${isFound ? 'Have found' : 'Can\'t find'} node ${key}`;
     yield 'Search is complete';
-    this.initMarkers();
+    this.initMarker();
   }
 
   * iteratorIns() {
@@ -123,7 +123,7 @@ export class PageBinaryTree extends PageBase {
     } else {
       yield 'Can\'t insert: Level is too great';
     }
-    this.initMarkers();
+    this.initMarker();
   }
 
   * iteratorTrav() {
@@ -231,7 +231,7 @@ export class PageBinaryTree extends PageBase {
         yield 'Node was replaced by successor';
       }
     }
-    this.initMarkers();
+    this.initMarker();
   }
 
   getSuccessor(index) {

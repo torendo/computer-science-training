@@ -1,10 +1,12 @@
 import {LitElement, svg, css} from 'lit-element';
+import {Marker} from '../classes/marker';
 
 export class XItemsTree extends LitElement {
   static get properties() {
     return {
       items: {type: Array},
-      marker: {type: Array}
+      marker: {type: Object},
+      clickFn: {type: Function}
     };
   }
 
@@ -29,7 +31,7 @@ export class XItemsTree extends LitElement {
       const coordsL = this.getCoords(iL);
       const coordsR = this.getCoords(iR);
       return item.value != null ? svg`
-        <g fill="${item.color}">
+        <g fill="${item.color}" class="${item.mark ? 'marked' : ''}">
           ${this.items[iL] && this.items[iL].value != null ? svg`
             <line class="line" x1="${coords.x}" y1="${coords.y}" x2="${coordsL.x}" y2="${coordsL.y}">
           ` : ''}
@@ -47,6 +49,14 @@ export class XItemsTree extends LitElement {
         ${items}
       </svg>
     `;
+  }
+
+  //TODO: onclick=${this.clickHandler.bind(this, item)}
+  clickHandler(item) {
+    if (this.clickFn != null) {
+      this.marker = new Marker({position: item.index});
+      return this.clickFn(item);
+    }
   }
 
   renderMarker(i ,coords) {
@@ -76,6 +86,9 @@ XItemsTree.styles = css`
   }
   .item {
     stroke: black;
+  }
+  .item.marked {
+    stroke: red;
   }
   .value {
     font: normal 13px sans-serif;
