@@ -1,4 +1,4 @@
-import {LitElement, html, css} from 'lit-element';
+import {css, html, LitElement} from 'lit-element';
 
 export class XItemsHorizontal extends LitElement {
   static get properties() {
