@@ -17,8 +17,8 @@ export class PageRedBlackTree extends PageBase {
         <x-button .callback=${this.init.bind(this)}>Start</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
+        <x-button .callback=${this.flip.bind(this)}>Flip</x-button>
         
-        <x-button .callback=${this.swichRB.bind(this)}>Flip</x-button>
         <x-button .callback=${this.swichRB.bind(this)}>RoL</x-button>
         <x-button .callback=${this.swichRB.bind(this)}>RoR</x-button>
         
@@ -37,15 +37,15 @@ export class PageRedBlackTree extends PageBase {
     this.dialog = this.querySelector('x-dialog');
   }
 
-  iterate() {
-    const result = super.iterate();
+  handleClick() {
+    const result = super.handleClick(...arguments);
     this.checkRules();
     return result;
   }
 
   init() {
     const arr = (new Array(31)).fill().map((_, i) => new Item({index: i}));
-    arr[0].setValue(Math.floor(Math.random() * 100));
+    arr[0].setValue(50);
     this.items = arr;
     this.marker = new Marker({position: 0});
     if (this.console) {
@@ -55,6 +55,7 @@ export class PageRedBlackTree extends PageBase {
   }
 
   * iteratorIns() {
+    if (this.isColorRuleFail) return;
     let key = 0;
     yield 'Enter key of node to insert';
     this.dialog.open().then(formData => {
@@ -120,10 +121,47 @@ export class PageRedBlackTree extends PageBase {
   }
 
   checkRules() {
-    let error = null;
-    if (this.items[0].mark) error = 'ERROR: Root must be black';
-    //TODO more rules
+    let error = 'Tree is red-black correct';
+    if (this.items[0].mark) {
+      error = 'ERROR: Root must be black';
+    }
+    this.isColorRuleFail = false;
+    this.items.forEach((item, i) => {
+      const leftChild = this.items[2 * i + 1];
+      const rightChild = this.items[2 * i + 2];
+      if (leftChild == null) return;
+      if (item.mark && (leftChild.mark || rightChild.mark)) {
+        error = 'ERROR: Parent and child are both red!';
+        this.marker.position = item.index;
+        this.isColorRuleFail = true;
+        //TODO: something
+        // } else if (...) {
+        //   this.marker.position = item.index;
+        //   error = 'ERROR: Black counts differ!';
+      }
+    });
     this.console.setMessage(error);
+  }
+
+  //TODO switch to generator
+  flip() {
+    const parent = this.items[this.marker.position];
+    const leftChild = this.items[2 * this.marker.position + 1];
+    const rightChild = this.items[2 * this.marker.position + 2];
+    if (!leftChild || !rightChild || leftChild.value == null || rightChild.value == null) {
+      this.console.setMessage('Node has no children');
+    } else if (parent.index === 0 && leftChild.mark === rightChild.mark) {
+      leftChild.mark = !leftChild.mark;
+      rightChild.mark = !rightChild.mark;
+    } else if (parent.mark !== leftChild.mark && leftChild.mark === rightChild.mark) {
+      leftChild.mark = !leftChild.mark;
+      rightChild.mark = !rightChild.mark;
+      parent.mark = !parent.mark;
+    } else {
+      this.console.setMessage('Can\'t flip this color arrangement');
+    }
+    this.checkRules();
+    this.requestUpdate();
   }
 
   swichRB() {
