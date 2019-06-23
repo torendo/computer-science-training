@@ -19,8 +19,8 @@ export class PageRedBlackTree extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
         <x-button .callback=${this.flip.bind(this)}>Flip</x-button>
         
-        <x-button .callback=${this.swichRB.bind(this)}>RoL</x-button>
-        <x-button .callback=${this.swichRB.bind(this)}>RoR</x-button>
+        <x-button .callback=${this.rotateRoL.bind(this)}>RoL</x-button>
+        <x-button .callback=${this.rotateRoR.bind(this)}>RoR</x-button>
         
         <x-button .callback=${this.swichRB.bind(this)}>R/B</x-button>
       </div>
@@ -55,7 +55,6 @@ export class PageRedBlackTree extends PageBase {
   }
 
   * iteratorIns() {
-    if (this.isColorRuleFail) return;
     let key = 0;
     yield 'Enter key of node to insert';
     this.dialog.open().then(formData => {
@@ -121,11 +120,12 @@ export class PageRedBlackTree extends PageBase {
   }
 
   checkRules() {
-    let error = 'Tree is red-black correct';
+    let error = null;
+
     if (this.items[0].mark) {
       error = 'ERROR: Root must be black';
     }
-    this.isColorRuleFail = false;
+
     this.items.forEach((item, i) => {
       const leftChild = this.items[2 * i + 1];
       const rightChild = this.items[2 * i + 2];
@@ -133,14 +133,37 @@ export class PageRedBlackTree extends PageBase {
       if (item.mark && (leftChild.mark || rightChild.mark)) {
         error = 'ERROR: Parent and child are both red!';
         this.marker.position = item.index;
-        this.isColorRuleFail = true;
-        //TODO: something
-        // } else if (...) {
-        //   this.marker.position = item.index;
-        //   error = 'ERROR: Black counts differ!';
       }
     });
-    this.console.setMessage(error);
+
+    let c = 1;
+    let cur = null;
+    function traverse(i, items) {
+      if (!items[i] || items[i].value == null) return;
+      const left = 2 * i + 1;
+      const right = 2 * i + 2;
+      //left
+      if (items[left] && !items[left].mark && items[left].value != null) c++;
+      traverse(left, items);
+      //self, leaf
+      if ((!items[left] || items[left].value == null) && (!items[right] || items[right].value == null)) {
+        if (cur != null && c !== cur) {
+          error = 'ERROR: Black counts differ!';
+        } else {
+          cur = c;
+        }
+      }
+      //right
+      if (items[right] && !items[right].mark && items[right].value != null) c++;
+      traverse(right, items);
+      //self, exit
+      if (!items[i].mark) c--;
+    }
+    if (error == null) {
+      traverse(0, this.items);
+    }
+
+    this.console.setMessage(error || 'Tree is red-black correct');
   }
 
   //TODO switch to generator
@@ -162,6 +185,14 @@ export class PageRedBlackTree extends PageBase {
     }
     this.checkRules();
     this.requestUpdate();
+  }
+
+  rotateRoL() {
+
+  }
+
+  rotateRoR() {
+
   }
 
   swichRB() {
