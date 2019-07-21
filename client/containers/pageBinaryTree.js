@@ -21,7 +21,7 @@ export class PageBinaryTree extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
       </div>
       <x-console class="main-console"></x-console>
-      <x-console class="trav-console" defaultMessage="—"></x-console>
+      <x-console class="console-stats" defaultMessage="—"></x-console>
       <x-items-tree .items=${this.items} .marker=${this.marker}></x-items-tree>
       <x-dialog>
         <label>Number: <input name="number" type="number"></label>
@@ -31,7 +31,7 @@ export class PageBinaryTree extends PageBase {
 
   firstUpdated() {
     this.console = this.querySelector('.main-console');
-    this.travConsole = this.querySelector('.trav-console');
+    this.travConsole = this.querySelector('.console-stats');
     this.dialog = this.querySelector('x-dialog');
   }
 

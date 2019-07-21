@@ -23,13 +23,13 @@ export class PageBaseSort extends PageBase {
         <x-button .callback=${this.handleAbort.bind(this)} class="btn_abort hidden">Abort</x-button>
       </div>
       <x-console class="console_verbose"></x-console>
-      <x-console class="console_stats" defaultMessage="—"></x-console>
+      <x-console class="console-stats" defaultMessage="—"></x-console>
       <x-items-vertical .items=${this.items} .markers=${this.markers} .temp=${this.temp} .pivots=${this.pivots}></x-items-vertical>
     `;
   }
 
   firstUpdated() {
-    this.consoleStats = this.querySelector('.console_stats');
+    this.consoleStats = this.querySelector('.console-stats');
     this.console = this.querySelector('.console_verbose');
     this.btnStop = this.querySelector('.btn_abort');
   }
