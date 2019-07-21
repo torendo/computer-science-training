@@ -152,7 +152,14 @@ export class PageRedBlackTree extends PageBase {
     let counter = 1;
     let cur = null;
     function traverse(i, items) {
-      if (!items[i] || items[i].value == null) return;
+      if (!items[i] || items[i].value == null) {
+        if (cur != null && counter !== cur) {
+          error = 'ERROR: Black counts differ!';
+        } else {
+          cur = counter;
+        }
+        return;
+      }
       const left = 2 * i + 1;
       const right = 2 * i + 2;
       //left
