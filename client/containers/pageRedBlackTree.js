@@ -18,11 +18,8 @@ export class PageRedBlackTree extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFlip)}>Flip</x-button>
-        
-        <x-button .callback=${this.rotateRoL.bind(this)}>RoL</x-button>
-        
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorRoL)}>RoL</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorRoR)}>RoR</x-button>
-        
         <x-button .callback=${this.swichRB.bind(this)}>R/B</x-button>
       </div>
       <x-console class="main-console"></x-console>
@@ -205,8 +202,26 @@ export class PageRedBlackTree extends PageBase {
     }
   }
 
-  rotateRoL() {
-
+  * iteratorRoL() {
+    const top = this.marker.position;
+    const left = 2 * top + 1;
+    const right = 2 * top + 2;
+    if (!this.items[right] || this.items[right].value == null) {
+      return 'Can\'t rotate';
+    }
+    if (this.items[left] && this.items[left].value != null) {
+      PageBinaryTree.moveSubtree(left, 2 * left + 1, this.items);
+    }
+    this.items[left].moveFrom(this.items[top]);
+    this.items[top].moveFrom(this.items[right]);
+    const rightGrandLeft = 2 * right + 1;
+    if (this.items[rightGrandLeft] && this.items[rightGrandLeft].value != null) {
+      PageBinaryTree.moveSubtree(rightGrandLeft, 2 * left + 2, this.items);
+    }
+    const rightGrandRight = 2 * right + 2;
+    if (this.items[rightGrandRight] && this.items[rightGrandRight].value != null) {
+      PageBinaryTree.moveSubtree(rightGrandRight, right, this.items);
+    }
   }
 
   * iteratorRoR() {
