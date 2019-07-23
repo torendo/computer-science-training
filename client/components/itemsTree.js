@@ -1,10 +1,12 @@
 import {LitElement, svg, css} from 'lit-element';
+import {Marker} from '../classes/marker';
 
 export class XItemsTree extends LitElement {
   static get properties() {
     return {
       items: {type: Array},
-      marker: {type: Array}
+      marker: {type: Object},
+      clickFn: {type: Function}
     };
   }
 
@@ -36,8 +38,10 @@ export class XItemsTree extends LitElement {
           ${this.items[iR] && this.items[iR].value != null ? svg`
             <line class="line" x1="${coords.x}" y1="${coords.y}" x2="${coordsR.x}" y2="${coordsR.y}">
           ` : ''}
-          <circle class="item" cx="${coords.x}" cy="${coords.y}" r="12"></circle>
-          <text class="value" x="${coords.x}" y="${coords.y + 2}" text-anchor="middle" alignment-baseline="middle">${item.value}</text>
+          <g @click=${this.clickHandler.bind(this, item)} class="${this.clickFn != null ? 'clickable' : ''}">
+            <circle class="item ${item.mark ? 'marked' : ''}" cx="${coords.x}" cy="${coords.y}" r="12"></circle>
+            <text class="value" x="${coords.x}" y="${coords.y + 2}" text-anchor="middle" alignment-baseline="middle">${item.value}</text>
+          </g>
         </g>
         ${this.renderMarker(i, coords)}
       ` : '';
@@ -47,6 +51,13 @@ export class XItemsTree extends LitElement {
         ${items}
       </svg>
     `;
+  }
+
+  clickHandler(item) {
+    if (this.clickFn != null) {
+      this.marker = new Marker({position: item.index});
+      return this.clickFn(item);
+    }
   }
 
   renderMarker(i ,coords) {
@@ -77,6 +88,13 @@ XItemsTree.styles = css`
   .item {
     stroke: black;
   }
+  .item.marked {
+    stroke: red;
+  }
+  .clickable {
+    cursor: pointer;
+    stroke-width: 2px;
+  }
   .value {
     font: normal 13px sans-serif;
     fill: black;
@@ -87,7 +105,7 @@ XItemsTree.styles = css`
   }
   .marker line {
     stroke: red;
-    stroke-width: 2;
+    stroke-width: 2px;
   }
 `;
 

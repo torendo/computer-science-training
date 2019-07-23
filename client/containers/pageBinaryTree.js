@@ -7,7 +7,7 @@ export class PageBinaryTree extends PageBase {
   constructor() {
     super();
     this.initItems(29);
-    this.initMarkers();
+    this.initMarker();
   }
 
   render() {
@@ -21,7 +21,7 @@ export class PageBinaryTree extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
       </div>
       <x-console class="main-console"></x-console>
-      <x-console class="trav-console" defaultMessage="—"></x-console>
+      <x-console class="console-stats" defaultMessage="—"></x-console>
       <x-items-tree .items=${this.items} .marker=${this.marker}></x-items-tree>
       <x-dialog>
         <label>Number: <input name="number" type="number"></label>
@@ -31,7 +31,7 @@ export class PageBinaryTree extends PageBase {
 
   firstUpdated() {
     this.console = this.querySelector('.main-console');
-    this.travConsole = this.querySelector('.trav-console');
+    this.travConsole = this.querySelector('.console-stats');
     this.dialog = this.querySelector('x-dialog');
   }
 
@@ -48,7 +48,7 @@ export class PageBinaryTree extends PageBase {
     this.items = arr;
   }
 
-  initMarkers() {
+  initMarker() {
     this.marker = new Marker({position: 0});
   }
 
@@ -93,7 +93,7 @@ export class PageBinaryTree extends PageBase {
     }
     yield `${isFound ? 'Have found' : 'Can\'t find'} node ${key}`;
     yield 'Search is complete';
-    this.initMarkers();
+    this.initMarker();
   }
 
   * iteratorIns() {
@@ -123,7 +123,7 @@ export class PageBinaryTree extends PageBase {
     } else {
       yield 'Can\'t insert: Level is too great';
     }
-    this.initMarkers();
+    this.initMarker();
   }
 
   * iteratorTrav() {
@@ -173,7 +173,7 @@ export class PageBinaryTree extends PageBase {
 
   * iteratorDel() {
     let key = 0;
-    yield 'Enter key of node to find';
+    yield 'Enter key of node to delete';
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
@@ -210,14 +210,14 @@ export class PageBinaryTree extends PageBase {
       yield 'Node was deleted';
     } else if (!rightChild || rightChild.value == null) { //if node has no right child
       yield 'Will replace node with its left subtree';
-      this.moveSubtree(leftChild.index, current.index);
+      PageBinaryTree.moveSubtree(leftChild.index, current.index, this.items);
       yield 'Node was replaced by its left subtree';
     } else if (!leftChild || leftChild.value == null) { //if node has no left child
       yield 'Will replace node with its right subtree';
-      this.moveSubtree(rightChild.index, current.index);
+      PageBinaryTree.moveSubtree(rightChild.index, current.index, this.items);
       yield 'Node was replaced by its right subtree';
     } else { //node has two children, find successor
-      const successor = this.getSuccessor(current.index);
+      const successor = PageBinaryTree.getSuccessor(current.index, this.items);
       yield `Will replace node with ${this.items[successor].value}`;
       const hasRightChild = this.items[2 * successor + 2] && this.items[2 * successor + 2].value != null;
       if (hasRightChild) {
@@ -225,28 +225,27 @@ export class PageBinaryTree extends PageBase {
       }
       current.moveFrom(this.items[successor]);
       if (hasRightChild) {
-        this.moveSubtree(2 * successor + 2, successor);
+        PageBinaryTree.moveSubtree(2 * successor + 2, successor, this.items);
         yield 'Removed node in 2-step process';
       } else {
         yield 'Node was replaced by successor';
       }
     }
-    this.initMarkers();
+    this.initMarker();
   }
 
-  getSuccessor(index) {
+  static getSuccessor(index, items) {
     let successor = index;
     let current = 2 * index + 2; //right child
-    while(this.items[current] && this.items[current].value != null) {
+    while(items[current] && items[current].value != null) {
       successor = current;
       current = 2 * current + 1; //left child
     }
     return successor;
   }
 
-  moveSubtree(from, to) {
+  static moveSubtree(from, to, items) {
     const tempItems = [];
-    const items = this.items;
     function recursiveMoveToTemp(from, to) {
       if (!items[from] || items[from].value == null) return;
       tempItems[to] = new Item(items[from]);
@@ -256,7 +255,7 @@ export class PageBinaryTree extends PageBase {
     }
     recursiveMoveToTemp(from, to);
     tempItems.forEach((item, index) => { //restore from temp
-      this.items[index].moveFrom(item);
+      items[index].moveFrom(item);
     });
   }
 }
