@@ -68,10 +68,7 @@ export class PageOrderedArray extends PageArray {
     yield `Will create empty array with ${length} cells`;
     const arr = [];
     for (let i = 0; i < length; i++) {
-      arr.push(new Item({
-        index: i,
-        value: null
-      }));
+      arr.push(new Item({index: i}));
     }
     this.items = arr;
     this.length = 0;
