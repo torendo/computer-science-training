@@ -14,6 +14,7 @@ export class PageHashTable extends PageBase {
     this.length = 0;
     this.initItems();
     this.initMarkers();
+    this.DELETED = 'Del';
   }
 
   render() {
@@ -130,12 +131,9 @@ export class PageHashTable extends PageBase {
     let index = this.hashFn(key);
     let counter = 1;
     this.markers[0].position = index;
-    while (this.items[index].value != null) {
+    while (this.items[index].value != null && this.items[index].value !== this.DELETED) {
       yield `Cell ${index} occupied; going to next cell`;
-      index++;
-      if (index === this.items.length) {
-        index = 0;
-      }
+      if (++index === this.items.length) index = 0;
       this.markers[0].position = index;
       yield `Searching for unoccupied cell; step was ${counter++}`;
     }
@@ -144,6 +142,31 @@ export class PageHashTable extends PageBase {
     this.length++;
     this.markers[0].position = 0;
     return `Insertion completed; total items ${this.length}`;
+  }
+
+  * iteratorLinearProbe(key) {
+    let index = this.hashFn(key);
+    let foundAt;
+    this.markers[0].position = index;
+    yield `Looking for item with key ${key} at index ${index}`;
+    if (this.items[index].value === key) {
+      foundAt = index;
+    } else if (this.items[index].value != null) {
+      yield 'No match; will start probe';
+      let counter = 0;
+      while (foundAt == null) {
+        if (++counter === this.items.length) break;
+        if (++index === this.items.length) index = 0;
+        if (this.items[index].value == null) break;
+        this.markers[0].position = index;
+        if (this.items[index].value === key) {
+          foundAt = index;
+        } else {
+          yield `Checking next cell; step was ${counter}`;
+        }
+      }
+    }
+    return foundAt;
   }
 
   * iteratorFind() {
@@ -157,36 +180,15 @@ export class PageHashTable extends PageBase {
     if (key > 1000 || key < 0) {
       return 'ERROR: use key between 0 and 999';
     }
-    let index = this.hashFn(key);
     let foundAt;
-    this.markers[0].position = index;
-    yield `Looking for item with key ${key} at index ${index}`;
-    if (this.items[index].value === key) {
-      foundAt = index;
-    } else if (this.items[index].value != null) {
-      yield 'No match; will start probe';
-
-
-      //TODO: move to separated iterator iteratorLinearProbe
-      //and use it in delete iterator
-      let counter = 1;
-      while (foundAt == null) {
-        index++;
-        if (index === this.items.length) {
-          index = 0;
-        }
-        if (this.items[index].value == null  || counter === this.items.length) {
-          break;
-        }
-        this.markers[0].position = index;
-        if (this.items[index].value === key) {
-          foundAt = index;
-        } else {
-          yield `Checking next cell; step was ${counter++}`;
-        }
+    const iterator = this.iteratorLinearProbe(key, false);
+    while (true) {
+      const iteration = iterator.next();
+      if (iteration.done) {
+        foundAt = iteration.value;
+        break;
       }
-
-
+      yield iteration.value;
     }
     if (foundAt == null) {
       yield `Can't locate item with key ${key}`;
@@ -209,30 +211,24 @@ export class PageHashTable extends PageBase {
     }
     yield `Looking for item with key ${key}`;
     let foundAt;
-    let deletedCount = 0;
-    let isAdditional = false;
-    for (let i = 0; i < this.length; i++) {
-      this.markers[0].position = i;
-      if (this.items[i].value === key) {
-        foundAt = i;
-        deletedCount++;
-        this.items[i].clear();
-        yield `Have found and deleted ${isAdditional ? 'additioal' : ''} item at index = ${foundAt}`;
-        if (this.dups.checked) isAdditional = true;
-      } else if (deletedCount > 0) {
-        yield `Will shift item ${deletedCount} spaces`;
-        this.items[i - deletedCount].moveFrom(this.items[i]);
-      } else {
-        yield `Checking ${isAdditional ? 'for additioal matches' : 'next cell'}; index = ${i + 1}`;
+    const iterator = this.iteratorLinearProbe(key, true);
+    while (true) {
+      const iteration = iterator.next();
+      if (iteration.done) {
+        foundAt = iteration.value;
+        break;
       }
+      yield iteration.value;
     }
-    this.length -= deletedCount;
-    this.markers[0].position = 0;
-    if (deletedCount > 0) {
-      return `Shift${deletedCount > 1 ? 's' : ''} complete; no ${isAdditional ? 'more' : ''} items to delete`;
+    if (foundAt == null) {
+      yield `Can't locate item with key ${key}`;
     } else {
-      return `No ${isAdditional ? 'additioal' : ''} items with key ${key}`;
+      this.items[foundAt].value = this.DELETED;
+      this.items[foundAt].color = null;
+      this.length--;
+      yield `Deleted item with key ${key}; total items ${this.length}`;
     }
+    this.markers[0].position = 0;
   }
 }
 
