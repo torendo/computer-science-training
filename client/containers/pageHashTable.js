@@ -1,9 +1,8 @@
 import {html} from 'lit-element';
-import {getUniqueRandomNumber, getUniqueRandomArray} from '../utils';
+import {getUniqueRandomArray} from '../utils';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {PageBase} from './pageBase';
-import {PageOrderedArray} from './pageOrderedArray';
 
 export class PageHashTable extends PageBase {
   constructor() {
@@ -26,6 +25,7 @@ export class PageHashTable extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
+        ${this.renderAdditionalControl()}
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items} .markers=${this.markers}></x-items-horizontal>
@@ -35,9 +35,18 @@ export class PageHashTable extends PageBase {
     `;
   }
 
+  renderAdditionalControl() {
+    return html`
+      <label><input type="radio" name="algorithm" class="algorithm algorithm_linear" disabled checked>Linear</label>
+      <label><input type="radio" name="algorithm" class="algorithm algorithm_quad" disabled>Quad</label>
+    `;
+  }
+
   firstUpdated() {
     this.console = this.querySelector('x-console');
     this.dialog = this.querySelector('x-dialog');
+    this.quad = this.querySelector('.algorithm_quad');
+    this.linear = this.querySelector('.algorithm_linear');
   }
 
   initItems() {
@@ -50,7 +59,7 @@ export class PageHashTable extends PageBase {
     this.length = lengthFill;
     this.items = arr;
     getUniqueRandomArray(lengthFill, 1000).forEach(value => {
-      arr[this.getIndexLinearProbe(value)].setValue(value);
+      arr[this.probeIndex(value)].setValue(value);
     });
   }
 
@@ -64,11 +73,15 @@ export class PageHashTable extends PageBase {
     return value % this.items.length;
   }
 
-  getIndexLinearProbe(value) {
+  probeIndex(value) {
     let index = this.hashFn(value);
+    let step = 1;
+    let counter = 0;
     while (this.items[index].value != null) {
-      index++;
-      if (index === this.items.length) index = 0;
+      counter++;
+      if (this.quad && this.quad.checked) step = counter**2;
+      index += step;
+      if (index >= this.items.length) index -= this.items.length;
     }
     return index;
   }
@@ -84,6 +97,11 @@ export class PageHashTable extends PageBase {
     if (length > 60 || length < 0) {
       return 'ERROR: use size between 0 and 60';
     }
+    this.quad.disabled = false;
+    this.linear.disabled = false;
+    yield 'Please, select probe method';
+    this.quad.disabled = true;
+    this.linear.disabled = true;
     yield `Will create empty array with ${length} cells`;
     const arr = [];
     for (let i = 0; i < length; i++) {
@@ -107,7 +125,7 @@ export class PageHashTable extends PageBase {
     }
     yield `Will fill in ${length} items`;
     getUniqueRandomArray(length, 1000).forEach(value => {
-      this.items[this.getIndexLinearProbe(value)].setValue(value);
+      this.items[this.probeIndex(value)].setValue(value);
     });
     this.length = length;
     return `Fill completed; total items = ${length}`;
@@ -129,13 +147,17 @@ export class PageHashTable extends PageBase {
     }
     yield `Will insert item with key ${key}`;
     let index = this.hashFn(key);
-    let counter = 1;
+    let step = 1;
+    let counter = 0;
     this.markers[0].position = index;
     while (this.items[index].value != null && this.items[index].value !== this.DELETED) {
       yield `Cell ${index} occupied; going to next cell`;
-      if (++index === this.items.length) index = 0;
+      counter++;
+      if (this.quad.checked) step = counter**2;
+      index += step;
+      if (index >= this.items.length) index -= this.items.length;
       this.markers[0].position = index;
-      yield `Searching for unoccupied cell; step was ${counter++}`;
+      yield `Searching for unoccupied cell; step was ${step}`;
     }
     this.items[index].setValue(key);
     yield `Inserted item with key ${key} at index ${index}`;
@@ -144,7 +166,7 @@ export class PageHashTable extends PageBase {
     return `Insertion completed; total items ${this.length}`;
   }
 
-  * iteratorLinearProbe(key) {
+  * iteratorProbe(key) {
     let index = this.hashFn(key);
     let foundAt;
     this.markers[0].position = index;
@@ -153,16 +175,19 @@ export class PageHashTable extends PageBase {
       foundAt = index;
     } else if (this.items[index].value != null) {
       yield 'No match; will start probe';
+      let step = 1;
       let counter = 0;
       while (foundAt == null) {
         if (++counter === this.items.length) break;
-        if (++index === this.items.length) index = 0;
+        if (this.quad.checked) step = counter**2;
+        index += step;
+        if (index >= this.items.length) index -= this.items.length;
         if (this.items[index].value == null) break;
         this.markers[0].position = index;
         if (this.items[index].value === key) {
           foundAt = index;
         } else {
-          yield `Checking next cell; step was ${counter}`;
+          yield `Checking next cell; step was ${step}`;
         }
       }
     }
@@ -181,7 +206,7 @@ export class PageHashTable extends PageBase {
       return 'ERROR: use key between 0 and 999';
     }
     let foundAt;
-    const iterator = this.iteratorLinearProbe(key, false);
+    const iterator = this.iteratorProbe(key, false);
     while (true) {
       const iteration = iterator.next();
       if (iteration.done) {
@@ -211,7 +236,7 @@ export class PageHashTable extends PageBase {
     }
     yield `Looking for item with key ${key}`;
     let foundAt;
-    const iterator = this.iteratorLinearProbe(key, true);
+    const iterator = this.iteratorProbe(key, true);
     while (true) {
       const iteration = iterator.next();
       if (iteration.done) {
