@@ -1,5 +1,5 @@
 import {html} from 'lit-element';
-import {getUniqueRandomArray} from '../utils';
+import {getUniqueRandomArray, isPrime} from '../utils';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {PageBase} from './pageBase';
@@ -39,18 +39,20 @@ export class PageHashTable extends PageBase {
     return html`
       <label><input type="radio" name="algorithm" class="algorithm algorithm_linear" disabled checked>Linear</label>
       <label><input type="radio" name="algorithm" class="algorithm algorithm_quad" disabled>Quad</label>
+      <label><input type="radio" name="algorithm" class="algorithm algorithm_double" disabled>Double</label>
     `;
   }
 
   firstUpdated() {
     this.console = this.querySelector('x-console');
     this.dialog = this.querySelector('x-dialog');
+    this.double = this.querySelector('.algorithm_double');
     this.quad = this.querySelector('.algorithm_quad');
     this.linear = this.querySelector('.algorithm_linear');
   }
 
   initItems() {
-    const length = 60;
+    const length = 59;
     const lengthFill = 30;
     const arr = [];
     for (let i = 0; i < length; i++) {
@@ -73,12 +75,17 @@ export class PageHashTable extends PageBase {
     return value % this.items.length;
   }
 
+  doubleHashFn(value) {
+    return 5 - value % 5;
+  }
+
   probeIndex(value) {
     let index = this.hashFn(value);
     let step = 1;
     let counter = 0;
     while (this.items[index].value != null) {
       counter++;
+      if (this.double && this.double.checked) step = this.doubleHashFn(value);
       if (this.quad && this.quad.checked) step = counter**2;
       index += step;
       if (index >= this.items.length) index -= this.items.length;
@@ -88,7 +95,7 @@ export class PageHashTable extends PageBase {
 
   * iteratorNew() {
     let length = 0;
-    yield 'Enter size of array to create';
+    yield 'Enter size of array to create. Closest prime number will be selected';
     this.dialog.open().then(formData => {
       length = Number(formData.get('number'));
       this.iterate();
@@ -97,9 +104,14 @@ export class PageHashTable extends PageBase {
     if (length > 60 || length < 0) {
       return 'ERROR: use size between 0 and 60';
     }
+    while (!isPrime(length)) {
+      length--;
+    }
+    this.double.disabled = false;
     this.quad.disabled = false;
     this.linear.disabled = false;
     yield 'Please, select probe method';
+    this.double.disabled = true;
     this.quad.disabled = true;
     this.linear.disabled = true;
     yield `Will create empty array with ${length} cells`;
@@ -153,6 +165,7 @@ export class PageHashTable extends PageBase {
     while (this.items[index].value != null && this.items[index].value !== this.DELETED) {
       yield `Cell ${index} occupied; going to next cell`;
       counter++;
+      if (this.double.checked) step = this.doubleHashFn(key);
       if (this.quad.checked) step = counter**2;
       index += step;
       if (index >= this.items.length) index -= this.items.length;
@@ -179,6 +192,7 @@ export class PageHashTable extends PageBase {
       let counter = 0;
       while (foundAt == null) {
         if (++counter === this.items.length) break;
+        if (this.double.checked) step = this.doubleHashFn(key);
         if (this.quad.checked) step = counter**2;
         index += step;
         if (index >= this.items.length) index -= this.items.length;

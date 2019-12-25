@@ -19,7 +19,7 @@ export class XApp extends LitElement {
       {path: '/quickSort2', component: 'page-quick-sort-2', title: 'Quick Sort 2'},
       {path: '/binaryTree', component: 'page-binary-tree', title: 'Binary Tree'},
       {path: '/redBlackTree', component: 'page-redblack-tree', title: 'Red-Black Tree'},
-      {path: '/hashTable', component: 'page-hash-table', title: 'Hash Table'}
+      {path: '/hashTable', component: 'page-hash-table', title: 'Hash Table (linear/quad/double)'}
     ];
     return html`
       <h3>Workshop applications</h3>
