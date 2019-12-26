@@ -7,10 +7,6 @@ import {PageBase} from './pageBase';
 export class PageHashTable extends PageBase {
   constructor() {
     super();
-    this.title = 'Array';
-    this.items = [];
-    this.markers = [];
-    this.length = 0;
     this.initItems();
     this.initMarkers();
     this.DELETED = 'Del';
@@ -18,7 +14,7 @@ export class PageHashTable extends PageBase {
 
   render() {
     return html`
-      <h4>${this.title}</h4>
+      <h4>Hash Table (linear/quad/double)</h4>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
@@ -66,9 +62,7 @@ export class PageHashTable extends PageBase {
   }
 
   initMarkers() {
-    this.markers = [
-      new Marker({position: 0, size: 1, color: 'red'})
-    ];
+    this.markers = [new Marker({position: 0})];
   }
 
   hashFn(value) {

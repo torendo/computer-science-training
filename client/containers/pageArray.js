@@ -60,9 +60,7 @@ export class PageArray extends PageBase {
   }
 
   initMarkers() {
-    this.markers = [
-      new Marker({position: 0, size: 1, color: 'red'})
-    ];
+    this.markers = [new Marker({position: 0})];
   }
 
   * iteratorNew() {
