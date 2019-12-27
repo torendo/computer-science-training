@@ -26,4 +26,5 @@ import './containers/pageQuickSort2';
 import './containers/pageBinaryTree';
 import './containers/pageRedBlackTree';
 import './containers/pageHashTable';
+import './containers/pageHashChain';
 import './containers/footer';
