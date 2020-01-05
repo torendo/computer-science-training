@@ -37,7 +37,7 @@ export class PageBinaryTree extends PageBase {
 
   initItems(length) {
     const arr = (new Array(31)).fill().map((_, i) => new Item({index: i}));
-    for (let i = 0; i <= length; i++) {
+    for (let i = 0; i <= length - 1; i++) {
       let i = 0;
       const value = Math.floor(Math.random() * 100);
       while(arr[i] && arr[i].value != null) {
