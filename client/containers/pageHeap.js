@@ -126,7 +126,7 @@ export class PageHeap extends PageBase {
     const removedKey = this.items[index].value;
     yield `Will remove largest node (${removedKey})`;
     this.items[index].setValue('', '#ffffff');
-    const lastNode = this.items[this.items.length - 1];
+    const lastNode = this.items[this.length - 1];
     yield `Will replace with "last" node (${lastNode.value})`;
     this.items[index].moveFrom(lastNode);
     this.length--;
@@ -137,9 +137,8 @@ export class PageHeap extends PageBase {
 
     //Trickle down algorithm
     //TODO: move it to dedicated method
-
-    let largerChild;
     while(index < Math.floor(this.length / 2)) { //node has at least one child
+      let largerChild;
       const leftChild = index * 2 + 1;
       const rightChild = leftChild + 1;
       if (rightChild < this.length && this.items[leftChild].value < this.items[rightChild].value) {
@@ -154,23 +153,40 @@ export class PageHeap extends PageBase {
       }
       this.items[largerChild].swapWith(this.items[index]);
       index = largerChild;
+      this.marker.position = index;
       yield 'Moved node up';
     }
-    if (largerChild == null) {
-      yield 'Node has no children, so done';
-    } else if (!this.items[index * 2 + 1] || this.items[index * 2 + 1].value == nullthis.items[index * 2 + 1]) {
+
+    if (Math.floor(Math.log2(this.length)) === Math.floor(Math.log2(index + 1))) {
       yield 'Reached bottom row, so done';
+    } else if (index >= Math.floor(this.length / 2)) {
+      yield 'Node has no children, so done';
     }
     this.items[index] = rootNode;
-    //Inserted "last" node
-    //Finished deleting largest node (${value})
+    yield 'Inserted "last" node';
+    yield `Finished deleting largest node (${removedKey})`;
+    this.marker.position = 0;
   }
 
   * iteratorChng() {
-    //Click on node to be changed
-    //Type node's new value
-    // ---dialog---
-    //Will change node from ${value} to ${value}
+    yield 'Click on node to be changed';
+    const top = this.marker.position;
+    yield 'Type node\'s new value';
+    let key = 0;
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (key > 99 || key < 0) {
+      return 'ERROR: can\'t insert. Need key between 0 and 999';
+    }
+    yield `Will change node from ${this.items[top].value} to ${key}`;
+    if (this.items[top].value > key) {
+
+    } else {
+
+    }
     //
     //Key decreased; will trickle down
     // ---trickle down---
