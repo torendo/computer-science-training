@@ -81,6 +81,22 @@ export class PageHeap extends PageBase {
     this.initItems(length);
   }
 
+  * trickleUp(key, index) {
+    this.items[index].setValue('', '#ffffff');
+    yield 'Saved new node; will trickle up';
+    let parent = Math.floor((index - 1) / 2);
+    while(index >= 0 && this.items[parent] && this.items[parent].value < key) {
+      this.items[parent].swapWith(this.items[index]);
+      this.marker.position = parent;
+      yield 'Moved empty node up';
+      index = parent;
+      parent = Math.floor((parent - 1) / 2);
+    }
+    yield 'Trickle up completed';
+    this.items[index].setValue(key);
+    this.marker.position = index;
+  }
+
   * iteratorIns() {
     if (this.items.length === this.length) {
       return 'ERROR: can\'t insert, no room in display';
@@ -96,47 +112,26 @@ export class PageHeap extends PageBase {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }
     yield `Will insert node with key ${key}`;
-
-    //Trickle up algorithm
-    //TODO: move it to dedicated method
-    let bottom = this.items[this.length].setValue(key);
-    this.marker.position = this.length;
-    yield 'Placed node in first empty cell';
     let index = this.length;
-    let parent = Math.floor((this.length - 1) / 2);
-    bottom.setValue('', '#ffffff');
-    yield 'Saved new node; will trickle up';
-    while(index >= 0 && this.items[parent] && this.items[parent].value < key) {
-      this.items[parent].swapWith(this.items[index]);
-      this.marker.position = parent;
-      yield 'Moved empty node up';
-      index = parent;
-      parent = Math.floor((parent - 1) / 2);
-    }
-    yield 'Trickle up completed';
     this.items[index].setValue(key);
     this.marker.position = index;
+    yield 'Placed node in first empty cell';
+    const iterator = this.trickleUp(key, index);
+    while (true) {
+      const iteration = iterator.next();
+      if (iteration.done) break;
+      yield iteration.value;
+    }
     yield 'Inserted new node in empty node';
     this.marker.position = 0;
     this.length++;
   }
 
-  * iteratorRem() {
-    let index = 0;
-    const removedKey = this.items[index].value;
-    yield `Will remove largest node (${removedKey})`;
-    this.items[index].setValue('', '#ffffff');
-    const lastNode = this.items[this.length - 1];
-    yield `Will replace with "last" node (${lastNode.value})`;
-    this.items[index].moveFrom(lastNode);
-    this.length--;
+  * trickleDown(index, isChg) {
     yield 'Will trickle down';
     const rootNode = new Item(this.items[index]);
     this.items[index].setValue('', '#ffffff');
-    yield `Saved root node (${rootNode.value})`;
-
-    //Trickle down algorithm
-    //TODO: move it to dedicated method
+    yield `Saved ${isChg ? 'changed' : 'root'} node (${rootNode.value})`;
     while(index < Math.floor(this.length / 2)) { //node has at least one child
       let largerChild;
       const leftChild = index * 2 + 1;
@@ -148,22 +143,38 @@ export class PageHeap extends PageBase {
       }
       yield `Key ${this.items[largerChild].value} is larger child`;
       if (this.items[largerChild].value < rootNode.value) {
-        yield '"Last" node larger; will insert it';
+        yield `${isChg ? 'Changed' : '"Last"'} node larger; will insert it`;
         break;
       }
       this.items[largerChild].swapWith(this.items[index]);
       index = largerChild;
       this.marker.position = index;
-      yield 'Moved node up';
+      yield 'Moved empty node down';
     }
-
     if (Math.floor(Math.log2(this.length)) === Math.floor(Math.log2(index + 1))) {
       yield 'Reached bottom row, so done';
     } else if (index >= Math.floor(this.length / 2)) {
       yield 'Node has no children, so done';
     }
     this.items[index] = rootNode;
-    yield 'Inserted "last" node';
+    yield `Inserted ${isChg ? 'changed' : '"last"'} node`;
+  }
+
+  * iteratorRem() {
+    let index = 0;
+    const removedKey = this.items[index].value;
+    yield `Will remove largest node (${removedKey})`;
+    this.items[index].setValue('', '#ffffff');
+    const lastNode = this.items[this.length - 1];
+    yield `Will replace with "last" node (${lastNode.value})`;
+    this.items[index].moveFrom(lastNode);
+    this.length--;
+    const iterator = this.trickleDown(index);
+    while (true) {
+      const iteration = iterator.next();
+      if (iteration.done) break;
+      yield iteration.value;
+    }
     yield `Finished deleting largest node (${removedKey})`;
     this.marker.position = 0;
   }
@@ -171,6 +182,7 @@ export class PageHeap extends PageBase {
   * iteratorChng() {
     yield 'Click on node to be changed';
     const top = this.marker.position;
+    const changingKey = this.items[top].value;
     yield 'Type node\'s new value';
     let key = 0;
     this.dialog.open().then(formData => {
@@ -181,19 +193,28 @@ export class PageHeap extends PageBase {
     if (key > 99 || key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }
-    yield `Will change node from ${this.items[top].value} to ${key}`;
+    yield `Will change node from ${changingKey} to ${key}`;
     if (this.items[top].value > key) {
-
+      this.items[top].setValue(key);
+      yield 'Key decreased; will trickle down';
+      const iterator = this.trickleDown(top, true);
+      while (true) {
+        const iteration = iterator.next();
+        if (iteration.done) break;
+        yield iteration.value;
+      }
     } else {
-
+      this.items[top].setValue(key);
+      yield 'Key increased; will trickle up';
+      const iterator = this.trickleUp(key, top);
+      while (true) {
+        const iteration = iterator.next();
+        if (iteration.done) break;
+        yield iteration.value;
+      }
     }
-    //
-    //Key decreased; will trickle down
-    // ---trickle down---
-    //OR
-    //Key increased; will trickle up
-    // ---trickle up---
-    //Finished changing node (${value})
+    yield `Finished changing node (${changingKey})`;
+    this.marker.position = 0;
   }
 }
 
