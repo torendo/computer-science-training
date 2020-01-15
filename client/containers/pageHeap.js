@@ -128,7 +128,6 @@ export class PageHeap extends PageBase {
   }
 
   * trickleDown(index, isChg) {
-    yield 'Will trickle down';
     const rootNode = new Item(this.items[index]);
     this.items[index].setValue('', '#ffffff');
     yield `Saved ${isChg ? 'changed' : 'root'} node (${rootNode.value})`;
@@ -169,6 +168,7 @@ export class PageHeap extends PageBase {
     yield `Will replace with "last" node (${lastNode.value})`;
     this.items[index].moveFrom(lastNode);
     this.length--;
+    yield 'Will trickle down';
     const iterator = this.trickleDown(index);
     while (true) {
       const iteration = iterator.next();
