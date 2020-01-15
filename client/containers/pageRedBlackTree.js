@@ -12,7 +12,7 @@ export class PageRedBlackTree extends PageBase {
 
   render() {
     return html`
-      <h4>Link List</h4>
+      <h4>Red-Black Tree</h4>
       <div class="controlpanel">
         <x-button .callback=${this.init.bind(this)}>Start</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>

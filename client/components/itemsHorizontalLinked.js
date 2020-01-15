@@ -4,7 +4,8 @@ export class XItemsHorizontalLinked extends LitElement {
   static get properties() {
     return {
       items: {type: Array},
-      marker: {type: Object}
+      marker: {type: Object},
+      narrow: {type: Boolean}
     };
   }
 
@@ -19,7 +20,7 @@ export class XItemsHorizontalLinked extends LitElement {
       ${this.items.map((item, i) => html`
         <div class="item ${item.mark ? 'mark' : ''} ${item.value == null ? 'no-data': ''}">
           <div class="value" style="${item.color ? 'background-color:' + item.color : ''}">
-            ${item.value}
+            ${item.value != null ? item.value : html`&nbsp;`}
           </div>
           <div class="marker_container">
             ${this.marker.position === (item.index != null ? item.index : i) ? html`<div class="marker"></div>` : ''}
@@ -38,6 +39,19 @@ XItemsHorizontalLinked.styles = css`
     align-content: flex-start;
     height: 19em;
     max-width: 600px;
+  }
+  :host([narrow]),
+  :host([narrow]) .item {
+    height: 3em;
+  }
+  :host([narrow]) .item:first-child {
+    margin-left: 0.6em;
+  }
+  :host([narrow]) .item:first-child:after {
+    display: none;
+  }
+  :host([narrow]) .marker:after {
+    height: 10px;
   }
   .item {
     display: flex;

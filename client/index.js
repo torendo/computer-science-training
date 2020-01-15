@@ -25,4 +25,9 @@ import './containers/pageQuickSort1';
 import './containers/pageQuickSort2';
 import './containers/pageBinaryTree';
 import './containers/pageRedBlackTree';
+import './containers/pageHashTable';
+import './containers/pageHashChain';
+import './containers/pageHeap';
 import './containers/footer';
+
+//TODO: move code from app here and imports spread to all files, where using some component, should be exact import
