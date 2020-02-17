@@ -21,7 +21,8 @@ export class XApp extends LitElement {
       {path: '/redBlackTree', component: 'page-redblack-tree', title: 'Red-Black Tree'},
       {path: '/hashTable', component: 'page-hash-table', title: 'Hash Table'},
       {path: '/hashChain', component: 'page-hash-chain', title: 'Hash Chain'},
-      {path: '/heap', component: 'page-heap', title: 'Heap'}
+      {path: '/heap', component: 'page-heap', title: 'Heap'},
+      {path: '/graphN', component: 'page-graph-n', title: 'Non-Directed Non-Weighted Graph '}
     ];
     return html`
       <h3>Workshop applications</h3>
