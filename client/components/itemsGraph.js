@@ -27,7 +27,24 @@ export class XItemsGraph extends LitElement {
   }
 
   render() {
-    const items = this.items.map(item => svg`
+    return svg`
+      <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg"
+        @dblclick=${this.dblclickHandler}
+        @mousedown="${(e) => e.preventDefault()}"
+        @mouseup="${this.dragendHandler}"
+        @mousemove="${this.dragHandler}"
+      >
+        ${this.dragOpts != null ? svg`
+          <line class="line" x1="${this.dragOpts.dragItem.x}" y1="${this.dragOpts.dragItem.y}" x2="${this.dragOpts.x}" y2="${this.dragOpts.y}">
+        ` : ''}
+        ${this.drawConnections()}
+        ${this.drawItems()}
+      </svg>
+    `;
+  }
+
+  drawItems() {
+    return this.items.map(item => svg`
       <g fill="${item.color}">
         <g
           class="clickable"
@@ -39,35 +56,23 @@ export class XItemsGraph extends LitElement {
           <text class="value" x="${item.x}" y="${item.y + 2}" text-anchor="middle" alignment-baseline="middle">${item.value}</text>
         </g>
       </g>
-      ${this.drawConnections(item)}
     `);
-    return svg`
-      <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg"
-        @dblclick=${this.dblclickHandler}
-        @mousedown="${(e) => e.preventDefault()}"
-        @mouseup="${this.dragendHandler}"
-        @mousemove="${this.dragHandler}"
-      >
-        ${this.dragOpts != null ? svg`
-          <line class="line" x1="${this.dragOpts.dragItem.x}" y1="${this.dragOpts.dragItem.y}" x2="${this.dragOpts.x}" y2="${this.dragOpts.y}">
-        ` : ''}
-        ${items}
-      </svg>
-    `;
   }
 
-
-  drawConnections(item) {
-    //TODO: draw connections below all items, so rework this
-    const connections = this.connections.get(item);
+  drawConnections() {
     const lines = [];
-    if (connections != null) {
+    this.connections.forEach((connections, item) => {
       for (let connection of connections) {
-        lines.push(svg`
-          <line class="line" x1="${item.x}" y1="${item.y}" x2="${connection.x}" y2="${connection.y}">
-        `);
+        //TODO: maybe remove opposite connections if it exists
+
+        // if (this.connections.has(connection) && !this.connections.get(connection).has(item)) {
+          lines.push(svg`
+            <line class="line" x1="${item.x}" y1="${item.y}" x2="${connection.x}" y2="${connection.y}">
+          `);
+        // }
+
       }
-    }
+    });
     return lines;
   }
 
