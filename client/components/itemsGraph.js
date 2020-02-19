@@ -63,14 +63,9 @@ export class XItemsGraph extends LitElement {
     const lines = [];
     this.connections.forEach((connections, item) => {
       for (let connection of connections) {
-        //TODO: maybe remove opposite connections if it exists
-
-        // if (this.connections.has(connection) && !this.connections.get(connection).has(item)) {
-          lines.push(svg`
-            <line class="line" x1="${item.x}" y1="${item.y}" x2="${connection.x}" y2="${connection.y}">
-          `);
-        // }
-
+        lines.push(svg`
+          <line class="line" x1="${item.x}" y1="${item.y}" x2="${connection.x}" y2="${connection.y}">
+        `);
       }
     });
     return lines;
