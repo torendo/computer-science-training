@@ -1,4 +1,5 @@
 import './components/itemsGraph';
+import './components/itemsTable';
 import './components/itemsTree';
 import './components/itemsVertical';
 import './components/itemsHorizontal';

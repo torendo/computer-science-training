@@ -1,13 +1,12 @@
 import {PageBase} from './pageBase';
 import {html} from 'lit-element';
 import {Item} from '../classes/item';
-import {Marker} from '../classes/marker';
 
 export class PageGraphN extends PageBase {
   constructor() {
     super();
     this.initItems();
-    this.initMarker();
+    this.connections = new Map();
   }
   render() {
     return html`
@@ -20,15 +19,11 @@ export class PageGraphN extends PageBase {
         <x-button .callback=${() => {}}>View</x-button>
       </div>
       <x-console class="main-console"></x-console>
-      <x-items-graph .items=${this.items} .marker=${this.marker} .clickFn=${item => this.marker.position = item.index}></x-items-graph>
+      <x-items-graph .items=${this.items} .connections=${this.connections} .clickFn=${item => this.marker.position = item.index} .markEdges="${this.markEdges}"></x-items-graph>
       <x-dialog>
         <label>Number: <input name="number" type="number"></label>
       </x-dialog>
     `;
-  }
-
-  initMarker() {
-    this.marker = new Marker({position: 0});
   }
 
   firstUpdated() {

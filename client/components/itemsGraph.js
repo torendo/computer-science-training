@@ -14,8 +14,8 @@ export class XItemsGraph extends LitElement {
     return {
       items: {type: Array},
       connections: {type: Array},
-      marker: {type: Object},
-      clickFn: {type: Function}
+      clickFn: {type: Function},
+      markEdges: {type: Boolean}
     };
   }
 
@@ -63,8 +63,9 @@ export class XItemsGraph extends LitElement {
     const lines = [];
     this.connections.forEach((connections, item) => {
       for (let connection of connections) {
+        const markLine = this.markEdges && connection.mark && item.mark;
         lines.push(svg`
-          <line class="line" x1="${item.x}" y1="${item.y}" x2="${connection.x}" y2="${connection.y}">
+          <line class="line ${markLine ? 'marked' : ''}" x1="${item.x}" y1="${item.y}" x2="${connection.x}" y2="${connection.y}">
         `);
       }
     });
@@ -115,9 +116,6 @@ export class XItemsGraph extends LitElement {
 
   clickHandler(item) {
     if (this.clickFn != null) {
-
-      //TODO: marker change position
-
       return this.clickFn(item);
     }
   }
@@ -138,6 +136,7 @@ XItemsGraph.styles = css`
   }
   .item.marked {
     stroke: red;
+    stroke-width: 2px;
   }
   .clickable {
     cursor: pointer;
@@ -150,8 +149,7 @@ XItemsGraph.styles = css`
   .line {
     stroke: black;
   }
-  .marker line {
-    stroke: red;
+  .line.marked {
     stroke-width: 2px;
   }
 `;
