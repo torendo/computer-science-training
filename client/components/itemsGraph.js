@@ -13,7 +13,7 @@ export class XItemsGraph extends LitElement {
   static get properties() {
     return {
       items: {type: Array},
-      connections: {type: Array},
+      connections: {type: Map},
       clickFn: {type: Function},
       markEdges: {type: Boolean}
     };
@@ -125,7 +125,8 @@ XItemsGraph.styles = css`
   :host {
     display: block;
     height: 400px;
-    width: 600px;    
+    width: 600px;
+    border: 1px gray solid;
   }
   svg {
     width: 100%;

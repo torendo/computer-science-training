@@ -7,6 +7,7 @@ export class PageGraphN extends PageBase {
     super();
     this.initItems();
     this.connections = new Map();
+    this.markEdges = false;
   }
   render() {
     return html`
@@ -19,16 +20,13 @@ export class PageGraphN extends PageBase {
         <x-button .callback=${() => {}}>View</x-button>
       </div>
       <x-console class="main-console"></x-console>
-      <x-items-graph .items=${this.items} .connections=${this.connections} .clickFn=${item => this.marker.position = item.index} .markEdges="${this.markEdges}"></x-items-graph>
-      <x-dialog>
-        <label>Number: <input name="number" type="number"></label>
-      </x-dialog>
+      <x-items-graph .items=${this.items} .connections=${this.connections} .markEdges="${this.markEdges} .clickFn=${item => this.marker.position = item.index}"></x-items-graph>
+      <x-items-table .items=${this.items} .connections=${this.connections}></x-items-table>
     `;
   }
 
   firstUpdated() {
     this.console = this.querySelector('.main-console');
-    this.dialog = this.querySelector('x-dialog');
   }
 
   * iteratorFill() {
