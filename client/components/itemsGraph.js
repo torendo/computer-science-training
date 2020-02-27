@@ -12,18 +12,12 @@ class PlacedItem extends Item {
 export class XItemsGraph extends LitElement {
   static get properties() {
     return {
+      limit: {type: Number},
       items: {type: Array},
       connections: {type: Map},
       clickFn: {type: Function},
       markEdges: {type: Boolean}
     };
-  }
-
-  constructor() {
-    super();
-    this.items = [];
-    this.connections = new Map();
-    this.dragOpts = null;
   }
 
   render() {
@@ -73,7 +67,7 @@ export class XItemsGraph extends LitElement {
   }
 
   dblclickHandler(e) {
-    if (this.dragOpts != null) return;
+    if (this.dragOpts != null || this.limit === this.items.length) return;
     const index = this.items.length;
     const item = new PlacedItem({
       index,
@@ -81,7 +75,10 @@ export class XItemsGraph extends LitElement {
       y: e.offsetY
     });
     item.setValue(String.fromCharCode(65 + index));
-    this.items = [...this.items, item];
+    this.items.push(item);
+    this.connections.set(item, new Set());
+    this.dispatchEvent(new Event('changed'));
+    this.requestUpdate();
   }
 
   dragstartHandler(e, item) {
@@ -102,15 +99,11 @@ export class XItemsGraph extends LitElement {
   dragendHandler(e, item) {
     if (this.dragOpts && item && item !== this.dragOpts.dragItem) {
       const dragItem = this.dragOpts.dragItem;
-      if (this.connections.has(dragItem)) {
-        this.connections.get(dragItem).add(item);
-      } else {
-        const value = new Set();
-        value.add(item);
-        this.connections.set(dragItem, value);
-      }
+      this.connections.get(dragItem).add(item);
+      this.connections.get(item).add(dragItem);
     }
     this.dragOpts = null;
+    this.dispatchEvent(new Event('changed'));
     this.requestUpdate();
   }
 

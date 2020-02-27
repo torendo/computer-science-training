@@ -20,13 +20,29 @@ export class PageGraphN extends PageBase {
         <x-button .callback=${() => {}}>View</x-button>
       </div>
       <x-console class="main-console"></x-console>
-      <x-items-graph .items=${this.items} .connections=${this.connections} .markEdges="${this.markEdges} .clickFn=${item => this.marker.position = item.index}"></x-items-graph>
-      <x-items-table .items=${this.items} .connections=${this.connections}></x-items-table>
+      <x-items-graph
+        .items=${this.items}
+        .connections=${this.connections}
+        .markEdges=${this.markEdges}
+        .clickFn=${item => this.marker.position = item.index}
+        limit="18"
+        @changed=${this.changedHandler}
+        ></x-items-graph>
+      <x-items-table
+        .items=${this.items}
+        .connections=${this.connections}
+        ></x-items-table>
     `;
   }
 
   firstUpdated() {
     this.console = this.querySelector('.main-console');
+    this.table = this.querySelector('x-items-table');
+    this.graph = this.querySelector('x-items-graph');
+  }
+
+  changedHandler() {
+    this.table.requestUpdate();
   }
 
   * iteratorFill() {
