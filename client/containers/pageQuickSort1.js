@@ -96,16 +96,7 @@ export class PageQuickSort1 extends PageBaseSort {
           value: this.items[right].value
         });
         yield `Entering quickSort; Will partition (${left}-${right})`;
-        const iterator = this.partition(left, right - 1, right);
-        let pivot;
-        while (true) {
-          const iteration = iterator.next();
-          if (iteration.done) {
-            pivot = iteration.value;
-            break;
-          }
-          yield iteration.value;
-        }
+        let pivot = yield* this.partition(left, right - 1, right);
         callStack.push({state: 'right', left: pivot + 1, right: right});
         callStack.push({state: 'left', left: left, right: pivot - 1});
       }

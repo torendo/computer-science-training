@@ -178,16 +178,7 @@ export class PageHashChain extends PageBase {
   }
 
   * iteratorDel() {
-    let key;
-    const iterator = this.iteratorFind(true);
-    while (true) {
-      const iteration = iterator.next();
-      if (iteration.done) {
-        key = iteration.value;
-        break;
-      }
-      yield iteration.value;
-    }
+    let key = yield* this.iteratorFind(true);
     if (key != null) {
       this.clearInitialMarker();
       const list = this.items[this.hashFn(key)];

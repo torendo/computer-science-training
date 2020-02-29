@@ -140,12 +140,7 @@ export class PageMergeSort extends PageBaseSort {
           yield 'Will merge ranges';
           this.markers[0].position = operations[i].lower;
           this.markers[1].position = operations[i].upper;
-          const iterator = this.merge(operations[i].lower, operations[i].mid, operations[i].upper);
-          while (true) {
-            const iteration = iterator.next();
-            if (iteration.done) break;
-            yield iteration.value;
-          }
+          yield* this.merge(operations[i].lower, operations[i].mid, operations[i].upper);
           this.markers[3].position = -1;
         }
       }

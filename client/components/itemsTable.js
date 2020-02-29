@@ -30,7 +30,7 @@ export class XItemsTable extends LitElement {
     return html`
       <tr>
         <td>${value}</td>
-        ${this.items.map(item => html`<td>${connections != null && connections.has(item) ? 1 : 0}</td>`)}      
+        ${this.items.map(item => html`<td>${connections.has(item) ? 1 : 0}</td>`)}      
       </tr>
     `;
   }
