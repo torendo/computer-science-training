@@ -28,7 +28,7 @@ export class XItemsGraph extends LitElement {
         @mouseup="${this.dragendHandler}"
         @mousemove="${this.dragHandler}"
       >
-        ${this.dragOpts != null ? svg`
+        ${this.dragOpts != null && this.dragOpts.isConnection ? svg`
           <line class="line" x1="${this.dragOpts.dragItem.x}" y1="${this.dragOpts.dragItem.y}" x2="${this.dragOpts.x}" y2="${this.dragOpts.y}">
         ` : ''}
         ${this.drawConnections()}
@@ -85,19 +85,26 @@ export class XItemsGraph extends LitElement {
     this.dragOpts = {
       initialX: e.clientX,
       initialY: e.clientY,
-      dragItem: item
+      dragItem: item,
+      isConnection: !e.ctrlKey
     };
   }
 
   dragHandler(e) {
     if (this.dragOpts == null) return;
-    this.dragOpts.x = e.offsetX;
-    this.dragOpts.y = e.offsetY;
+    if (this.dragOpts.isConnection) {
+      this.dragOpts.x = e.offsetX;
+      this.dragOpts.y = e.offsetY;
+    } else {
+      this.dragOpts.dragItem.x = e.offsetX;
+      this.dragOpts.dragItem.y = e.offsetY;
+    }
     this.requestUpdate();
   }
 
   dragendHandler(e, item) {
-    if (this.dragOpts && item && item !== this.dragOpts.dragItem) {
+    if (this.dragOpts == null) return;
+    if (this.dragOpts && item && item !== this.dragOpts.dragItem && this.dragOpts.isConnection) {
       const dragItem = this.dragOpts.dragItem;
       this.connections.get(dragItem).add(item);
       this.connections.get(item).add(dragItem);

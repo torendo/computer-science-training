@@ -19,12 +19,12 @@ export class PageGraphN extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorTree)}>Tree</x-button>
         <x-button .callback=${this.toggleView.bind(this)}>View</x-button>
       </div>
-      <x-console class="main-console" defaultMessage="Double-click mouse to make vertex"></x-console>
+      <x-console class="main-console" defaultMessage="Double-click mouse to make vertex. Drag to make an edge. Drag + Ctrl to move vertex."></x-console>
       <x-items-graph
         .items=${this.items}
         .connections=${this.connections}
         .markEdges=${this.markEdges}
-        .clickFn=${item => this.marker.position = item.index}
+        .clickFn=${item => {}}
         limit="18"
         @changed=${this.changedHandler}
       ></x-items-graph>
