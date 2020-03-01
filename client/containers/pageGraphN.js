@@ -8,10 +8,11 @@ export class PageGraphN extends PageBase {
     this.connections = new Map();
     this.markEdges = false;
     this.renewConfirmed = false;
+    this.clickFn = null;
   }
   render() {
     return html`
-      <h4>Heap</h4>
+      <h4>Non-Directed Non-Weighted Graph</h4>
       <div class="controlpanel">
         <x-button .callback=${this.newGraph.bind(this)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDFS)}>DFS</x-button>
@@ -20,11 +21,12 @@ export class PageGraphN extends PageBase {
         <x-button .callback=${this.toggleView.bind(this)}>View</x-button>
       </div>
       <x-console class="main-console" defaultMessage="Double-click mouse to make vertex. Drag to make an edge. Drag + Ctrl to move vertex."></x-console>
+      <x-console class="console-stats" defaultMessage="—"></x-console>
       <x-items-graph
         .items=${this.items}
         .connections=${this.connections}
         .markEdges=${this.markEdges}
-        .clickFn=${item => {}}
+        .clickFn=${this.clickFn}
         limit="18"
         @changed=${this.changedHandler}
       ></x-items-graph>
@@ -38,6 +40,7 @@ export class PageGraphN extends PageBase {
 
   firstUpdated() {
     this.console = this.querySelector('.main-console');
+    this.statConsole = this.querySelector('.console-stats');
     this.table = this.querySelector('x-items-table');
     this.graph = this.querySelector('x-items-graph');
   }
@@ -70,7 +73,23 @@ export class PageGraphN extends PageBase {
   }
 
   * iteratorDFS() {
+    let startItem;
+    this.clickFn = item => {
+      startItem = item;
+      this.iterate();
+    };
+    yield 'Single-click on vertex from which to start search';
+    this.clickFn = null;
+    yield `You clicked on ${startItem.value}`;
 
+    this.statConsole.setMessage('Visits: A. Stack: (b->t): A') ; //TODO: setting stats as a method
+    startItem.mark = true;
+    yield `Start search from vertex ${startItem.value}`;
+
+    //TODO: cycle
+
+    this.items.forEach(item => item.mark = false);
+    this.statConsole.setMessage();
   }
 
   * iteratorBFS() {

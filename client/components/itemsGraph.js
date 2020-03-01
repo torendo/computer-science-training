@@ -24,9 +24,9 @@ export class XItemsGraph extends LitElement {
     return svg`
       <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg"
         @dblclick=${this.dblclickHandler}
-        @mousedown="${(e) => e.preventDefault()}"
-        @mouseup="${this.dragendHandler}"
-        @mousemove="${this.dragHandler}"
+        @mousedown=${(e) => e.preventDefault()}
+        @mouseup=${this.dragendHandler}
+        @mousemove=${this.dragHandler}
       >
         ${this.dragOpts != null && this.dragOpts.isConnection ? svg`
           <line class="line" x1="${this.dragOpts.dragItem.x}" y1="${this.dragOpts.dragItem.y}" x2="${this.dragOpts.x}" y2="${this.dragOpts.y}">
@@ -41,10 +41,12 @@ export class XItemsGraph extends LitElement {
     return this.items.map(item => svg`
       <g fill="${item.color}">
         <g
-          class="clickable"
-          @click=${this.clickHandler.bind(this, item)}"
-          @mousedown="${(e) => this.dragstartHandler(e, item)}"
-          @mouseup="${(e) => this.dragendHandler(e, item)}"
+          class="itemGroup ${this.clickFn != null ? 'clickable' : ''}"
+          @click=${this.clickHandler.bind(this, item)}
+          @mousedown=${(e) => this.dragstartHandler(e, item)}
+          @mouseup=${(e) => this.dragendHandler(e, item)}
+          @mousemove=${this.itemHoverHandler}
+          @mouseleave=${this.itemLeaveHandler}
         >
           <circle class="item ${item.mark ? 'marked' : ''}" cx="${item.x}" cy="${item.y}" r="12"></circle>
           <text class="value" x="${item.x}" y="${item.y + 2}" text-anchor="middle" alignment-baseline="middle">${item.value}</text>
@@ -119,6 +121,17 @@ export class XItemsGraph extends LitElement {
       return this.clickFn(item);
     }
   }
+
+  itemHoverHandler(e) {
+    if (e.ctrlKey) {
+      e.currentTarget.classList.add('draggable');
+    } else {
+      e.currentTarget.classList.remove('draggable');
+    }
+  }
+  itemLeaveHandler(e) {
+    e.target.classList.remove('draggable');
+  }
 }
 
 XItemsGraph.styles = css`
@@ -132,6 +145,9 @@ XItemsGraph.styles = css`
     width: 100%;
     height: 100%;
   }
+  .itemGroup {
+    cursor: pointer;
+  }
   .item {
     stroke: black;
   }
@@ -140,7 +156,10 @@ XItemsGraph.styles = css`
     stroke-width: 2px;
   }
   .clickable {
-    cursor: pointer;
+    stroke-width: 2px;
+  }
+  .draggable {
+    cursor: grab;
   }
   .value {
     font: normal 13px sans-serif;
