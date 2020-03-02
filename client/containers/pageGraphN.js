@@ -119,8 +119,8 @@ export class PageGraphN extends PageBase {
     const connectedItems = this.connections.get(item);
     let found = null;
     if (connectedItems.size > 0) {
-      connectedItems.forEach(item => {
-        if (found == null && !item.mark) found = item;
+      found = this.items.find(item => {
+        return connectedItems.has(item) && !item.mark;
       });
     }
     return found;
