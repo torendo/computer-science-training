@@ -49,7 +49,7 @@ export class XItemsGraph extends LitElement {
           @mouseleave=${this.itemLeaveHandler}
         >
           <circle class="item ${item.mark ? 'marked' : ''}" cx="${item.x}" cy="${item.y}" r="12"></circle>
-          <text class="value" x="${item.x}" y="${item.y + 2}" text-anchor="middle" alignment-baseline="middle">${item.value}</text>
+          <text class="value ${item.mark ? 'marked' : ''}" x="${item.x}" y="${item.y + 2}" text-anchor="middle" alignment-baseline="middle">${item.value}</text>
         </g>
       </g>
     `);
@@ -165,6 +165,9 @@ XItemsGraph.styles = css`
     font: normal 13px sans-serif;
     fill: black;
     stroke: none;
+  }
+  .value.marked {
+    fill: red;
   }
   .line {
     stroke: black;
