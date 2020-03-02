@@ -14,7 +14,7 @@ export class XItemsGraph extends LitElement {
     return {
       limit: {type: Number},
       items: {type: Array},
-      connections: {type: Map},
+      connections: {type: Map}, //TODO: refactor to Array w Arrays matrix instead Map w Set
       clickFn: {type: Function},
       markEdges: {type: Boolean}
     };

@@ -80,16 +80,54 @@ export class PageGraphN extends PageBase {
     };
     yield 'Single-click on vertex from which to start search';
     this.clickFn = null;
+    if (startItem == null) {
+      return 'ERROR: Item\'s not clicked.';
+    }
     yield `You clicked on ${startItem.value}`;
 
-    this.statConsole.setMessage('Visits: A. Stack: (b->t): A') ; //TODO: setting stats as a method
+    const visits = [startItem];
+    const stack = [startItem];
     startItem.mark = true;
+    this.setStats(visits, stack);
     yield `Start search from vertex ${startItem.value}`;
 
-    //TODO: cycle
+    while (stack.length > 0) {
+      const item = this.getAdjUnvisitedVertex(stack[stack.length - 1]);
+      if (item == null) {
+        stack.pop();
+        this.setStats(visits, stack);
+        if (stack.length > 0) {
+          yield `Will check vertices adjacent to ${stack[stack.length - 1].value}`;
+        } else {
+          yield 'No more vertices with unvisited neighbors';
+        }
+      } else {
+        stack.push(item);
+        visits.push(item);
+        item.mark = true;
+        this.setStats(visits, stack);
+        yield `Visited vertex ${item.value}`;
+      }
+    }
 
+    yield 'Press again to reset search';
     this.items.forEach(item => item.mark = false);
     this.statConsole.setMessage();
+  }
+
+  getAdjUnvisitedVertex(item) {
+    const connectedItems = this.connections.get(item);
+    let found = null;
+    if (connectedItems.size > 0) {
+      connectedItems.forEach(item => {
+        if (found == null && !item.mark) found = item;
+      });
+    }
+    return found;
+  }
+
+  setStats(visits, stack) {
+    this.statConsole.setMessage(`Visits: ${visits.map(i => i.value).join(' ')}. Stack: (b->t): ${stack.map(i => i.value).join(' ')}`);
   }
 
   * iteratorBFS() {
