@@ -72,7 +72,7 @@ export class PageGraphN extends PageBase {
     this.renewConfirmed = false;
   }
 
-  * iteratorDFS() {
+  * iteratorStartSearch() {
     let startItem;
     this.clickFn = item => {
       startItem = item;
@@ -84,7 +84,18 @@ export class PageGraphN extends PageBase {
       return 'ERROR: Item\'s not clicked.';
     }
     yield `You clicked on ${startItem.value}`;
+    return startItem;
+  }
 
+  * iteratorClear() {
+    yield 'Press again to reset search';
+    this.items.forEach(item => item.mark = false);
+    this.statConsole.setMessage();
+  }
+
+  //Depth-first search
+  * iteratorDFS() {
+    const startItem = yield* this.iteratorStartSearch();
     const visits = [startItem];
     const stack = [startItem];
     startItem.mark = true;
@@ -109,10 +120,7 @@ export class PageGraphN extends PageBase {
         yield `Visited vertex ${item.value}`;
       }
     }
-
-    yield 'Press again to reset search';
-    this.items.forEach(item => item.mark = false);
-    this.statConsole.setMessage();
+    yield* this.iteratorClear();
   }
 
   getAdjUnvisitedVertex(item) {
@@ -126,12 +134,43 @@ export class PageGraphN extends PageBase {
     return found;
   }
 
-  setStats(visits, stack) {
-    this.statConsole.setMessage(`Visits: ${visits.map(i => i.value).join(' ')}. Stack: (b->t): ${stack.map(i => i.value).join(' ')}`);
+  setStats(visits, stack, queue) {
+    if (stack)
+      this.statConsole.setMessage(`Visits: ${visits.map(i => i.value).join(' ')}. Stack: (b->t): ${stack.map(i => i.value).join(' ')}`);
+    if (queue)
+      this.statConsole.setMessage(`Visits: ${visits.map(i => i.value).join(' ')}. Queue: (f->r): ${queue.map(i => i.value).join(' ')}`);
   }
 
+  //Breadth-first search
   * iteratorBFS() {
+    const startItem = yield* this.iteratorStartSearch();
+    const visits = [startItem];
+    const queue = [startItem];
+    startItem.mark = true;
+    this.setStats(visits, null, queue);
+    yield `Start search from vertex ${startItem.value}`;
 
+    while (queue.length > 0) {
+      const item = this.getAdjUnvisitedVertex(queue[queue.length - 1]);
+      //TODO: ...
+
+      if (item == null) {
+        queue.pop();
+        this.setStats(visits, null, queue);
+        if (queue.length > 0) {
+          yield `Will check vertices adjacent to ${queue[queue.length - 1].value}`;
+        } else {
+          yield 'No more vertices with unvisited neighbors';
+        }
+      } else {
+        queue.push(item);
+        visits.push(item);
+        item.mark = true;
+        this.setStats(visits, null, queue);
+        yield `Visited vertex ${item.value}`;
+      }
+    }
+    yield* this.iteratorClear();
   }
 
   * iteratorTree() {
