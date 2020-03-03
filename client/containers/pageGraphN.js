@@ -150,17 +150,18 @@ export class PageGraphN extends PageBase {
     this.setStats(visits, null, queue);
     yield `Start search from vertex ${startItem.value}`;
 
-    while (queue.length > 0) {
-      const item = this.getAdjUnvisitedVertex(queue[queue.length - 1]);
-      //TODO: ...
+    let currentItem = queue.shift();
+    this.setStats(visits, null, queue);
+    yield `Will check vertices adjacent to ${startItem.value}`;
 
+    while (currentItem != null) {
+      const item = this.getAdjUnvisitedVertex(currentItem);
       if (item == null) {
-        queue.pop();
-        this.setStats(visits, null, queue);
-        if (queue.length > 0) {
-          yield `Will check vertices adjacent to ${queue[queue.length - 1].value}`;
-        } else {
-          yield 'No more vertices with unvisited neighbors';
+        yield `No more unvisited vertices adjacent to ${currentItem.value}`;
+        currentItem = queue.shift();
+        if (currentItem != null) {
+          this.setStats(visits, null, queue);
+          yield `Will check vertices adjacent to ${currentItem.value}`;
         }
       } else {
         queue.push(item);
