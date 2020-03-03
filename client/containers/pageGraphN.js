@@ -72,13 +72,19 @@ export class PageGraphN extends PageBase {
     this.renewConfirmed = false;
   }
 
+  reset() {
+    this.items.forEach(item => item.mark = false);
+    this.statConsole.setMessage();
+    this.markEdges = false;
+  }
+
   * iteratorStartSearch() {
     let startItem;
     this.clickFn = item => {
       startItem = item;
       this.iterate();
     };
-    yield 'Single-click on vertex from which to start search';
+    yield 'Single-click on vertex from which to start';
     this.clickFn = null;
     if (startItem == null) {
       return 'ERROR: Item\'s not clicked.';
@@ -87,14 +93,8 @@ export class PageGraphN extends PageBase {
     return startItem;
   }
 
-  * iteratorClear() {
-    yield 'Press again to reset search';
-    this.items.forEach(item => item.mark = false);
-    this.statConsole.setMessage();
-  }
-
   //Depth-first search
-  * iteratorDFS() {
+  * iteratorDFS(isReset = true) {
     const startItem = yield* this.iteratorStartSearch();
     const visits = [startItem];
     const stack = [startItem];
@@ -120,7 +120,10 @@ export class PageGraphN extends PageBase {
         yield `Visited vertex ${item.value}`;
       }
     }
-    yield* this.iteratorClear();
+    if (isReset) {
+      yield 'Press again to reset search';
+      this.reset();
+    }
   }
 
   getAdjUnvisitedVertex(item) {
@@ -171,11 +174,19 @@ export class PageGraphN extends PageBase {
         yield `Visited vertex ${item.value}`;
       }
     }
-    yield* this.iteratorClear();
+    yield 'Press again to reset search';
+    this.reset();
   }
 
   * iteratorTree() {
+    this.markEdges = true;
+    yield* this.iteratorDFS(false);
+    yield 'Press again to hide unmarked edges';
 
+    //TODO:hide
+
+    yield 'Minimum spanning tree; Press again to reset tree';
+    this.reset();
   }
 }
 
