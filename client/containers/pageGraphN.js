@@ -7,6 +7,7 @@ export class PageGraphN extends PageBase {
     this.initItems();
     this.connections = new Map();
     this.markEdges = false;
+    this.tree = new Map();
     this.renewConfirmed = false;
     this.clickFn = null;
   }
@@ -26,6 +27,7 @@ export class PageGraphN extends PageBase {
         .items=${this.items}
         .connections=${this.connections}
         .markEdges=${this.markEdges}
+        .tree=${this.tree}
         .clickFn=${this.clickFn}
         limit="18"
         @changed=${this.changedHandler}
@@ -98,6 +100,7 @@ export class PageGraphN extends PageBase {
     const startItem = yield* this.iteratorStartSearch();
     const visits = [startItem];
     const stack = [startItem];
+    this.tree = new Map();
     startItem.mark = true;
     this.setStats(visits, stack);
     yield `Start search from vertex ${startItem.value}`;
@@ -113,6 +116,7 @@ export class PageGraphN extends PageBase {
           yield 'No more vertices with unvisited neighbors';
         }
       } else {
+        if (stack.length > 0) this.tree.set(stack[stack.length - 1], item);
         stack.push(item);
         visits.push(item);
         item.mark = true;
