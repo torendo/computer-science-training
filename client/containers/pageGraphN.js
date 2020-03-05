@@ -5,9 +5,8 @@ export class PageGraphN extends PageBase {
   constructor() {
     super();
     this.initItems();
-    this.connections = new Map();
-    this.markEdges = false;
     this.tree = new Map();
+    this.connections = new Map();
     this.renewConfirmed = false;
     this.clickFn = null;
   }
@@ -26,7 +25,7 @@ export class PageGraphN extends PageBase {
       <x-items-graph
         .items=${this.items}
         .connections=${this.connections}
-        .markEdges=${this.markEdges}
+        .markedConnections=${this.tree}
         .tree=${this.tree}
         .clickFn=${this.clickFn}
         limit="18"
@@ -96,11 +95,10 @@ export class PageGraphN extends PageBase {
   }
 
   //Depth-first search
-  * iteratorDFS(isReset = true) {
+  * iteratorDFS(isTree) {
     const startItem = yield* this.iteratorStartSearch();
     const visits = [startItem];
     const stack = [startItem];
-    this.tree = new Map();
     startItem.mark = true;
     this.setStats(visits, stack);
     yield `Start search from vertex ${startItem.value}`;
@@ -116,7 +114,9 @@ export class PageGraphN extends PageBase {
           yield 'No more vertices with unvisited neighbors';
         }
       } else {
-        if (stack.length > 0) this.tree.set(stack[stack.length - 1], item);
+        if (stack.length > 0 && isTree === true) {
+          this.tree.get(stack[stack.length - 1]).add(item);
+        }
         stack.push(item);
         visits.push(item);
         item.mark = true;
@@ -124,7 +124,7 @@ export class PageGraphN extends PageBase {
         yield `Visited vertex ${item.value}`;
       }
     }
-    if (isReset) {
+    if (isTree !== true) {
       yield 'Press again to reset search';
       this.reset();
     }
@@ -183,13 +183,14 @@ export class PageGraphN extends PageBase {
   }
 
   * iteratorTree() {
-    this.markEdges = true;
-    yield* this.iteratorDFS(false);
+    this.items.forEach(item => this.tree.set(item, new Set()));
+    yield* this.iteratorDFS(true);
     yield 'Press again to hide unmarked edges';
-
-    //TODO:hide
-
+    const connections = this.connections;
+    this.connections = new Map();
     yield 'Minimum spanning tree; Press again to reset tree';
+    this.connections = connections;
+    this.tree = new Map();
     this.reset();
   }
 }

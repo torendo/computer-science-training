@@ -15,8 +15,8 @@ export class XItemsGraph extends LitElement {
       limit: {type: Number},
       items: {type: Array},
       connections: {type: Map},
-      clickFn: {type: Function},
-      markEdges: {type: Boolean}
+      markedConnections: {type: Map},
+      clickFn: {type: Function}
     };
   }
 
@@ -32,6 +32,7 @@ export class XItemsGraph extends LitElement {
           <line class="line" x1="${this.dragOpts.dragItem.x}" y1="${this.dragOpts.dragItem.y}" x2="${this.dragOpts.x}" y2="${this.dragOpts.y}">
         ` : ''}
         ${this.drawConnections()}
+        ${this.drawMarkedConnections()}
         ${this.drawItems()}
       </svg>
     `;
@@ -59,9 +60,20 @@ export class XItemsGraph extends LitElement {
     const lines = [];
     this.connections.forEach((connections, item) => {
       for (let connection of connections) {
-        const markLine = this.markEdges && connection.mark && item.mark;
         lines.push(svg`
-          <line class="line ${markLine ? 'marked' : ''}" x1="${item.x}" y1="${item.y}" x2="${connection.x}" y2="${connection.y}">
+          <line class="line" x1="${item.x}" y1="${item.y}" x2="${connection.x}" y2="${connection.y}">
+        `);
+      }
+    });
+    return lines;
+  }
+
+  drawMarkedConnections() {
+    const lines = [];
+    this.markedConnections.forEach((connections, item) => {
+      for (let connection of connections) {
+        lines.push(svg`
+          <line class="line marked" x1="${item.x}" y1="${item.y}" x2="${connection.x}" y2="${connection.y}">
         `);
       }
     });
@@ -173,7 +185,7 @@ XItemsGraph.styles = css`
     stroke: black;
   }
   .line.marked {
-    stroke-width: 2px;
+    stroke-width: 3px;
   }
 `;
 
