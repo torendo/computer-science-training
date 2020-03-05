@@ -27,12 +27,14 @@ export class XItemsTable extends LitElement {
   }
   
   renderRow(value, connections) {
-    return html`
-      <tr>
-        <td>${value}</td>
-        ${this.items.map(item => html`<td>${connections.has(item) ? 1 : 0}</td>`)}      
-      </tr>
-    `;
+    if (this.connections.size > 0) {
+      return html`
+        <tr>
+          <td>${value}</td>
+          ${this.items.map(item => html`<td>${connections.has(item) ? 1 : 0}</td>`)}      
+        </tr>
+      `;
+    }
   }
 }
 

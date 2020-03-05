@@ -97,6 +97,7 @@ export class PageGraphN extends PageBase {
   //Depth-first search
   * iteratorDFS(isTree) {
     const startItem = yield* this.iteratorStartSearch();
+    if (startItem == null) return;
     const visits = [startItem];
     const stack = [startItem];
     startItem.mark = true;
@@ -151,6 +152,7 @@ export class PageGraphN extends PageBase {
   //Breadth-first search
   * iteratorBFS() {
     const startItem = yield* this.iteratorStartSearch();
+    if (startItem == null) return;
     const visits = [startItem];
     const queue = [startItem];
     startItem.mark = true;
