@@ -213,16 +213,7 @@ export class PageHashTable extends PageBase {
     if (key > 1000 || key < 0) {
       return 'ERROR: use key between 0 and 999';
     }
-    let foundAt;
-    const iterator = this.iteratorProbe(key, false);
-    while (true) {
-      const iteration = iterator.next();
-      if (iteration.done) {
-        foundAt = iteration.value;
-        break;
-      }
-      yield iteration.value;
-    }
+    let foundAt = yield* this.iteratorProbe(key, false);
     if (foundAt == null) {
       yield `Can't locate item with key ${key}`;
     } else {
@@ -243,16 +234,7 @@ export class PageHashTable extends PageBase {
       return 'ERROR: use key between 0 and 999';
     }
     yield `Looking for item with key ${key}`;
-    let foundAt;
-    const iterator = this.iteratorProbe(key, true);
-    while (true) {
-      const iteration = iterator.next();
-      if (iteration.done) {
-        foundAt = iteration.value;
-        break;
-      }
-      yield iteration.value;
-    }
+    let foundAt = yield* this.iteratorProbe(key, true);
     if (foundAt == null) {
       yield `Can't locate item with key ${key}`;
     } else {

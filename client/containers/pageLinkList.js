@@ -99,15 +99,7 @@ export class PageLinkList extends PageBase {
     let foundAt = 0;
     if (this.sorted.checked) {
       yield 'Will search insertion point';
-      const iterator = this.search(key, true);
-      while (true) {
-        const iteration = iterator.next();
-        if (iteration.done) {
-          foundAt = iteration.value;
-          break;
-        }
-        yield iteration.value;
-      }
+      foundAt = yield* this.search(key, true);
       yield 'Have found insertion point';
       if (foundAt != null) {
         const part = this.items.splice(foundAt, this.items.length - foundAt, item);
@@ -140,16 +132,7 @@ export class PageLinkList extends PageBase {
       return 'ERROR: use key between 0 and 999';
     }
     yield `Looking for item with key ${key}`;
-    let foundAt;
-    const iterator = this.search(key);
-    while (true) {
-      const iteration = iterator.next();
-      if (iteration.done) {
-        foundAt = iteration.value;
-        break;
-      }
-      yield iteration.value;
-    }
+    let foundAt = yield* this.search(key);
     this.marker.position = 0;
     return `${foundAt == null ? 'No' : 'Have found'} items with key ${key}`;
   }
@@ -166,16 +149,7 @@ export class PageLinkList extends PageBase {
       return 'ERROR: use key between 0 and 999';
     }
     yield `Looking for item with key ${key}`;
-    let foundAt;
-    const iterator = this.search(key);
-    while (true) {
-      const iteration = iterator.next();
-      if (iteration.done) {
-        foundAt = iteration.value;
-        break;
-      }
-      yield iteration.value;
-    }
+    let foundAt = yield* this.search(key);
     if (foundAt == null) {
       this.marker.position = 0;
       return `No items with key ${key}`;

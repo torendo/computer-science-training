@@ -53,6 +53,7 @@ nav {
   color: darkgray;
 }
 
-.hidden {
+.hidden,
+[hidden] {
   display: none;
 }

@@ -131,16 +131,7 @@ export class PageQuickSort2 extends PageQuickSort1 {
         this.updateStats(++this.swaps, this.comparisons);
         this.items[median].swapWith(this.items[right - 1]);
         this.markers[4].position = right - 1;
-        const iterator = this.partition(left, right, right - 1);
-        let partition;
-        while (true) {
-          const iteration = iterator.next();
-          if (iteration.done) {
-            partition = iteration.value;
-            break;
-          }
-          yield iteration.value;
-        }
+        let partition = yield* this.partition(left, right, right - 1);
         callStack.push({state: 'right', left: partition + 1, right: right});
         callStack.push({state: 'left', left: left, right: partition - 1});
       }

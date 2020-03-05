@@ -20,7 +20,7 @@ export class PageHeap extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
       </div>
       <x-console class="main-console"></x-console>
-      <x-items-tree .items=${this.items} .marker=${this.marker} .clickFn=${item => this.marker.position = item.index}></x-items-tree>
+      <x-items-tree .items=${this.items} .marker=${this.marker}></x-items-tree>
       <x-dialog>
         <label>Number: <input name="number" type="number"></label>
       </x-dialog>
@@ -42,6 +42,7 @@ export class PageHeap extends PageBase {
   firstUpdated() {
     this.console = this.querySelector('.main-console');
     this.dialog = this.querySelector('x-dialog');
+    this.tree = this.querySelector('x-items-tree');
   }
 
   initItems(length) {
@@ -116,12 +117,7 @@ export class PageHeap extends PageBase {
     this.items[index].setValue(key);
     this.marker.position = index;
     yield 'Placed node in first empty cell';
-    const iterator = this.trickleUp(key, index);
-    while (true) {
-      const iteration = iterator.next();
-      if (iteration.done) break;
-      yield iteration.value;
-    }
+    yield* this.trickleUp(key, index);
     yield 'Inserted new node in empty node';
     this.marker.position = 0;
     this.length++;
@@ -169,18 +165,15 @@ export class PageHeap extends PageBase {
     this.items[index].moveFrom(lastNode);
     this.length--;
     yield 'Will trickle down';
-    const iterator = this.trickleDown(index);
-    while (true) {
-      const iteration = iterator.next();
-      if (iteration.done) break;
-      yield iteration.value;
-    }
+    yield* this.trickleDown(index);
     yield `Finished deleting largest node (${removedKey})`;
     this.marker.position = 0;
   }
 
   * iteratorChng() {
+    this.tree.clickFn = item => this.marker.position = item.index;
     yield 'Click on node to be changed';
+    this.tree.clickFn = null;
     const top = this.marker.position;
     const changingKey = this.items[top].value;
     yield 'Type node\'s new value';
@@ -197,21 +190,11 @@ export class PageHeap extends PageBase {
     if (this.items[top].value > key) {
       this.items[top].setValue(key);
       yield 'Key decreased; will trickle down';
-      const iterator = this.trickleDown(top, true);
-      while (true) {
-        const iteration = iterator.next();
-        if (iteration.done) break;
-        yield iteration.value;
-      }
+      yield* this.trickleDown(top, true);
     } else {
       this.items[top].setValue(key);
       yield 'Key increased; will trickle up';
-      const iterator = this.trickleUp(key, top);
-      while (true) {
-        const iteration = iterator.next();
-        if (iteration.done) break;
-        yield iteration.value;
-      }
+      yield* this.trickleUp(key, top);
     }
     yield `Finished changing node (${changingKey})`;
     this.marker.position = 0;

@@ -149,16 +149,8 @@ export class PageOrderedArray extends PageArray {
       return 'ERROR: can\'t insert, duplicate found';
     }
     yield `Will insert item with key ${key}`;
-    let insertAt;
-    const iterator = this.linear.checked ? this.linearSearch(key, true) : this.binarySearch(key, true);
-    while (true) {
-      const iteration = iterator.next();
-      if (iteration.done) {
-        insertAt = iteration.value != null ? iteration.value : this.length;
-        break;
-      }
-      yield iteration.value;
-    }
+    let insertAt = yield* (this.linear.checked ? this.linearSearch(key, true) : this.binarySearch(key, true));
+    insertAt = insertAt != null ? insertAt : this.length;
     yield `Will insert at index ${insertAt}${insertAt !== this.length ? ', following shift' : ''}`;
     this.markers[0].position = this.length;
     if (insertAt !== this.length) {
@@ -188,16 +180,7 @@ export class PageOrderedArray extends PageArray {
       return 'ERROR: use key between 0 and 999';
     }
     yield `Looking for item with key ${key}`;
-    let foundAt;
-    const iterator = this.linear.checked ? this.linearSearch(key) : this.binarySearch(key);
-    while (true) {
-      const iteration = iterator.next();
-      if (iteration.done) {
-        foundAt = iteration.value;
-        break;
-      }
-      yield iteration.value;
-    }
+    let foundAt = yield* (this.linear.checked ? this.linearSearch(key) : this.binarySearch(key));
     this.markers[0].position = 0;
     if (foundAt == null) {
       return `No items with key ${key}`;
@@ -218,16 +201,7 @@ export class PageOrderedArray extends PageArray {
       return 'ERROR: use key between 0 and 999';
     }
     yield `Looking for item with key ${key}`;
-    let foundAt;
-    const iterator = this.linear.checked ? this.linearSearch(key) : this.binarySearch(key);
-    while (true) {
-      const iteration = iterator.next();
-      if (iteration.done) {
-        foundAt = iteration.value;
-        break;
-      }
-      yield iteration.value;
-    }
+    let foundAt = yield* (this.linear.checked ? this.linearSearch(key) : this.binarySearch(key));
     if (foundAt == null) {
       this.markers[0].position = 0;
       return `No items with key ${key}`;
