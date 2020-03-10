@@ -17,7 +17,7 @@ export class PageGraphN extends PageBase {
         <x-button .callback=${this.newGraph.bind(this)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDFS)}>DFS</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorBFS)}>BFS</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorTree)}>Tree</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorMST)}>Tree</x-button>
         <x-button .callback=${this.toggleView.bind(this)}>View</x-button>
       </div>
       <x-console class="main-console" defaultMessage="Double-click mouse to make vertex. Drag to make an edge. Drag + Ctrl to move vertex."></x-console>
@@ -94,7 +94,7 @@ export class PageGraphN extends PageBase {
     return startItem;
   }
 
-  //Depth-first search
+  //DFS - Depth-first search
   * iteratorDFS(isTree) {
     const startItem = yield* this.iteratorStartSearch();
     if (startItem == null) return;
@@ -149,7 +149,7 @@ export class PageGraphN extends PageBase {
       this.statConsole.setMessage(`Visits: ${visits.map(i => i.value).join(' ')}. Queue: (f->r): ${queue.map(i => i.value).join(' ')}`);
   }
 
-  //Breadth-first search
+  //BFS - Breadth-first search
   * iteratorBFS() {
     const startItem = yield* this.iteratorStartSearch();
     if (startItem == null) return;
@@ -184,7 +184,8 @@ export class PageGraphN extends PageBase {
     this.reset();
   }
 
-  * iteratorTree() {
+  //MST - Minimum Spanning Tree
+  * iteratorMST() {
     this.items.forEach(item => this.tree.set(item, new Set()));
     yield* this.iteratorDFS(true);
     yield 'Press again to hide unmarked edges';
