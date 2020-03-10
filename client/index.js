@@ -31,6 +31,7 @@ import './containers/pageHashTable';
 import './containers/pageHashChain';
 import './containers/pageHeap';
 import './containers/pageGraphN';
+import './containers/pageGraphD';
 import './containers/footer';
 
 //TODO: move code from app here and imports spread to all files, where using some component, should be exact import

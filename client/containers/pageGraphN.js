@@ -5,8 +5,8 @@ export class PageGraphN extends PageBase {
   constructor() {
     super();
     this.initItems();
-    this.tree = new Map();
-    this.connections = new Map();
+    this.tree = [];
+    this.connections = [];
     this.renewConfirmed = false;
     this.clickFn = null;
   }
@@ -58,7 +58,7 @@ export class PageGraphN extends PageBase {
   newGraph() {
     if (this.renewConfirmed) {
       this.initItems();
-      this.connections = new Map();
+      this.connections = [];
       this.console.setMessage();
       this.renewConfirmed = false;
     } else {
@@ -132,11 +132,11 @@ export class PageGraphN extends PageBase {
   }
 
   getAdjUnvisitedVertex(item) {
-    const connectedItems = this.connections.get(item);
+    const connectedItems = this.connections[item.index];
     let found = null;
-    if (connectedItems.size > 0) {
+    if (connectedItems.length > 0) {
       found = this.items.find(item => {
-        return connectedItems.has(item) && !item.mark;
+        return !item.mark && connectedItems[item.index] === 1;
       });
     }
     return found;
@@ -189,10 +189,10 @@ export class PageGraphN extends PageBase {
     yield* this.iteratorDFS(true);
     yield 'Press again to hide unmarked edges';
     const connections = this.connections;
-    this.connections = new Map();
+    this.connections = [];
     yield 'Minimum spanning tree; Press again to reset tree';
     this.connections = connections;
-    this.tree = new Map();
+    this.tree = [];
     this.reset();
   }
 }

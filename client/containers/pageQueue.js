@@ -4,9 +4,14 @@ import {Marker} from '../classes/marker';
 import {PageStack} from './pageStack';
 
 export class PageQueue extends PageStack {
+  constructor() {
+    super();
+    this.title = 'Queue';
+  }
+
   render() {
     return html`
-      <h4>Queue</h4>
+      <h4>${this.title}</h4>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
