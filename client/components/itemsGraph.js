@@ -8,7 +8,8 @@ export class XItemsGraph extends LitElement {
       items: {type: Array},
       connections: {type: Array},
       markedConnections: {type: Array},
-      clickFn: {type: Function}
+      clickFn: {type: Function},
+      directed: {type: Boolean}
     };
   }
 
@@ -21,7 +22,7 @@ export class XItemsGraph extends LitElement {
         @mousemove=${this.dragHandler}
       >
         ${this.dragOpts != null && this.dragOpts.isConnection ? svg`
-          <line class="line" x1="${this.dragOpts.dragItem.x}" y1="${this.dragOpts.dragItem.y}" x2="${this.dragOpts.x}" y2="${this.dragOpts.y}">
+          <line class="line" x1="${this.dragOpts.dragItem.x}" y1="${this.dragOpts.dragItem.y}" x2="${this.dragOpts.x}" y2="${this.dragOpts.y}"></line>
         ` : ''}
         ${this.drawConnections(false)}
         ${this.drawConnections(true)}
@@ -61,12 +62,28 @@ export class XItemsGraph extends LitElement {
               y1="${this.items[i].y}"
               x2="${this.items[j].x}"
               y2="${this.items[j].y}"
-            >
+            ></line>
+            ${this.directed ? this.drawDirectionMarker(this.items[i], this.items[j]) : ''}
           `);
         }
       }
     });
     return lines;
+  }
+
+  drawDirectionMarker(p1, p2) {
+    const step = 20;
+    const px = p1.x - p2.x;
+    const py = p1.y - p2.y;
+    let angle = - Math.atan(py / px) - Math.PI / 2;
+    if (px > 0 && py > 0 || px > 0 && py < 0) {
+      angle -= Math.PI;
+    }
+    const x = p2.x + step * Math.sin(angle);
+    const y = p2.y + step * Math.cos(angle);
+    return svg`
+      <circle class="directionMarker" cx="${x}" cy="${y}" r="3"></circle>
+    `;
   }
 
   dblclickHandler(e) {
@@ -112,13 +129,13 @@ export class XItemsGraph extends LitElement {
     if (this.dragOpts == null) return;
     if (this.dragOpts && item && item !== this.dragOpts.dragItem && this.dragOpts.isConnection) {
       const dragItem = this.dragOpts.dragItem;
-
       this.connections[dragItem.index][item.index] = 1;
-      this.connections[item.index][dragItem.index] = 1;
-
+      if (!this.directed) {
+        this.connections[item.index][dragItem.index] = 1;
+      }
+      this.dispatchEvent(new Event('changed'));
     }
     this.dragOpts = null;
-    this.dispatchEvent(new Event('changed'));
     this.requestUpdate();
   }
 
@@ -180,6 +197,11 @@ XItemsGraph.styles = css`
   }
   .line.marked {
     stroke-width: 3px;
+  }
+  .directionMarker {
+      stroke: black;
+      stroke-width: 2px;
+      fill: black;
   }
 `;
 

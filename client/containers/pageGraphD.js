@@ -26,6 +26,7 @@ export class PageGraphD extends PageBase {
         .markedConnections=${this.tree}
         .tree=${this.tree}
         .clickFn=${this.clickFn}
+        directed
         limit="18"
         @changed=${this.changedHandler}
       ></x-items-graph>
@@ -71,7 +72,10 @@ export class PageGraphD extends PageBase {
     this.renewConfirmed = false;
   }
 
+  //topological sort
   * iteratorTopo() {
+    //check cycles then throw error
+    //do topological sort
   }
 }
 
