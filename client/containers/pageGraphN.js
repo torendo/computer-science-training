@@ -5,7 +5,7 @@ export class PageGraphN extends PageBase {
   constructor() {
     super();
     this.initItems();
-    this.tree = [];
+    this.treeConnections = [];
     this.connections = [];
     this.renewConfirmed = false;
     this.clickFn = null;
@@ -25,8 +25,7 @@ export class PageGraphN extends PageBase {
       <x-items-graph
         .items=${this.items}
         .connections=${this.connections}
-        .markedConnections=${this.tree}
-        .tree=${this.tree}
+        .markedConnections=${this.treeConnections}
         .clickFn=${this.clickFn}
         limit="18"
         @changed=${this.changedHandler}
@@ -105,7 +104,8 @@ export class PageGraphN extends PageBase {
     yield `Start search from vertex ${startItem.value}`;
 
     while (stack.length > 0) {
-      const item = this.getAdjUnvisitedVertex(stack[stack.length - 1]);
+      const prevItem = stack[stack.length - 1];
+      const item = this.getAdjUnvisitedVertex(prevItem);
       if (item == null) {
         stack.pop();
         this.setStats(visits, stack);
@@ -116,7 +116,8 @@ export class PageGraphN extends PageBase {
         }
       } else {
         if (stack.length > 0 && isTree === true) {
-          this.tree.get(stack[stack.length - 1]).add(item);
+          this.treeConnections[prevItem.index][item.index] = 1;
+          this.treeConnections[item.index][prevItem.index] = 1;
         }
         stack.push(item);
         visits.push(item);
@@ -186,14 +187,16 @@ export class PageGraphN extends PageBase {
 
   //MST - Minimum Spanning Tree
   * iteratorMST() {
-    this.items.forEach(item => this.tree.set(item, new Set()));
+    this.treeConnections = new Array(this.connections.length).fill(0).map(() => {
+      return new Array(this.connections.length).fill(0);
+    });
     yield* this.iteratorDFS(true);
     yield 'Press again to hide unmarked edges';
     const connections = this.connections;
-    this.connections = [];
+    this.connections = this.treeConnections;
+    this.treeConnections = [];
     yield 'Minimum spanning tree; Press again to reset tree';
     this.connections = connections;
-    this.tree = [];
     this.reset();
   }
 }

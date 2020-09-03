@@ -53,8 +53,8 @@ export class XItemsGraph extends LitElement {
     const lines = [];
     const connections = isMarked ? this.markedConnections : this.connections;
     connections.forEach((row, i) => {
-      for (let j = 0; j < row.length; j++) {
-        if (row[j] !== 0) {
+      row.forEach((val, j) => {
+        if (val !== 0) {
           lines.push(svg`
             <line
               class="line ${isMarked ? 'marked' : ''}"
@@ -66,7 +66,7 @@ export class XItemsGraph extends LitElement {
             ${this.directed ? this.drawDirectionMarker(this.items[i], this.items[j]) : ''}
           `);
         }
-      }
+      });
     });
     return lines;
   }

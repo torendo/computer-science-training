@@ -74,8 +74,12 @@ export class PageGraphD extends PageBase {
 
   //topological sort
   * iteratorTopo() {
+    const connectionsCache = this.connections;
+    const result = [];
     //check cycles then throw error
+
     //do topological sort
+
   }
 }
 
