@@ -1,5 +1,6 @@
 import {PageBase} from './pageBase';
 import {html} from 'lit-element';
+import {Vertex} from '../classes/vertex';
 
 export class PageGraphD extends PageBase {
   constructor() {
@@ -74,12 +75,38 @@ export class PageGraphD extends PageBase {
 
   //topological sort
   * iteratorTopo() {
-    const connectionsCache = this.connections;
+    yield 'Will perform topological sort';
+    const connectionsCache = this.connections.map(row => [...row]);
+    const itemsCache = this.items.map(item => new Vertex(item));
     const result = [];
-    //check cycles then throw error
+    for (let i = 0; i < connectionsCache.length; i++) {
+      const curItem = this.getNoSuccessorVertex();
+      if (!curItem) {
+        yield 'ERROR: Cannot sort graph with cycles';
+        return;
+      }
+      yield `Will remove vertex ${curItem.value}`;
+      result.push(curItem.value);
+      this.statConsole.setMessage(`List: ${result.join(' ')}`);
 
-    //do topological sort
+      //remove item (vertex) and its connections
+      this.connections.splice(curItem.index, 1);
+      this.connections.forEach(row => row.splice(curItem.index, 1));
+      this.items.splice(curItem.index, 1);
+      this.items.forEach((item, i) => item.index = i);
 
+      yield `Added vertex ${curItem.value} at start of sorted list`;
+    }
+    yield 'Sort is complete. Will restore graph';
+    this.connections = connectionsCache;
+    this.items = itemsCache;
+    yield 'Will reset sort';
+    this.statConsole.setMessage();
+  }
+
+  getNoSuccessorVertex() {
+    const index = this.connections.findIndex(row => row.reduce((acc, i) => acc + i) === 0);
+    return index != null ? this.items[index] : false;
   }
 }
 
