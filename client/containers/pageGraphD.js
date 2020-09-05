@@ -83,6 +83,9 @@ export class PageGraphD extends PageBase {
       const curItem = this.getNoSuccessorVertex();
       if (!curItem) {
         yield 'ERROR: Cannot sort graph with cycles';
+        this.connections = connectionsCache;
+        this.items = itemsCache;
+        this.statConsole.setMessage();
         return;
       }
       yield `Will remove vertex ${curItem.value}`;
