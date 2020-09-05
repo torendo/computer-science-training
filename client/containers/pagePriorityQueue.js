@@ -4,6 +4,11 @@ import {getUniqueRandomArray} from '../utils';
 import {PageQueue} from './pageQueue';
 
 export class PagePriorityQueue extends PageQueue {
+  constructor() {
+    super();
+    this.title = 'Priority Queue';
+  }
+
   initItems() {
     const length = 10;
     const lengthFill = 4;

@@ -5,8 +5,8 @@ export class PageGraphN extends PageBase {
   constructor() {
     super();
     this.initItems();
-    this.tree = new Map();
-    this.connections = new Map();
+    this.treeConnections = [];
+    this.connections = [];
     this.renewConfirmed = false;
     this.clickFn = null;
   }
@@ -17,7 +17,7 @@ export class PageGraphN extends PageBase {
         <x-button .callback=${this.newGraph.bind(this)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDFS)}>DFS</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorBFS)}>BFS</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorTree)}>Tree</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorMST)}>Tree</x-button>
         <x-button .callback=${this.toggleView.bind(this)}>View</x-button>
       </div>
       <x-console class="main-console" defaultMessage="Double-click mouse to make vertex. Drag to make an edge. Drag + Ctrl to move vertex."></x-console>
@@ -25,8 +25,7 @@ export class PageGraphN extends PageBase {
       <x-items-graph
         .items=${this.items}
         .connections=${this.connections}
-        .markedConnections=${this.tree}
-        .tree=${this.tree}
+        .markedConnections=${this.treeConnections}
         .clickFn=${this.clickFn}
         limit="18"
         @changed=${this.changedHandler}
@@ -58,7 +57,7 @@ export class PageGraphN extends PageBase {
   newGraph() {
     if (this.renewConfirmed) {
       this.initItems();
-      this.connections = new Map();
+      this.connections = [];
       this.console.setMessage();
       this.renewConfirmed = false;
     } else {
@@ -94,7 +93,7 @@ export class PageGraphN extends PageBase {
     return startItem;
   }
 
-  //Depth-first search
+  //DFS - Depth-first search
   * iteratorDFS(isTree) {
     const startItem = yield* this.iteratorStartSearch();
     if (startItem == null) return;
@@ -105,7 +104,8 @@ export class PageGraphN extends PageBase {
     yield `Start search from vertex ${startItem.value}`;
 
     while (stack.length > 0) {
-      const item = this.getAdjUnvisitedVertex(stack[stack.length - 1]);
+      const prevItem = stack[stack.length - 1];
+      const item = this.getAdjUnvisitedVertex(prevItem);
       if (item == null) {
         stack.pop();
         this.setStats(visits, stack);
@@ -116,7 +116,8 @@ export class PageGraphN extends PageBase {
         }
       } else {
         if (stack.length > 0 && isTree === true) {
-          this.tree.get(stack[stack.length - 1]).add(item);
+          this.treeConnections[prevItem.index][item.index] = 1;
+          this.treeConnections[item.index][prevItem.index] = 1;
         }
         stack.push(item);
         visits.push(item);
@@ -132,11 +133,11 @@ export class PageGraphN extends PageBase {
   }
 
   getAdjUnvisitedVertex(item) {
-    const connectedItems = this.connections.get(item);
+    const connectedItems = this.connections[item.index];
     let found = null;
-    if (connectedItems.size > 0) {
+    if (connectedItems.length > 0) {
       found = this.items.find(item => {
-        return connectedItems.has(item) && !item.mark;
+        return !item.mark && connectedItems[item.index] === 1;
       });
     }
     return found;
@@ -149,7 +150,7 @@ export class PageGraphN extends PageBase {
       this.statConsole.setMessage(`Visits: ${visits.map(i => i.value).join(' ')}. Queue: (f->r): ${queue.map(i => i.value).join(' ')}`);
   }
 
-  //Breadth-first search
+  //BFS - Breadth-first search
   * iteratorBFS() {
     const startItem = yield* this.iteratorStartSearch();
     if (startItem == null) return;
@@ -184,15 +185,18 @@ export class PageGraphN extends PageBase {
     this.reset();
   }
 
-  * iteratorTree() {
-    this.items.forEach(item => this.tree.set(item, new Set()));
+  //MST - Minimum Spanning Tree
+  * iteratorMST() {
+    this.treeConnections = new Array(this.connections.length).fill(0).map(() => {
+      return new Array(this.connections.length).fill(0);
+    });
     yield* this.iteratorDFS(true);
     yield 'Press again to hide unmarked edges';
     const connections = this.connections;
-    this.connections = new Map();
+    this.connections = this.treeConnections;
+    this.treeConnections = [];
     yield 'Minimum spanning tree; Press again to reset tree';
     this.connections = connections;
-    this.tree = new Map();
     this.reset();
   }
 }

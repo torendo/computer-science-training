@@ -1,22 +1,15 @@
 import {LitElement, svg, css} from 'lit-element';
-import {Item} from '../classes/item';
-
-class PlacedItem extends Item {
-  constructor(options) {
-    super(options);
-    this.x = options.x;
-    this.y = options.y;
-  }
-}
+import {Vertex} from '../classes/vertex';
 
 export class XItemsGraph extends LitElement {
   static get properties() {
     return {
       limit: {type: Number},
       items: {type: Array},
-      connections: {type: Map},
-      markedConnections: {type: Map},
-      clickFn: {type: Function}
+      connections: {type: Array},
+      markedConnections: {type: Array},
+      clickFn: {type: Function},
+      directed: {type: Boolean}
     };
   }
 
@@ -29,10 +22,10 @@ export class XItemsGraph extends LitElement {
         @mousemove=${this.dragHandler}
       >
         ${this.dragOpts != null && this.dragOpts.isConnection ? svg`
-          <line class="line" x1="${this.dragOpts.dragItem.x}" y1="${this.dragOpts.dragItem.y}" x2="${this.dragOpts.x}" y2="${this.dragOpts.y}">
+          <line class="line" x1="${this.dragOpts.dragItem.x}" y1="${this.dragOpts.dragItem.y}" x2="${this.dragOpts.x}" y2="${this.dragOpts.y}"></line>
         ` : ''}
-        ${this.drawConnections()}
-        ${this.drawMarkedConnections()}
+        ${this.drawConnections(false)}
+        ${this.drawConnections(true)}
         ${this.drawItems()}
       </svg>
     `;
@@ -56,41 +49,57 @@ export class XItemsGraph extends LitElement {
     `);
   }
 
-  drawConnections() {
+  drawConnections(isMarked) {
     const lines = [];
-    this.connections.forEach((connections, item) => {
-      for (let connection of connections) {
-        lines.push(svg`
-          <line class="line" x1="${item.x}" y1="${item.y}" x2="${connection.x}" y2="${connection.y}">
-        `);
-      }
+    const connections = isMarked ? this.markedConnections : this.connections;
+    connections.forEach((row, i) => {
+      row.forEach((val, j) => {
+        if (val !== 0) {
+          lines.push(svg`
+            <line
+              class="line ${isMarked ? 'marked' : ''}"
+              x1="${this.items[i].x}"
+              y1="${this.items[i].y}"
+              x2="${this.items[j].x}"
+              y2="${this.items[j].y}"
+            ></line>
+            ${this.directed ? this.drawDirectionMarker(this.items[i], this.items[j]) : ''}
+          `);
+        }
+      });
     });
     return lines;
   }
 
-  drawMarkedConnections() {
-    const lines = [];
-    this.markedConnections.forEach((connections, item) => {
-      for (let connection of connections) {
-        lines.push(svg`
-          <line class="line marked" x1="${item.x}" y1="${item.y}" x2="${connection.x}" y2="${connection.y}">
-        `);
-      }
-    });
-    return lines;
+  drawDirectionMarker(p1, p2) {
+    const step = 20;
+    const px = p1.x - p2.x;
+    const py = p1.y - p2.y;
+    let angle = - Math.atan(py / px) - Math.PI / 2;
+    if (px > 0 && py > 0 || px > 0 && py < 0) {
+      angle -= Math.PI;
+    }
+    const x = p2.x + step * Math.sin(angle);
+    const y = p2.y + step * Math.cos(angle);
+    return svg`
+      <circle class="directionMarker" cx="${x}" cy="${y}" r="3"></circle>
+    `;
   }
 
   dblclickHandler(e) {
     if (this.dragOpts != null || this.limit === this.items.length) return;
     const index = this.items.length;
-    const item = new PlacedItem({
+    const item = new Vertex({
       index,
       x: e.offsetX,
       y: e.offsetY
     });
     item.setValue(String.fromCharCode(65 + index));
     this.items.push(item);
-    this.connections.set(item, new Set());
+
+    this.connections.push(new Array(this.connections.length).fill(0));
+    this.connections.forEach(c => c.push(0));
+
     this.dispatchEvent(new Event('changed'));
     this.requestUpdate();
   }
@@ -120,11 +129,13 @@ export class XItemsGraph extends LitElement {
     if (this.dragOpts == null) return;
     if (this.dragOpts && item && item !== this.dragOpts.dragItem && this.dragOpts.isConnection) {
       const dragItem = this.dragOpts.dragItem;
-      this.connections.get(dragItem).add(item);
-      this.connections.get(item).add(dragItem);
+      this.connections[dragItem.index][item.index] = 1;
+      if (!this.directed) {
+        this.connections[item.index][dragItem.index] = 1;
+      }
+      this.dispatchEvent(new Event('changed'));
     }
     this.dragOpts = null;
-    this.dispatchEvent(new Event('changed'));
     this.requestUpdate();
   }
 
@@ -186,6 +197,11 @@ XItemsGraph.styles = css`
   }
   .line.marked {
     stroke-width: 3px;
+  }
+  .directionMarker {
+      stroke: black;
+      stroke-width: 2px;
+      fill: black;
   }
 `;
 
