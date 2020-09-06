@@ -9,8 +9,13 @@ export class XItemsGraph extends LitElement {
       connections: {type: Array},
       markedConnections: {type: Array},
       clickFn: {type: Function},
-      directed: {type: Boolean}
+      directed: {type: Boolean},
+      weighted: {type: Boolean}
     };
+  }
+
+  getNoConnectionValue() {
+    return this.weighted ? Infinity : 0;
   }
 
   render() {
@@ -64,6 +69,7 @@ export class XItemsGraph extends LitElement {
               y2="${this.items[j].y}"
             ></line>
             ${this.directed ? this.drawDirectionMarker(this.items[i], this.items[j]) : ''}
+            ${this.weighted ? this.drawWeightMarker(this.items[i], this.items[j], val) : ''}
           `);
         }
       });
@@ -75,15 +81,16 @@ export class XItemsGraph extends LitElement {
     const step = 20;
     const px = p1.x - p2.x;
     const py = p1.y - p2.y;
-    let angle = - Math.atan(py / px) - Math.PI / 2;
-    if (px > 0 && py > 0 || px > 0 && py < 0) {
-      angle -= Math.PI;
-    }
+    let angle = - Math.atan(py / px) - Math.PI * (px >= 0 ? 1.5 : 0.5);
     const x = p2.x + step * Math.sin(angle);
     const y = p2.y + step * Math.cos(angle);
     return svg`
       <circle class="directionMarker" cx="${x}" cy="${y}" r="3"></circle>
     `;
+  }
+
+  drawWeightMarker(p1, p2, w) {
+
   }
 
   dblclickHandler(e) {
