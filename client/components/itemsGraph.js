@@ -1,4 +1,4 @@
-import {LitElement, svg, css} from 'lit-element';
+import {LitElement, svg, html, css} from 'lit-element';
 import {Vertex} from '../classes/vertex';
 
 export class XItemsGraph extends LitElement {
@@ -15,7 +15,7 @@ export class XItemsGraph extends LitElement {
   }
 
   getNoConnectionValue() {
-    return this.weighted ? Infinity : 0;
+    return this.weighted ? '—' : 0;
   }
 
   render() {
@@ -33,7 +33,15 @@ export class XItemsGraph extends LitElement {
         ${this.drawConnections(true)}
         ${this.drawItems()}
       </svg>
-    `;
+      ${html`
+        <x-dialog>
+          <label>Weight (0—99): <input name="number" type="number" min="0" max="99" step="1"></label>
+        </x-dialog>`}
+      `;
+  }
+
+  firstUpdated() {
+    this.dialog = this.shadowRoot.querySelector('x-dialog');
   }
 
   drawItems() {
@@ -59,7 +67,7 @@ export class XItemsGraph extends LitElement {
     const connections = isMarked ? this.markedConnections : this.connections;
     connections.forEach((row, i) => {
       row.forEach((val, j) => {
-        if (val !== 0) {
+        if (val !== this.getNoConnectionValue()) {
           lines.push(svg`
             <line
               class="line ${isMarked ? 'marked' : ''}"
@@ -90,7 +98,12 @@ export class XItemsGraph extends LitElement {
   }
 
   drawWeightMarker(p1, p2, w) {
-
+    const x = (p1.x + p2.x) / 2;
+    const y =  (p1.y + p2.y) / 2;
+    return svg`
+      <rect class="weightRect" x="${x - 9}" y="${y - 9}" width="18" height="18"/>
+      <text class="weightText" x="${x}" y="${y + 2}" text-anchor="middle" alignment-baseline="middle">${w}</text>
+    `;
   }
 
   dblclickHandler(e) {
@@ -104,8 +117,8 @@ export class XItemsGraph extends LitElement {
     item.setValue(String.fromCharCode(65 + index));
     this.items.push(item);
 
-    this.connections.push(new Array(this.connections.length).fill(0));
-    this.connections.forEach(c => c.push(0));
+    this.connections.push(new Array(this.connections.length).fill(this.getNoConnectionValue()));
+    this.connections.forEach(c => c.push(this.getNoConnectionValue()));
 
     this.dispatchEvent(new Event('changed'));
     this.requestUpdate();
@@ -136,13 +149,23 @@ export class XItemsGraph extends LitElement {
     if (this.dragOpts == null) return;
     if (this.dragOpts && item && item !== this.dragOpts.dragItem && this.dragOpts.isConnection) {
       const dragItem = this.dragOpts.dragItem;
-      this.connections[dragItem.index][item.index] = 1;
-      if (!this.directed) {
-        this.connections[item.index][dragItem.index] = 1;
+      if (this.weighted) {
+        this.dialog.open().then(formData => {
+          this.createConnection(dragItem, item, Number(formData.get('number')));
+        });
+      } else {
+        this.createConnection(dragItem, item);
       }
-      this.dispatchEvent(new Event('changed'));
     }
     this.dragOpts = null;
+  }
+
+  createConnection(item1, item2, weight = 1) {
+    this.connections[item1.index][item2.index] = weight;
+    if (!this.directed) {
+      this.connections[item2.index][item1.index] = weight;
+    }
+    this.dispatchEvent(new Event('changed'));
     this.requestUpdate();
   }
 
@@ -206,9 +229,19 @@ XItemsGraph.styles = css`
     stroke-width: 3px;
   }
   .directionMarker {
-      stroke: black;
-      stroke-width: 2px;
+    stroke: black;
+    stroke-width: 2px;
+    fill: black;
+  }
+  .weightRect {
+    stroke: black;
+    stroke-width: 1px;
+    fill: bisque;
+  }
+  .weightText {
+      font: normal 12px sans-serif;
       fill: black;
+      stroke: none;
   }
 `;
 

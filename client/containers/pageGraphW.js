@@ -28,6 +28,7 @@ export class PageGraphW extends PageBase {
         .tree=${this.tree}
         .clickFn=${this.clickFn}
         directed
+        weighted
         limit="18"
         @changed=${this.changedHandler}
       ></x-items-graph>
