@@ -102,7 +102,7 @@ export class XItemsGraph extends LitElement {
     const y =  (p1.y + p2.y) / 2;
     return svg`
       <rect class="weightRect" x="${x - 9}" y="${y - 9}" width="18" height="18"/>
-      <text class="weightText" x="${x}" y="${y + 2}" text-anchor="middle" alignment-baseline="middle">${w}</text>
+      <text class="weightText" x="${x}" y="${y + 1}" text-anchor="middle" alignment-baseline="middle">${w}</text>
     `;
   }
 
@@ -152,12 +152,14 @@ export class XItemsGraph extends LitElement {
       if (this.weighted) {
         this.dialog.open().then(formData => {
           this.createConnection(dragItem, item, Number(formData.get('number')));
-        });
+          this.requestUpdate();
+        }, () => this.requestUpdate());
       } else {
         this.createConnection(dragItem, item);
       }
     }
     this.dragOpts = null;
+    this.requestUpdate();
   }
 
   createConnection(item1, item2, weight = 1) {
@@ -166,7 +168,6 @@ export class XItemsGraph extends LitElement {
       this.connections[item2.index][item1.index] = weight;
     }
     this.dispatchEvent(new Event('changed'));
-    this.requestUpdate();
   }
 
   clickHandler(item) {
@@ -206,10 +207,10 @@ XItemsGraph.styles = css`
   }
   .item.marked {
     stroke: red;
-    stroke-width: 2px;
+    stroke-width: 3px;
   }
   .clickable {
-    stroke-width: 2px;
+    stroke-width: 3px;
   }
   .draggable {
     cursor: grab;
@@ -239,9 +240,9 @@ XItemsGraph.styles = css`
     fill: bisque;
   }
   .weightText {
-      font: normal 12px sans-serif;
-      fill: black;
-      stroke: none;
+    font: normal 12px sans-serif;
+    fill: black;
+    stroke: none;
   }
 `;
 

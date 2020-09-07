@@ -1,22 +1,15 @@
-import {PageBase} from './pageBase';
 import {html} from 'lit-element';
-import {Vertex} from '../classes/vertex';
+import {PageGraphN} from './pageGraphN';
+import {Edge} from '../classes/edge';
 
-export class PageGraphW extends PageBase {
-  constructor() {
-    super();
-    this.initItems();
-    this.tree = [];
-    this.connections = [];
-    this.renewConfirmed = false;
-    this.clickFn = null;
-  }
+export class PageGraphW extends PageGraphN {
+
   render() {
     return html`
       <h4>Weighted, Undirected Graph</h4>
       <div class="controlpanel">
         <x-button .callback=${this.newGraph.bind(this)}>New</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorTopo)}>Topo</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorMST)}>Tree</x-button>
         <x-button .callback=${this.toggleView.bind(this)}>View</x-button>
       </div>
       <x-console class="main-console" defaultMessage="Double-click mouse to make vertex. Drag to make an edge. Drag + Ctrl to move vertex."></x-console>
@@ -24,10 +17,8 @@ export class PageGraphW extends PageBase {
       <x-items-graph
         .items=${this.items}
         .connections=${this.connections}
-        .markedConnections=${this.tree}
-        .tree=${this.tree}
+        .markedConnections=${this.markedConnections}
         .clickFn=${this.clickFn}
-        directed
         weighted
         limit="18"
         @changed=${this.changedHandler}
@@ -40,77 +31,67 @@ export class PageGraphW extends PageBase {
     `;
   }
 
-  firstUpdated() {
-    this.console = this.querySelector('.main-console');
-    this.statConsole = this.querySelector('.console-stats');
-    this.table = this.querySelector('x-items-table');
-    this.graph = this.querySelector('x-items-graph');
+  setStats(tree, pq) {
+    this.statConsole.setMessage(`Tree: ${tree.map(i => i.value).join(' ')}. PQ: ${pq.map(i => i.title).join(' ')}`);
   }
 
-  changedHandler() {
-    this.table.requestUpdate();
-  }
+  //minimal spanning tree (MST)
+  * iteratorDFS() {
+    let currentItem = yield* this.iteratorStartSearch();
+    yield `Starting tree from vertex ${currentItem.value}`;
+    if (currentItem == null) return;
+    const tree = [];
+    const pq = [];
+    let countItems = 0;
+    while(true) {
+      tree.push(currentItem);
+      this.setStats(tree, pq);
+      currentItem.mark = true;
+      currentItem.isInTree = true;
+      countItems++;
+      yield `Placed vertex ${currentItem.value} in tree`;
 
-  toggleView() {
-    this.table.toggleAttribute('hidden');
-    this.graph.toggleAttribute('hidden');
-  }
+      if (countItems === this.items.length) break;
 
-  newGraph() {
-    if (this.renewConfirmed) {
-      this.initItems();
-      this.connections = [];
-      this.console.setMessage();
-      this.renewConfirmed = false;
-    } else {
-      this.console.setMessage('ARE YOU SURE? Press again to clear old graph');
-      this.renewConfirmed = true;
-    }
-    this.requestUpdate();
-  }
+      //insertion in PQ vertices, adjacent current
+      this.items.forEach(item => {
+        const distance = this.connections[currentItem.index][item.index];
+        if (item !== currentItem && !item.isInTree && typeof distance === 'number') {
+          this.putInPQ(pq, currentItem, item, distance);
+        }
+      });
 
-  handleClick() {
-    super.handleClick(...arguments);
-    this.renewConfirmed = false;
-  }
+      this.setStats(tree, pq);
+      yield `Placed vertices adjacent to ${currentItem.value} in priority queue`;
 
-  //topological sort
-  * iteratorTopo() {
-    yield 'Will perform topological sort';
-    const connectionsCache = this.connections.map(row => [...row]);
-    const itemsCache = this.items.map(item => new Vertex(item));
-    const result = [];
-    for (let i = 0; i < connectionsCache.length; i++) {
-      const curItem = this.getNoSuccessorVertex();
-      if (!curItem) {
-        yield 'ERROR: Cannot sort graph with cycles';
-        this.connections = connectionsCache;
-        this.items = itemsCache;
-        this.statConsole.setMessage();
+      if (pq.length === 0) {
+        yield 'Graph not connected';
+        this.reset();
         return;
       }
-      yield `Will remove vertex ${curItem.value}`;
-      result.push(curItem.value);
-      this.statConsole.setMessage(`List: ${result.join(' ')}`);
 
-      //remove item (vertex) and its connections
-      this.connections.splice(curItem.index, 1);
-      this.connections.forEach(row => row.splice(curItem.index, 1));
-      this.items.splice(curItem.index, 1);
-      this.items.forEach((item, i) => item.index = i);
-
-      yield `Added vertex ${curItem.value} at start of sorted list`;
+      //removing min edge from pq
+      const edge = pq.pop();
+      currentItem = edge.dest;
+      yield `Removed minimum-distance edge ${edge.title} from priority queue`;
+      this.markedConnections[edge.src.index][edge.dest.index] = edge.distance;
     }
-    yield 'Sort is complete. Will restore graph';
-    this.connections = connectionsCache;
-    this.items = itemsCache;
-    yield 'Will reset sort';
-    this.statConsole.setMessage();
+    this.items.forEach(item => delete item.isInTree);
   }
 
-  getNoSuccessorVertex() {
-    const index = this.connections.findIndex(row => row.reduce((acc, i) => acc + i) === 0);
-    return index != null ? this.items[index] : false;
+  putInPQ(pq, currentItem, item, distance) {
+    const index = pq.findIndex(edge => edge.dest === item);
+    let shouldAdd = false;
+    if (index === -1) {
+      shouldAdd = true;
+    } else if (pq[index].distance > distance) {
+      pq.splice(index, 1);
+      shouldAdd = true;
+    }
+    if (shouldAdd) {
+      const indexPriority = pq.findIndex(edge => edge.distance < distance);
+      pq.splice(indexPriority < 0 ? pq.length : indexPriority, 0, new Edge({src: currentItem, dest: item, distance}));
+    }
   }
 }
 

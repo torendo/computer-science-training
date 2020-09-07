@@ -5,7 +5,7 @@ export class PageGraphN extends PageBase {
   constructor() {
     super();
     this.initItems();
-    this.treeConnections = [];
+    this.markedConnections = [];
     this.connections = [];
     this.renewConfirmed = false;
     this.clickFn = null;
@@ -25,7 +25,7 @@ export class PageGraphN extends PageBase {
       <x-items-graph
         .items=${this.items}
         .connections=${this.connections}
-        .markedConnections=${this.treeConnections}
+        .markedConnections=${this.markedConnections}
         .clickFn=${this.clickFn}
         limit="18"
         @changed=${this.changedHandler}
@@ -75,7 +75,6 @@ export class PageGraphN extends PageBase {
   reset() {
     this.items.forEach(item => item.mark = false);
     this.statConsole.setMessage();
-    this.markEdges = false;
   }
 
   * iteratorStartSearch() {
@@ -116,8 +115,8 @@ export class PageGraphN extends PageBase {
         }
       } else {
         if (stack.length > 0 && isTree === true) {
-          this.treeConnections[prevItem.index][item.index] = 1;
-          this.treeConnections[item.index][prevItem.index] = 1;
+          this.markedConnections[prevItem.index][item.index] = 1;
+          this.markedConnections[item.index][prevItem.index] = 1;
         }
         stack.push(item);
         visits.push(item);
@@ -187,14 +186,12 @@ export class PageGraphN extends PageBase {
 
   //MST - Minimum Spanning Tree
   * iteratorMST() {
-    this.treeConnections = new Array(this.connections.length).fill(0).map(() => {
-      return new Array(this.connections.length).fill(0);
-    });
+    this.markedConnections = this.connections.map(() => new Array(this.connections.length).fill(this.graph.getNoConnectionValue()));
     yield* this.iteratorDFS(true);
     yield 'Press again to hide unmarked edges';
     const connections = this.connections;
-    this.connections = this.treeConnections;
-    this.treeConnections = [];
+    this.connections = this.markedConnections;
+    this.markedConnections = [];
     yield 'Minimum spanning tree; Press again to reset tree';
     this.connections = connections;
     this.reset();
