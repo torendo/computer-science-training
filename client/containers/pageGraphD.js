@@ -6,7 +6,6 @@ export class PageGraphD extends PageBase {
   constructor() {
     super();
     this.initItems();
-    this.tree = [];
     this.connections = [];
     this.renewConfirmed = false;
     this.clickFn = null;
@@ -24,8 +23,6 @@ export class PageGraphD extends PageBase {
       <x-items-graph
         .items=${this.items}
         .connections=${this.connections}
-        .markedConnections=${this.tree}
-        .tree=${this.tree}
         .clickFn=${this.clickFn}
         directed
         limit="18"

@@ -58,6 +58,7 @@ XItemsTable.styles = css`
   }
   td {
       font-family: monospace;
+      text-align: center;
   }
   tr td:first-child,
   tr th:first-child {
