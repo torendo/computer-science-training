@@ -22,7 +22,8 @@ const routes = [
   {path: '/heap', component: 'page-heap', title: 'Heap'},
   {path: '/graphN', component: 'page-graph-n', title: 'Non-Directed Non-Weighted Graph'},
   {path: '/graphD', component: 'page-graph-d', title: 'Directed Non-Weighted Graph'},
-  {path: '/graphW', component: 'page-graph-w', title: 'Weighted, Undirected Graph'}
+  {path: '/graphW', component: 'page-graph-w', title: 'Weighted, Undirected Graph'},
+  {path: '/graphDW', component: 'page-graph-dw', title: 'Directed, Weighted Graph'}
 ];
 
 export class XApp extends LitElement {
