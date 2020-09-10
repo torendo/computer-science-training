@@ -9,16 +9,17 @@ export class PageGraphDW extends PageGraphN {
       <h4>Directed, Weighted Graph</h4>
       <div class="controlpanel">
         <x-button .callback=${this.newGraph.bind(this)}>New</x-button>
-        <x-button .callback=${this.handleClick.bind(this, this.iteratorMST)}>Tree</x-button>
+        <x-button .callback=${this.handleClick.bind(this, this.iteratorPath)}>Path</x-button>
         <x-button .callback=${this.toggleView.bind(this)}>View</x-button>
       </div>
       <x-console class="main-console" defaultMessage="Double-click mouse to make vertex. Drag to make an edge. Drag + Ctrl to move vertex."></x-console>
-      <x-console class="console-stats" defaultMessage="—"></x-console>
+      <x-console class="console-stats" defaultMessage="—" allowHtml></x-console>
       <x-items-graph
         .items=${this.items}
         .connections=${this.connections}
         .markedConnections=${this.markedConnections}
         .clickFn=${this.clickFn}
+        directed
         weighted
         limit="18"
         @changed=${this.changedHandler}
@@ -31,67 +32,75 @@ export class PageGraphDW extends PageGraphN {
     `;
   }
 
-  setStats(tree, pq) {
-    this.statConsole.setMessage(`Tree: ${tree.map(i => i.value).join(' ')}. PQ: ${pq.map(i => i.title).join(' ')}`);
+  setStats(shortestPath) {
+    this.statConsole.setMessage(html`
+      <table class="shortestPathTable">
+        <tr>
+          ${shortestPath.map(edge => html`<th class=${edge.dest.isInTree ? 'marked' : ''}>${edge.dest.value}</th>`)}
+        </tr>
+        <tr>
+          ${shortestPath.map(edge => html`<td>${edge.titleFrom}</td>`)}
+        </tr>
+      </table>
+    `);
+  }
+
+  * adjustShortestPath(shortestPath, lastEdge) {
+    for (let i = 0; i < shortestPath.length; i++) {
+      if (shortestPath[i].dest.isInTree) continue;
+      yield `Will compare distances for column ${shortestPath[i].dest.value}`;
+      const destV = shortestPath[i].dest.value;
+      yield `To ${destV}: `; //todo : ...
+    }
   }
 
   //minimal spanning tree (MST)
-  * iteratorDFS() {
-    let currentItem = yield* this.iteratorStartSearch();
-    yield `Starting tree from vertex ${currentItem.value}`;
-    if (currentItem == null) return;
-    const tree = [];
-    const pq = [];
-    let countItems = 0;
-    while(true) {
-      tree.push(currentItem);
-      this.setStats(tree, pq);
-      currentItem.mark = true;
-      currentItem.isInTree = true;
-      countItems++;
-      yield `Placed vertex ${currentItem.value} in tree`;
+  * iteratorPath() {
+    let startItem = yield* this.iteratorStartSearch();
+    if (startItem == null) return;
+    yield `Starting from vertex ${startItem.value}`;
 
-      if (countItems === this.items.length) break;
+    startItem.mark = true;
+    startItem.isInTree = true;
+    yield `Added vertex ${startItem.value} to tree`;
 
-      //insertion in PQ vertices, adjacent current
-      this.items.forEach(item => {
-        const distance = this.connections[currentItem.index][item.index];
-        if (item !== currentItem && !item.isInTree && typeof distance === 'number') {
-          this.putInPQ(pq, currentItem, item, distance);
-        }
+    const shortestPath = this.connections[startItem.index].map((weight, index) => {
+      return new Edge({weight, src: startItem, dest: this.items[index]});
+    });
+    this.setStats(shortestPath);
+    yield `Copied row ${startItem.value} from adjacency matrix to shortest path array`;
+
+    let counter = 0;
+    while(counter < this.items.length) {
+
+      const minPathEdge = shortestPath.reduce((min, cur) => {
+        return (min && min.weight < cur.weight) ? min : cur;
       });
 
-      this.setStats(tree, pq);
-      yield `Placed vertices adjacent to ${currentItem.value} in priority queue`;
-
-      if (pq.length === 0) {
-        yield 'Graph not connected';
-        this.reset();
-        return;
+      if (!minPathEdge) {
+        //todo: say something
+        break;
       }
+      counter++;
 
-      //removing min edge from pq
-      const edge = pq.pop();
-      currentItem = edge.dest;
-      yield `Removed minimum-distance edge ${edge.title} from priority queue`;
-      this.markedConnections[edge.src.index][edge.dest.index] = edge.distance;
-    }
-    this.items.forEach(item => delete item.isInTree);
-  }
+      yield `Minimum distance from ${minPathEdge.src.value} is ${minPathEdge.weight}, to vertex ${minPathEdge.dest.value}`;
 
-  putInPQ(pq, currentItem, item, distance) {
-    const index = pq.findIndex(edge => edge.dest === item);
-    let shouldAdd = false;
-    if (index === -1) {
-      shouldAdd = true;
-    } else if (pq[index].distance > distance) {
-      pq.splice(index, 1);
-      shouldAdd = true;
+      minPathEdge.dest.mark = true;
+      minPathEdge.dest.isInTree = true;
+      this.markedConnections[minPathEdge.src.index][minPathEdge.dest.index] = minPathEdge.weight;
+      yield `Added vertex ${minPathEdge.dest.value} to tree`;
+
+      yield 'Will adjust values in shortest-path array';
+      yield* this.adjustShortestPath(shortestPath, minPathEdge);
+
     }
-    if (shouldAdd) {
-      const indexPriority = pq.findIndex(edge => edge.distance < distance);
-      pq.splice(indexPriority < 0 ? pq.length : indexPriority, 0, new Edge({src: currentItem, dest: item, distance}));
-    }
+    yield `All shortest paths from ${startItem.value} found. Distances in array`;
+    yield 'Press again to reset paths';
+    this.items.forEach(item => {
+      delete item.isInTree;
+      item.mark = false;
+    });
+    this.markedConnections = [];
   }
 }
 
