@@ -5,10 +5,6 @@ export class Edge {
     this.weight = weight;
   }
   get title() {
-    return this.src.value + this.dest.value + this.weight;
-  }
-
-  get titleFrom() {
-    return `${this.weight}(${this.src.value})`;
+    return `${this.src.value}${this.dest.value}(${this.weight.toString().slice(0, 3)})`;
   }
 }

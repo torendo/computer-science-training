@@ -31,7 +31,10 @@ export class XItemsTable extends LitElement {
       return html`
         <tr>
           <td>${value}</td>
-          ${this.items.map(item => html`<td>${connections[item.index]}</td>`)}      
+          ${this.items.map(item => {
+            const weight = connections[item.index].toString().slice(0,3);
+            return html`<td>${weight}</td>`;
+          })}
         </tr>
       `;
     }

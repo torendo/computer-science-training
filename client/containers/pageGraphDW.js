@@ -34,24 +34,55 @@ export class PageGraphDW extends PageGraphN {
 
   setStats(shortestPath) {
     this.statConsole.setMessage(html`
-      <table class="shortestPathTable">
+      <table>
         <tr>
           ${shortestPath.map(edge => html`<th class=${edge.dest.isInTree ? 'marked' : ''}>${edge.dest.value}</th>`)}
         </tr>
         <tr>
-          ${shortestPath.map(edge => html`<td>${edge.titleFrom}</td>`)}
+          ${shortestPath.map(edge => html`<td>${edge.weight.toString().slice(0, 3)}(${edge.src.value})</td>`)}
         </tr>
       </table>
     `);
   }
 
-  * adjustShortestPath(shortestPath, lastEdge) {
-    for (let i = 0; i < shortestPath.length; i++) {
-      if (shortestPath[i].dest.isInTree) continue;
-      yield `Will compare distances for column ${shortestPath[i].dest.value}`;
-      const destV = shortestPath[i].dest.value;
-      yield `To ${destV}: `; //todo : ...
+  * adjustShortestPath(shortestPath, startItem, lastEdge) {
+    const lastItem = lastEdge.dest;
+    const startToLastWeight = lastEdge.weight;
+    let i = 0;
+    while (true) {
+      if (i >= shortestPath.length) break;
+      if (shortestPath[i].dest.isInTree) {
+        i++;
+        continue;
+      }
+
+      const startToCurWeight = shortestPath[i].weight;
+      const curItem = shortestPath[i].dest;
+      yield `Will compare distances for column ${curItem.value}`;
+
+      const lastToCurWeight = this.connections[lastItem.index][curItem.index];
+      const isNeedToReplace = (startToLastWeight + lastToCurWeight) < startToCurWeight;
+      yield `To ${curItem.value}: ${startItem.value} to ${lastItem.value} (${startToLastWeight.toString().slice(0, 3)})
+        plus edge ${lastItem.value}${curItem.value}(${lastToCurWeight.toString().slice(0, 3)})
+        ${isNeedToReplace ? 'less than' : 'greater than or equal to'} ${startItem.value} to ${curItem.value} (${startToCurWeight.toString().slice(0, 3)})`;
+
+      if (isNeedToReplace) {
+        shortestPath[i].src = lastItem;
+        shortestPath[i].weight = startToLastWeight + lastToCurWeight;
+        this.setStats(shortestPath);
+        yield `Updated array column ${curItem.value}`;
+      } else {
+        yield `No need to update array column ${curItem.value}`;
+      }
+
+      if (i < shortestPath.length) {
+        yield 'Will examine next non-tree column';
+        i++;
+      } else {
+        break;
+      }
     }
+    yield 'Done all entries in shortest-path array';
   }
 
   //minimal spanning tree (MST)
@@ -64,8 +95,10 @@ export class PageGraphDW extends PageGraphN {
     startItem.isInTree = true;
     yield `Added vertex ${startItem.value} to tree`;
 
+    this.markedConnections = this.connections.map(() => new Array(this.connections.length).fill(this.graph.getNoConnectionValue()));
+
     const shortestPath = this.connections[startItem.index].map((weight, index) => {
-      return new Edge({weight, src: startItem, dest: this.items[index]});
+      return new Edge({src: startItem, dest: this.items[index], weight});
     });
     this.setStats(shortestPath);
     yield `Copied row ${startItem.value} from adjacency matrix to shortest path array`;
@@ -78,7 +111,7 @@ export class PageGraphDW extends PageGraphN {
       });
 
       if (!minPathEdge) {
-        //todo: say something
+        yield 'One or more vertices are UNREACHABLE';
         break;
       }
       counter++;
@@ -88,10 +121,11 @@ export class PageGraphDW extends PageGraphN {
       minPathEdge.dest.mark = true;
       minPathEdge.dest.isInTree = true;
       this.markedConnections[minPathEdge.src.index][minPathEdge.dest.index] = minPathEdge.weight;
+      this.setStats(shortestPath);
       yield `Added vertex ${minPathEdge.dest.value} to tree`;
 
       yield 'Will adjust values in shortest-path array';
-      yield* this.adjustShortestPath(shortestPath, minPathEdge);
+      yield* this.adjustShortestPath(shortestPath, startItem, minPathEdge);
 
     }
     yield `All shortest paths from ${startItem.value} found. Distances in array`;

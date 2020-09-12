@@ -32,6 +32,13 @@ XConsole.styles = css`
     padding: 10px;
     font-family: monospace;
   }
+  
+  .message table th {
+      border-bottom: 1px solid black;
+  }
+  .message .marked {
+      color: crimson;
+  }
 `;
 
 customElements.define('x-console', XConsole);

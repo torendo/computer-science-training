@@ -57,11 +57,3 @@ nav {
 [hidden] {
   display: none;
 }
-
-page-graph-dw .shortestPathTable th {
-  border-bottom: 1px solid black;
-}
-
-page-graph-dw .marked {
-  color: crimson;
-}
