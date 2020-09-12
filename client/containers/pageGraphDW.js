@@ -103,24 +103,24 @@ export class PageGraphDW extends PageGraphN {
     this.setStats(shortestPath);
     yield `Copied row ${startItem.value} from adjacency matrix to shortest path array`;
 
-    let counter = 0;
+    let counter = 1;
     while(counter < this.items.length) {
+      counter++;
 
       const minPathEdge = shortestPath.reduce((min, cur) => {
-        return (min && min.weight < cur.weight) ? min : cur;
+        return (min && min.weight < cur.weight || cur.dest.isInTree) ? min : cur;
       });
 
-      if (!minPathEdge) {
+      if (!minPathEdge || minPathEdge.weight === Infinity) {
         yield 'One or more vertices are UNREACHABLE';
         break;
       }
-      counter++;
 
-      yield `Minimum distance from ${minPathEdge.src.value} is ${minPathEdge.weight}, to vertex ${minPathEdge.dest.value}`;
+      yield `Minimum distance from ${startItem.value} is ${minPathEdge.weight}, to vertex ${minPathEdge.dest.value}`;
 
       minPathEdge.dest.mark = true;
       minPathEdge.dest.isInTree = true;
-      this.markedConnections[minPathEdge.src.index][minPathEdge.dest.index] = minPathEdge.weight;
+      this.markedConnections[minPathEdge.src.index][minPathEdge.dest.index] = this.connections[minPathEdge.src.index][minPathEdge.dest.index];
       this.setStats(shortestPath);
       yield `Added vertex ${minPathEdge.dest.value} to tree`;
 
@@ -135,6 +135,7 @@ export class PageGraphDW extends PageGraphN {
       item.mark = false;
     });
     this.markedConnections = [];
+    this.statConsole.setMessage();
   }
 }
 
