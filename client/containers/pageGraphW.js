@@ -1,6 +1,10 @@
 import {html} from 'lit-element';
 import {PageGraphN} from './pageGraphN';
 import {Edge} from '../classes/edge';
+import '../components/button';
+import '../components/console';
+import '../components/itemsGraph';
+import '../components/itemsTable';
 
 export class PageGraphW extends PageGraphN {
 

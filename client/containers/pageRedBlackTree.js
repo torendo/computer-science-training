@@ -3,6 +3,10 @@ import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {PageBinaryTree} from './pageBinaryTree';
+import '../components/button';
+import '../components/console';
+import '../components/dialog';
+import '../components/itemsTree';
 
 export class PageRedBlackTree extends PageBase {
   constructor() {

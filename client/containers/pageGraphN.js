@@ -1,5 +1,9 @@
 import {PageBase} from './pageBase';
 import {html} from 'lit-element';
+import '../components/button';
+import '../components/console';
+import '../components/itemsGraph';
+import '../components/itemsTable';
 
 export class PageGraphN extends PageBase {
   constructor() {

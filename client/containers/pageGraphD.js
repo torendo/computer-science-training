@@ -1,6 +1,10 @@
 import {PageBase} from './pageBase';
 import {html} from 'lit-element';
 import {Vertex} from '../classes/vertex';
+import '../components/button';
+import '../components/console';
+import '../components/itemsGraph';
+import '../components/itemsTable';
 
 export class PageGraphD extends PageBase {
   constructor() {

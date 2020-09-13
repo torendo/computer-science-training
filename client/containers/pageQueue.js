@@ -2,6 +2,10 @@ import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {PageStack} from './pageStack';
+import '../components/button';
+import '../components/console';
+import '../components/dialog';
+import '../components/itemsHorizontal';
 
 export class PageQueue extends PageStack {
   constructor() {

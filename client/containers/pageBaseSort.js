@@ -2,6 +2,9 @@ import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {getColor100} from '../utils';
 import {PageBase} from './pageBase';
+import '../components/button';
+import '../components/console';
+import '../components/itemsVertical';
 
 export class PageBaseSort extends PageBase {
   constructor() {

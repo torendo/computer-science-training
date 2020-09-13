@@ -3,6 +3,10 @@ import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {PageBase} from './pageBase';
 import {getUniqueRandomArray} from '../utils';
+import '../components/button';
+import '../components/console';
+import '../components/dialog';
+import '../components/itemsHorizontalLinked';
 
 export class PageLinkList extends PageBase {
   constructor() {

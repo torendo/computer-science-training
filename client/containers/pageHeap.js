@@ -2,6 +2,10 @@ import {PageBase} from './pageBase';
 import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
+import '../components/button';
+import '../components/console';
+import '../components/dialog';
+import '../components/itemsTree';
 
 export class PageHeap extends PageBase {
   constructor() {

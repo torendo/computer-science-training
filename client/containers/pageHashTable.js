@@ -3,6 +3,10 @@ import {getUniqueRandomArray, isPrime} from '../utils';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {PageBase} from './pageBase';
+import '../components/button';
+import '../components/console';
+import '../components/dialog';
+import '../components/itemsHorizontal';
 
 export class PageHashTable extends PageBase {
   constructor() {

@@ -1,5 +1,6 @@
 import {LitElement, svg, html, css} from 'lit-element';
 import {Vertex} from '../classes/vertex';
+import './dialog';
 
 export class XItemsGraph extends LitElement {
   static get properties() {
@@ -65,6 +66,7 @@ export class XItemsGraph extends LitElement {
   drawConnections(isMarked) {
     const lines = [];
     const connections = isMarked ? this.markedConnections : this.connections;
+    if (!connections) return;
     connections.forEach((row, i) => {
       row.forEach((val, j) => {
         if (val !== this.getNoConnectionValue()) {

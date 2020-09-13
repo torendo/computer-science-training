@@ -23,11 +23,7 @@ export class XButton extends LitElement {
   }
 
   updated() {
-    if (this.activated) {
-      this.classList.add('activated');
-    } else {
-      this.classList.remove('activated');
-    }
+    this.classList.toggle('activated', this.activated);
   }
 
   handleClick() {
