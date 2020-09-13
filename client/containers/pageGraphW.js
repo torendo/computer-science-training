@@ -55,9 +55,9 @@ export class PageGraphW extends PageGraphN {
 
       //insertion in PQ vertices, adjacent current
       this.items.forEach(item => {
-        const distance = this.connections[currentItem.index][item.index];
-        if (item !== currentItem && !item.isInTree && typeof distance === 'number') {
-          this.putInPQ(pq, currentItem, item, distance);
+        const weight = this.connections[currentItem.index][item.index];
+        if (item !== currentItem && !item.isInTree && typeof weight === 'number') {
+          this.putInPQ(pq, currentItem, item, weight);
         }
       });
 
@@ -74,23 +74,23 @@ export class PageGraphW extends PageGraphN {
       const edge = pq.pop();
       currentItem = edge.dest;
       yield `Removed minimum-distance edge ${edge.title} from priority queue`;
-      this.markedConnections[edge.src.index][edge.dest.index] = edge.distance;
+      this.markedConnections[edge.src.index][edge.dest.index] = edge.weight;
     }
     this.items.forEach(item => delete item.isInTree);
   }
 
-  putInPQ(pq, currentItem, item, distance) {
+  putInPQ(pq, currentItem, item, weight) {
     const index = pq.findIndex(edge => edge.dest === item);
     let shouldAdd = false;
     if (index === -1) {
       shouldAdd = true;
-    } else if (pq[index].distance > distance) {
+    } else if (pq[index].weight > weight) {
       pq.splice(index, 1);
       shouldAdd = true;
     }
     if (shouldAdd) {
-      const indexPriority = pq.findIndex(edge => edge.distance < distance);
-      pq.splice(indexPriority < 0 ? pq.length : indexPriority, 0, new Edge({src: currentItem, dest: item, distance}));
+      const indexPriority = pq.findIndex(edge => edge.weight < weight);
+      pq.splice(indexPriority < 0 ? pq.length : indexPriority, 0, new Edge({src: currentItem, dest: item, weight}));
     }
   }
 }

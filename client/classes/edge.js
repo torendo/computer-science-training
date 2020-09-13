@@ -1,10 +1,10 @@
 export class Edge {
-  constructor({src, dest, distance}) {
+  constructor({src, dest, weight}) {
     this.src = src;
     this.dest = dest;
-    this.distance = distance;
+    this.weight = weight;
   }
   get title() {
-    return this.src.value + this.dest.value + this.distance;
+    return `${this.src.value}${this.dest.value}(${this.weight.toString().slice(0, 3)})`;
   }
 }

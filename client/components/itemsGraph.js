@@ -15,7 +15,7 @@ export class XItemsGraph extends LitElement {
   }
 
   getNoConnectionValue() {
-    return this.weighted ? '—' : 0;
+    return this.weighted ? Infinity : 0;
   }
 
   render() {
