@@ -16,7 +16,7 @@ export class PageGraphD extends PageBase {
   }
   render() {
     return html`
-      <h4>Directed Non-Weighted Graph</h4>
+      <h1>Directed Non-Weighted Graph</h1>
       <div class="controlpanel">
         <x-button .callback=${this.newGraph.bind(this)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorTopo)}>Topo</x-button>

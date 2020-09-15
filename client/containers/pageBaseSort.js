@@ -17,7 +17,7 @@ export class PageBaseSort extends PageBase {
 
   render() {
     return html`
-      <h4>${this.title}</h4>
+      <h1>${this.title}</h1>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorSize)}>Size</x-button>

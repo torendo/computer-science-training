@@ -19,7 +19,7 @@ export class PageStack extends PageBase {
 
   render() {
     return html`
-      <h4>Stack</h4>
+      <h1>Stack</h1>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorPush)}>Push</x-button>

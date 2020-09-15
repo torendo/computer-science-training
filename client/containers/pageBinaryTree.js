@@ -16,7 +16,7 @@ export class PageBinaryTree extends PageBase {
 
   render() {
     return html`
-      <h4>Binary Tree</h4>
+      <h1>Binary Tree</h1>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>

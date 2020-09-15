@@ -10,7 +10,7 @@ export class PageGraphW extends PageGraphN {
 
   render() {
     return html`
-      <h4>Weighted, Undirected Graph</h4>
+      <h1>Weighted, Undirected Graph</h1>
       <div class="controlpanel">
         <x-button .callback=${this.newGraph.bind(this)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorMST)}>Tree</x-button>

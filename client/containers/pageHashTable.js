@@ -18,7 +18,7 @@ export class PageHashTable extends PageBase {
 
   render() {
     return html`
-      <h4>Hash Table (linear/quad/double)</h4>
+      <h1>Hash Table (linear/quad/double)</h1>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>

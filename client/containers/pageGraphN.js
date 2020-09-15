@@ -90,7 +90,8 @@ export class PageGraphN extends PageBase {
     yield 'Single-click on vertex from which to start';
     this.clickFn = null;
     if (startItem == null) {
-      return 'ERROR: Item\'s not clicked.';
+      yield 'ERROR: Item\'s not clicked.';
+      return;
     }
     yield `You clicked on ${startItem.value}`;
     return startItem;

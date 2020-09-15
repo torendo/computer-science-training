@@ -16,7 +16,7 @@ export class PageHeap extends PageBase {
 
   render() {
     return html`
-      <h4>Heap</h4>
+      <h1>Heap</h1>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorChng)}>Chng</x-button>
