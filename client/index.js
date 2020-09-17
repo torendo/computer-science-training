@@ -133,7 +133,10 @@ class XApp extends LitElement {
 
   loadView() {
     const hash = location.hash;
-    if (hash !== '') view.component = routes[hash];
+    if (hash !== '') {
+      view.component = routes[hash];
+      view.scrollIntoView();
+    }
   }
 }
 

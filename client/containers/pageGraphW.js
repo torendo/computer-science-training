@@ -3,6 +3,7 @@ import {PageGraphN} from './pageGraphN';
 import {Edge} from '../classes/edge';
 import '../components/button';
 import '../components/console';
+import '../components/info';
 import '../components/itemsGraph';
 import '../components/itemsTable';
 
@@ -15,6 +16,14 @@ export class PageGraphW extends PageGraphN {
         <x-button .callback=${this.newGraph.bind(this)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorMST)}>Tree</x-button>
         <x-button .callback=${this.toggleView.bind(this)}>View</x-button>
+        <x-info>
+          <p><b>Double-click</b> to create new vertex</p>
+          <p><b>Drag</b> from vertex to vertex to create edge</p>
+          <p><b>Drag + Ctrl</b> moves vertex</p>
+          <p><b>New</b> clears an old graph</p>
+          <p><b>Tree</b> creates minimum spanning tree</p>
+          <p><b>View</b> toggles between graph and adjacency matrix</p>
+        </x-info>
       </div>
       <x-console class="main-console" defaultMessage="Double-click mouse to make vertex. Drag to make an edge. Drag + Ctrl to move vertex."></x-console>
       <x-console class="console-stats" defaultMessage="—"></x-console>

@@ -5,6 +5,7 @@ import {PageBase} from './pageBase';
 import '../components/button';
 import '../components/console';
 import '../components/dialog';
+import '../components/info';
 import '../components/itemsTree';
 
 export class PageBinaryTree extends PageBase {
@@ -23,6 +24,13 @@ export class PageBinaryTree extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorTrav)}>Trav</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
+        <x-info>
+          <p><b>Fill</b> creates a new tree with N nodes</p> 
+          <p><b>Find</b> searches for a node with value N</p>
+          <p><b>Ins</b> inserts a new node with value N</p>
+          <p><b>Trav</b> traverses the tree in ascending order</p> 
+          <p><b>Del</b> deletes the node with value N</p>
+        </x-info>
       </div>
       <x-console class="main-console"></x-console>
       <x-console class="console-stats" defaultMessage="—"></x-console>

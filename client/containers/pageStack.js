@@ -5,6 +5,7 @@ import {PageBase} from './pageBase';
 import '../components/button';
 import '../components/console';
 import '../components/dialog';
+import '../components/info';
 import '../components/itemsHorizontal';
 
 export class PageStack extends PageBase {
@@ -25,6 +26,12 @@ export class PageStack extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorPush)}>Push</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorPop)}>Pop</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorPeek)}>Peek</x-button>
+        <x-info>
+          <p><b>New</b> creates new stack</p> 
+          <p><b>Push</b> inserts item with value N at top of stack</p> 
+          <p><b>Pop</b> removes item from top of stack, returns value</p> 
+          <p><b>Peek</b> returns value of item at top of stack</p>
+        </x-info>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items} .markers=${this.markers} reverse></x-items-horizontal>

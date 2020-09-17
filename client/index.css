@@ -66,6 +66,11 @@ footer {
   color: darkgray;
 }
 
+page-start {
+  display: block;
+  width: 600px;
+}
+
 .hidden,
 [hidden] {
   display: none;

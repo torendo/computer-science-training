@@ -6,6 +6,7 @@ import {PageBase} from './pageBase';
 import '../components/button';
 import '../components/console';
 import '../components/dialog';
+import '../components/info';
 
 export class PageHashChain extends PageBase {
   constructor() {
@@ -24,6 +25,13 @@ export class PageHashChain extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
+        <x-info>
+          <p><b>New</b> creates new hash table containing N linked lists</p>
+          <p><b>Fill</b> inserts N items into table</p>
+          <p><b>Ins</b> inserts new item with value N</p>
+          <p><b>Find</b> finds item with value N</p>
+          <p><b>Del</b> deletes item with value N</p>
+        </x-info>
       </div>
       <x-console></x-console>
       <ol start="0" style="height: 30em; overflow-y: scroll;">${this.renderLines()}</ol>

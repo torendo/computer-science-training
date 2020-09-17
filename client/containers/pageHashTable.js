@@ -6,6 +6,7 @@ import {PageBase} from './pageBase';
 import '../components/button';
 import '../components/console';
 import '../components/dialog';
+import '../components/info';
 import '../components/itemsHorizontal';
 
 export class PageHashTable extends PageBase {
@@ -25,21 +26,22 @@ export class PageHashTable extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
-        ${this.renderAdditionalControl()}
+        <label><input type="radio" name="algorithm" class="algorithm algorithm_linear" disabled checked>Linear</label>
+        <label><input type="radio" name="algorithm" class="algorithm algorithm_quad" disabled>Quad</label>
+        <label><input type="radio" name="algorithm" class="algorithm algorithm_double" disabled>Double</label>
+        <x-info>
+          <p><b>New</b> creates hash table with N cells (60 max)</p> 
+          <p><b>Fill</b> inserts N items into table</p> 
+          <p><b>Ins</b> inserts new item with value N</p> 
+          <p><b>Find</b> finds item with value N</p> 
+          <p><b>Linear/Quad/Double</b> selects probe method</p> 
+        </x-info>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items} .markers=${this.markers}></x-items-horizontal>
       <x-dialog>
         <label>Number: <input name="number" type="number"></label>
       </x-dialog>
-    `;
-  }
-
-  renderAdditionalControl() {
-    return html`
-      <label><input type="radio" name="algorithm" class="algorithm algorithm_linear" disabled checked>Linear</label>
-      <label><input type="radio" name="algorithm" class="algorithm algorithm_quad" disabled>Quad</label>
-      <label><input type="radio" name="algorithm" class="algorithm algorithm_double" disabled>Double</label>
     `;
   }
 

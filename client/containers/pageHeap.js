@@ -5,6 +5,7 @@ import {Marker} from '../classes/marker';
 import '../components/button';
 import '../components/console';
 import '../components/dialog';
+import '../components/info';
 import '../components/itemsTree';
 
 export class PageHeap extends PageBase {
@@ -22,6 +23,13 @@ export class PageHeap extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorChng)}>Chng</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorRem)}>Rem</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
+        <x-info>
+          <p><b>Fill</b> creates new heap with N nodes</p>
+          <p><b>Chng</b> changes selected node to value N</p>
+          <p><b>Click on node</b> to select it</p>
+          <p><b>Rem</b> removes node with highest key</p>
+          <p><b>Ins</b> inserts new node with value N</p>
+        </x-info>
       </div>
       <x-console class="main-console"></x-console>
       <x-items-tree .items=${this.items} .marker=${this.marker}></x-items-tree>

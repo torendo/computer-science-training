@@ -6,12 +6,20 @@ import {PageBase} from './pageBase';
 import '../components/button';
 import '../components/console';
 import '../components/dialog';
+import '../components/info';
 import '../components/itemsHorizontal';
 
 export class PageArray extends PageBase {
   constructor() {
     super();
     this.title = 'Array';
+    this.info = html`
+      <p><b>New</b> creates array with N cells (60 max)</p>
+      <p><b>Fill</b> inserts N items into array</p>
+      <p><b>Ins</b> inserts new item with value N</p>
+      <p><b>Find</b> finds item(s) with value N</p>
+      <p><b>Del</b> deletes item(s) with value N</p>
+    `;
     this.items = [];
     this.markers = [];
     this.length = 0;
@@ -21,7 +29,7 @@ export class PageArray extends PageBase {
 
   render() {
     return html`
-      <h4>${this.title}</h4>
+      <h1>${this.title}</h1>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFill)}>Fill</x-button>
@@ -29,6 +37,7 @@ export class PageArray extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
         ${this.renderAdditionalControl()}
+        <x-info>${this.info}</x-info>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items} .markers=${this.markers}></x-items-horizontal>
