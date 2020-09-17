@@ -79,7 +79,8 @@ XItemsTree.styles = css`
   :host {
     display: block;
     height: 400px;
-    width: 600px;    
+    width: 600px;
+    margin: 10px;
   }
   svg {
     width: 100%;

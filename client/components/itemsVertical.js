@@ -90,6 +90,7 @@ XItemsVertical.styles = css`
     flex-direction: row;
     flex-wrap: nowrap;
     max-width: 600px;
+    margin: 10px;
   }
   .item {
     position: relative;

@@ -47,6 +47,7 @@ XItemsTable.styles = css`
     height: 400px;
     width: 600px;
     background: papayawhip;
+    margin: 10px;
   }
   table {
     font-size: 14px;

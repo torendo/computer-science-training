@@ -39,6 +39,7 @@ XItemsHorizontalLinked.styles = css`
     align-content: flex-start;
     height: 19em;
     max-width: 600px;
+    margin: 10px;
   }
   :host([narrow]),
   :host([narrow]) .item {
@@ -52,6 +53,9 @@ XItemsHorizontalLinked.styles = css`
   }
   :host([narrow]) .marker:after {
     height: 10px;
+  }
+  x-items-horizontal-linked {
+    margin: 0;
   }
   .item {
     display: flex;

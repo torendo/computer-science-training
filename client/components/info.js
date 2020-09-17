@@ -36,7 +36,7 @@ XInfo.styles = css`
     top: .5em;
     left: 2em;
     width: 250px;
-    padding: 0 15px;
+    padding: 15px 15px 0 15px;
     border: 1px solid gray;
     background: whitesmoke;
   }

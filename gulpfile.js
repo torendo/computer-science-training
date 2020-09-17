@@ -9,8 +9,8 @@ var nodeResolve = require('rollup-plugin-node-resolve');
 
 function js(isProd) {
   var bundler = rollup({
-    input: './client/index.js',
-    name: 'index.js',
+    input: './client/lafore-applets.js',
+    name: 'lafore-applets.js',
     format: 'umd',
     sourcemap: true,
     plugins: [
@@ -19,7 +19,7 @@ function js(isProd) {
         main: true
       })
     ]
-  }).pipe(source('index.js', './dist/client'));
+  }).pipe(source('lafore-applets.js', './dist/client'));
   if (isProd) {
     bundler
       .pipe(buffer())
@@ -31,7 +31,7 @@ function js(isProd) {
 function statics() {
   return gulp.src([
     './client/index.html',
-    './client/index.css'
+    './client/lafore-applets.css'
   ])
     .pipe(gulp.dest('./dist/client'));
 }

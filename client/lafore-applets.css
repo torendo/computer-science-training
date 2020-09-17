@@ -1,13 +1,25 @@
 x-app {
   display: grid;
   grid-template-columns: 200px auto;
-  gap: 10px 10px;
+  gap: 20px 20px;
   grid-template-areas: "nav view"
                        "footer  footer";
   font-family: sans-serif;
   padding: 10px;
   font-size: 14px;
   box-sizing: border-box;
+  background: white;
+}
+
+x-app:not(:defined):before {
+  content: '';
+  display: block;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: dimgrey;
+  border-radius: 50%;
+  width: 13px;
+  height: 13px;
+  animation: loading-spin 1.2s linear infinite;
 }
 
 x-app x-router {
@@ -29,12 +41,34 @@ x-app nav {
   flex-direction: column;
 }
 
+x-app p {
+  margin: 0 0 1em 0;
+}
+
+x-app li {
+  margin-left: 2em;
+}
+
 x-app h1 {
   font-size: 16px;
 }
 
 x-app h2 {
   font-size: 14px;
+}
+
+x-app h1,
+x-app h2 {
+  margin: .5em 0 .5em 0 !important;
+}
+
+x-app label {
+  display: inline-block;
+  margin: 0 0 0 .5em;
+}
+
+x-app input[type="checkbox"] {
+  margin-right: .5em;
 }
 
 x-app .nav-item {

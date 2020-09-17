@@ -196,6 +196,7 @@ XItemsGraph.styles = css`
     height: 400px;
     width: 600px;
     border: 1px gray solid;
+    margin: 10px;
   }
   svg {
     width: 100%;

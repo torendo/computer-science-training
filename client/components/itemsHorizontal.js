@@ -57,6 +57,7 @@ XItemsHorizontal.styles = css`
     flex-wrap: wrap;
     height: 19em;
     max-width: 600px;
+    margin: 10px;
   }
   .item {
     display: flex;
@@ -96,6 +97,7 @@ XItemsHorizontal.styles = css`
     position: absolute;
     left: 0;
     height: 100%;
+    width: 100%;
     font-size: .8em;
     text-align: center;
   }
