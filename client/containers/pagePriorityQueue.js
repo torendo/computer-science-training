@@ -2,11 +2,18 @@ import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {getUniqueRandomArray} from '../utils';
 import {PageQueue} from './pageQueue';
+import {html} from 'lit-element';
 
 export class PagePriorityQueue extends PageQueue {
   constructor() {
     super();
     this.title = 'Priority Queue';
+    this.info = html`
+      <p><b>New</b> creates new empty priority queue</p> 
+      <p><b>Ins</b> inserts item with value N</p>
+      <p><b>Rem</b> removes item from front of queue, returns value</p> 
+      <p><b>Peek</b> returns value of item at front of queue</p>
+    `;
   }
 
   initItems() {

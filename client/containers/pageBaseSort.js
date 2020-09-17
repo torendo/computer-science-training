@@ -2,6 +2,10 @@ import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {getColor100} from '../utils';
 import {PageBase} from './pageBase';
+import '../components/button';
+import '../components/console';
+import '../components/info';
+import '../components/itemsVertical';
 
 export class PageBaseSort extends PageBase {
   constructor() {
@@ -14,13 +18,19 @@ export class PageBaseSort extends PageBase {
 
   render() {
     return html`
-      <h4>${this.title}</h4>
+      <h1>${this.title}</h1>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorSize)}>Size</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorRun)}>Run</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorStep)}>Step</x-button>
         <x-button .callback=${this.handleAbort.bind(this)} class="btn_abort hidden">Abort</x-button>
+        <x-info>
+          <p><b>New</b> creates new data and initializes sort; toggles between random and inverse order</p>
+          <p><b>Size</b> toggles between 10 bars and 100 bars; also creates new data and initializes sort</p> 
+          <p><b>Run</b> starts the sorting process running automatically (Next to pause/resume, Abort to stop)</p> 
+          <p><b>Step</b> executes one step of sorting process</p> 
+        </x-info>
       </div>
       <x-console class="console_verbose"></x-console>
       <x-console class="console-stats" defaultMessage="—"></x-console>

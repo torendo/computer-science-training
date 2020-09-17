@@ -7,6 +7,13 @@ export class PageOrderedArray extends PageArray {
   constructor() {
     super();
     this.title = 'Ordered Array';
+    this.info = html`
+      <p><b>New</b> creates array with N cells (60 max)</p>
+      <p><b>Fill</b> inserts N items into array</p>
+      <p><b>Ins</b> inserts new item with value N</p>
+      <p><b>Find</b> finds item with value N</p>
+      <p><b>Del</b> deletes item with value N</p>
+    `;
   }
 
   renderAdditionalControl() {

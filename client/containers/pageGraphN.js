@@ -1,5 +1,10 @@
 import {PageBase} from './pageBase';
 import {html} from 'lit-element';
+import '../components/button';
+import '../components/console';
+import '../components/info';
+import '../components/itemsGraph';
+import '../components/itemsTable';
 
 export class PageGraphN extends PageBase {
   constructor() {
@@ -19,6 +24,16 @@ export class PageGraphN extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorBFS)}>BFS</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorMST)}>Tree</x-button>
         <x-button .callback=${this.toggleView.bind(this)}>View</x-button>
+        <x-info>
+          <p><b>Double-click</b> to create new vertex</p>
+          <p><b>Drag</b> from vertex to vertex to create edge</p>
+          <p><b>Drag + Ctrl</b> moves vertex</p>
+          <p><b>New</b> clears an old graph</p>
+          <p><b>DFS</b> carries out Depth First Search</p>
+          <p><b>BFS</b> carries out Breadth First Search</p>
+          <p><b>Tree</b> creates minimum spanning tree</p>
+          <p><b>View</b> toggles between graph and adjacency matrix</p>
+        </x-info>
       </div>
       <x-console class="main-console" defaultMessage="Double-click mouse to make vertex. Drag to make an edge. Drag + Ctrl to move vertex."></x-console>
       <x-console class="console-stats" defaultMessage="—"></x-console>
@@ -86,7 +101,8 @@ export class PageGraphN extends PageBase {
     yield 'Single-click on vertex from which to start';
     this.clickFn = null;
     if (startItem == null) {
-      return 'ERROR: Item\'s not clicked.';
+      yield 'ERROR: Item\'s not clicked.';
+      return;
     }
     yield `You clicked on ${startItem.value}`;
     return startItem;

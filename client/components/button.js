@@ -11,7 +11,7 @@ export class XButton extends LitElement {
 
   render() {
     return html`
-      <button @click=${this.handleClick} ?disabled=${this.disabled}>
+      <button type="button" title="" @click=${this.handleClick} ?disabled=${this.disabled}>
         <slot class=${this.activated ? 'hidden' : ''}></slot>      
         <span class=${this.activated ? '' : 'hidden'}>Next</span>
       </button>
@@ -23,11 +23,7 @@ export class XButton extends LitElement {
   }
 
   updated() {
-    if (this.activated) {
-      this.classList.add('activated');
-    } else {
-      this.classList.remove('activated');
-    }
+    this.classList.toggle('activated', this.activated);
   }
 
   handleClick() {
@@ -38,6 +34,12 @@ export class XButton extends LitElement {
 XButton.styles = css`
   .hidden {
     display: none;
+  }
+  button {
+    height: 1.6em;
+    border-radius: 4px;
+    border: 1px solid gray;
+    background: whitesmoke;
   }
 `;
 
