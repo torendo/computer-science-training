@@ -1,77 +1,70 @@
-html, body {
-  margin: 0;
-}
-
-body {
-  font-family: sans-serif;
-  padding: 10px;
-  font-size: 14px;
-  box-sizing: border-box;
-}
-
 x-app {
   display: grid;
   grid-template-columns: 200px auto;
   gap: 10px 10px;
   grid-template-areas: "nav view"
                        "footer  footer";
+  font-family: sans-serif;
+  padding: 10px;
+  font-size: 14px;
+  box-sizing: border-box;
 }
 
-x-router {
+x-app x-router {
   flex: auto;
 }
 
-x-console {
+x-app x-console {
   margin: 10px;
   background: aliceblue;
 }
 
-x-console.console-stats {
+x-app x-console.console-stats {
   background: honeydew;
 }
 
-nav {
+x-app nav {
   grid-area: nav;
   display: flex;
   flex-direction: column;
 }
 
-h1 {
+x-app h1 {
   font-size: 16px;
 }
 
-h2 {
+x-app h2 {
   font-size: 14px;
 }
 
-.nav-item {
+x-app .nav-item {
   margin: 5px;
 }
 
-.controlpanel {
+x-app .controlpanel {
   padding: 10px;
   margin: 10px;
   background: cornsilk;
 }
 
-x-view {
+x-app x-view {
   display: block;
   grid-area: view;
 }
 
-footer {
+x-app footer {
   grid-area: footer;
   padding: 20px;
   font-size: .8em;
   color: darkgray;
 }
 
-page-start {
+x-app page-start {
   display: block;
   width: 600px;
 }
 
-.hidden,
-[hidden] {
+x-app .hidden,
+x-app [hidden] {
   display: none;
 }
