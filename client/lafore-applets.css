@@ -14,12 +14,22 @@ x-app {
 x-app:not(:defined):before {
   content: '';
   display: block;
-  border: 4px solid rgba(0, 0, 0, 0.1);
+  position: absolute;
+  left: 50%;
+  border: 5px solid rgba(0, 0, 0, 0.1);
   border-left-color: dimgrey;
   border-radius: 50%;
-  width: 13px;
-  height: 13px;
-  animation: loading-spin 1.2s linear infinite;
+  width: 20px;
+  height: 20px;
+  animation: loading-spin 1s linear infinite;
+}
+@keyframes loading-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 x-app x-router {
