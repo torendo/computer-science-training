@@ -2,16 +2,33 @@ import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {PageStack} from './pageStack';
+import '../components/button';
+import '../components/console';
+import '../components/dialog';
+import '../components/info';
+import '../components/itemsHorizontal';
 
 export class PageQueue extends PageStack {
+  constructor() {
+    super();
+    this.title = 'Queue';
+    this.info = html`
+      <p><b>New</b> creates new queue</p> 
+      <p><b>Ins</b> inserts item with value N at rear of queue</p> 
+      <p><b>Rem</b> removes item from front of queue, returns value</p> 
+      <p><b>Peek</b> returns value of item at front of queue</p> 
+    `;
+  }
+
   render() {
     return html`
-      <h4>Queue</h4>
+      <h1>${this.title}</h1>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorRem)}>Rem</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorPeek)}>Peek</x-button>
+        <x-info>${this.info}</x-info>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items} .markers=${this.markers} reverse></x-items-horizontal>

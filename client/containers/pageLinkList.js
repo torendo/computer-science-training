@@ -3,6 +3,11 @@ import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {PageBase} from './pageBase';
 import {getUniqueRandomArray} from '../utils';
+import '../components/button';
+import '../components/console';
+import '../components/dialog';
+import '../components/info';
+import '../components/itemsHorizontalLinked';
 
 export class PageLinkList extends PageBase {
   constructor() {
@@ -13,25 +18,26 @@ export class PageLinkList extends PageBase {
 
   render() {
     return html`
-      <h4>Link List</h4>
+      <h1>Link List</h1>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorFind)}>Find</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDel)}>Del</x-button>
-        ${this.renderAdditionalControl()}
+        <label><input class="sorted" type="checkbox" disabled>Sorted</label>
+        <x-info>
+          <p><b>New</b> creates linked list with N items (28 max)</p> 
+          <p><b>Ins</b> inserts new item with value N</p> 
+          <p><b>Find</b> finds item with value N</p> 
+          <p><b>Del</b> deletes item with value N</p> 
+          <p><b>Sorted</b> checkbox is used with New</p> 
+        </x-info>
       </div>
       <x-console></x-console>
       <x-items-horizontal-linked .items=${this.items} .marker=${this.marker}></x-items-horizontal-linked>
       <x-dialog>
         <label>Number: <input name="number" type="number"></label>
       </x-dialog>
-    `;
-  }
-
-  renderAdditionalControl() {
-    return html`
-      <label><input class="sorted" type="checkbox" disabled>Sorted</label>
     `;
   }
 

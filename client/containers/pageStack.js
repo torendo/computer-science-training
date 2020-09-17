@@ -2,6 +2,11 @@ import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {PageBase} from './pageBase';
+import '../components/button';
+import '../components/console';
+import '../components/dialog';
+import '../components/info';
+import '../components/itemsHorizontal';
 
 export class PageStack extends PageBase {
   constructor() {
@@ -15,12 +20,18 @@ export class PageStack extends PageBase {
 
   render() {
     return html`
-      <h4>Stack</h4>
+      <h1>Stack</h1>
       <div class="controlpanel">
         <x-button .callback=${this.handleClick.bind(this, this.iteratorNew)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorPush)}>Push</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorPop)}>Pop</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorPeek)}>Peek</x-button>
+        <x-info>
+          <p><b>New</b> creates new stack</p> 
+          <p><b>Push</b> inserts item with value N at top of stack</p> 
+          <p><b>Pop</b> removes item from top of stack, returns value</p> 
+          <p><b>Peek</b> returns value of item at top of stack</p>
+        </x-info>
       </div>
       <x-console></x-console>
       <x-items-horizontal .items=${this.items} .markers=${this.markers} reverse></x-items-horizontal>

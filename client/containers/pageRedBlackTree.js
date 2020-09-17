@@ -3,6 +3,11 @@ import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
 import {PageBinaryTree} from './pageBinaryTree';
+import '../components/button';
+import '../components/console';
+import '../components/dialog';
+import '../components/info';
+import '../components/itemsTree';
 
 export class PageRedBlackTree extends PageBase {
   constructor() {
@@ -12,7 +17,7 @@ export class PageRedBlackTree extends PageBase {
 
   render() {
     return html`
-      <h4>Red-Black Tree</h4>
+      <h1>Red-Black Tree</h1>
       <div class="controlpanel">
         <x-button .callback=${this.init.bind(this)}>Start</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorIns)}>Ins</x-button>
@@ -21,6 +26,16 @@ export class PageRedBlackTree extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorRoL)}>RoL</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorRoR)}>RoR</x-button>
         <x-button .callback=${this.swichRB.bind(this)}>R/B</x-button>
+        <x-info>
+          <p><b>Click on node</b> to move arrow to it</p> 
+          <p><b>Start</b> makes a new tree with one node</p> 
+          <p><b>Ins</b> inserts a new node with value N</p> 
+          <p><b>Del</b> deletes the node with value N</p> 
+          <p><b>Flip</b> swaps colors between black parent (arrow) and two red children</p> 
+          <p><b>RoL</b> rotates left around node with arrow</p> 
+          <p><b>RoR</b> rotates right around node with arrow</p> 
+          <p><b>R/B</b> toggles color of node with arrow</p> 
+        </x-info>
       </div>
       <x-console class="main-console"></x-console>
       <x-console class="console-stats" defaultMessage="—"></x-console>

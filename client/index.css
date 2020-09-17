@@ -1,18 +1,20 @@
 html, body {
   margin: 0;
-  height: 100%;
 }
 
 body {
   font-family: sans-serif;
   padding: 10px;
+  font-size: 14px;
   box-sizing: border-box;
 }
 
 x-app {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  display: grid;
+  grid-template-columns: 200px auto;
+  gap: 10px 10px;
+  grid-template-areas: "nav view"
+                       "footer  footer";
 }
 
 x-router {
@@ -29,8 +31,17 @@ x-console.console-stats {
 }
 
 nav {
+  grid-area: nav;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+}
+
+h1 {
+  font-size: 16px;
+}
+
+h2 {
+  font-size: 14px;
 }
 
 .nav-item {
@@ -43,14 +54,21 @@ nav {
   background: cornsilk;
 }
 
-.credits {
-  font-size: .8em;
-  color: dimgray;
+x-view {
+  display: block;
+  grid-area: view;
 }
 
-.credits-my {
+footer {
+  grid-area: footer;
+  padding: 20px;
   font-size: .8em;
   color: darkgray;
+}
+
+page-start {
+  display: block;
+  width: 600px;
 }
 
 .hidden,
