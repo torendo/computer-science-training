@@ -1,0 +1,59 @@
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: sans-serif;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+x-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+x-router {
+  flex: auto;
+}
+
+x-console {
+  margin: 10px;
+  background: aliceblue;
+}
+
+x-console.console-stats {
+  background: honeydew;
+}
+
+nav {
+  display: flex;
+  flex-direction: row;
+}
+
+.nav-item {
+  margin: 5px;
+}
+
+.controlpanel {
+  padding: 10px;
+  margin: 10px;
+  background: cornsilk;
+}
+
+.credits {
+  font-size: .8em;
+  color: dimgray;
+}
+
+.credits-my {
+  font-size: .8em;
+  color: darkgray;
+}
+
+.hidden,
+[hidden] {
+  display: none;
+}
