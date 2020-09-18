@@ -1,3 +1,5 @@
+## Robert Lafore workshop applets in JavaScript
+
 There are workshop applets from "Data Structures & Algorithms in Java" (2nd), Robert Lafore book.
 Instead of Java they are made using JavaScript.
 
