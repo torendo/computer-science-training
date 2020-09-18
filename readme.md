@@ -14,3 +14,7 @@ You need Node 10.16.3+
 `npm start`
 
 Project will accesible by `localhost:3003`
+
+### In progress
+- Chapter 6 (10) Towers game
+- Chapter 10 (18) Tree234
