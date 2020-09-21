@@ -15,7 +15,7 @@ export class PageGraphDW extends PageGraphN {
       <div class="controlpanel">
         <x-button .callback=${this.newGraph.bind(this)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorPath)}>Path</x-button>
-        <x-button .callback=${this.toggleView.bind(this)}>View</x-button>
+        <x-button class="operable" .callback=${this.toggleView.bind(this)}>View</x-button>
         <x-info>
           <p><b>Double-click</b> to create new vertex</p>
           <p><b>Drag</b> from vertex to vertex to create edge</p>
