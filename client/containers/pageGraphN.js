@@ -23,7 +23,7 @@ export class PageGraphN extends PageBase {
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDFS)}>DFS</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorBFS)}>BFS</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorMST)}>Tree</x-button>
-        <x-button .callback=${this.toggleView.bind(this)}>View</x-button>
+        <x-button class="operable" .callback=${this.toggleView.bind(this)}>View</x-button>
         <x-info>
           <p><b>Double-click</b> to create new vertex</p>
           <p><b>Drag</b> from vertex to vertex to create edge</p>

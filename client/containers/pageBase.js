@@ -20,8 +20,8 @@ export class PageBase extends LitElement {
   }
 
   toggleButtonsActivity(btn, status) {
-    this.querySelectorAll('x-button').forEach(el => {
-      if (el !== btn) el.disabled = status;
+    this.querySelectorAll('x-button').forEach(node => {
+      if (!node.classList.contains('operable') && node !== btn) node.disabled = status;
     });
     btn.activated = status;
   }
