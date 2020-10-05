@@ -69,13 +69,16 @@ export class PageRedBlackTree extends PageBase {
   }
 
   * iteratorIns() {
-    let key = 0;
+    let key;
     yield 'Enter key of node to insert';
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (key > 99 || key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }
@@ -103,13 +106,16 @@ export class PageRedBlackTree extends PageBase {
   }
 
   * iteratorDel() {
-    let key = 0;
+    let key;
     yield 'Enter key of node to delete';
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (key > 99 || key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }

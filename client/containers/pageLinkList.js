@@ -58,13 +58,16 @@ export class PageLinkList extends PageBase {
   }
 
   * iteratorNew() {
-    let length = 0;
+    let length;
     yield 'Enter size of linked list to create';
     this.dialog.open().then(formData => {
       length = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (length == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (length > 56 || length < 0) {
       return 'ERROR: use size between 0 and 60';
     }
@@ -91,13 +94,16 @@ export class PageLinkList extends PageBase {
     if (this.items.length === 56) {
       return 'ERROR: can\'t insert, list is full';
     }
-    let key = 0;
+    let key;
     yield 'Enter key of item to insert';
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (key > 1000 || key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }
@@ -127,13 +133,16 @@ export class PageLinkList extends PageBase {
   }
 
   * iteratorFind() {
-    let key = 0;
+    let key;
     yield 'Enter key of item to find';
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (key > 1000 || key < 0) {
       return 'ERROR: use key between 0 and 999';
     }
@@ -144,13 +153,16 @@ export class PageLinkList extends PageBase {
   }
 
   * iteratorDel() {
-    let key = 0;
+    let key;
     yield 'Enter key of item to delete';
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (key > 1000 || key < 0) {
       return 'ERROR: use key between 0 and 999';
     }

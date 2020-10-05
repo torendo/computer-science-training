@@ -65,13 +65,16 @@ export class PageBinaryTree extends PageBase {
   }
 
   * iteratorFill() {
-    let length = 0;
+    let length;
     yield 'Enter number of nodes (1 to 31)';
     this.dialog.open().then(formData => {
       length = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (length == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (length > 31 || length < 1) {
       return 'ERROR: use size between 1 and 31';
     }
@@ -79,17 +82,7 @@ export class PageBinaryTree extends PageBase {
     this.initItems(length);
   }
 
-  * iteratorFind() {
-    let key = 0;
-    yield 'Enter key of node to find';
-    this.dialog.open().then(formData => {
-      key = Number(formData.get('number'));
-      this.iterate();
-    }, () => this.iterate());
-    yield 'Dialog opened'; //skip in promise
-    if (key > 1000 || key < 0) {
-      return 'ERROR: use key between 0 and 99';
-    }
+  * iteratorSearch(key) {
     yield `Will try to find node with key ${key}`;
     let i = 0;
     let isFound = false;
@@ -103,19 +96,40 @@ export class PageBinaryTree extends PageBase {
       i = 2 * i + (isLeft ? 1 : 2);
       yield `Going to ${isLeft ? 'left' : 'right'} child`;
     }
-    yield `${isFound ? 'Have found' : 'Can\'t find'} node ${key}`;
+    return isFound ? i : null;
+  }
+
+  * iteratorFind() {
+    let key;
+    yield 'Enter key of node to find';
+    this.dialog.open().then(formData => {
+      key = Number(formData.get('number'));
+      this.iterate();
+    }, () => this.iterate());
+    yield 'Dialog opened'; //skip in promise
+    if (key == null) {
+      return 'ERROR: Input cancelled';
+    }
+    if (key > 1000 || key < 0) {
+      return 'ERROR: use key between 0 and 99';
+    }
+    let index = yield* this.iteratorSearch(key);
+    yield `${index != null ? 'Have found' : 'Can\'t find'} node ${key}`;
     yield 'Search is complete';
     this.initMarker();
   }
 
   * iteratorIns() {
-    let key = 0;
+    let key;
     yield 'Enter key of node to insert';
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (key > 99 || key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }
@@ -184,38 +198,31 @@ export class PageBinaryTree extends PageBase {
   }
 
   * iteratorDel() {
-    let key = 0;
+    let key;
     yield 'Enter key of node to delete';
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (key > 1000 || key < 0) {
       return 'ERROR: use key between 0 and 99';
     }
-    yield `Will try to find node with key ${key}`;
-    let i = 0;
-    let isFound = false;
-    while (this.items[i] && this.items[i].value != null) {
-      this.marker.position = i;
-      if (this.items[i].value === key) {
-        isFound = true;
-        break;
-      }
-      const isLeft = this.items[i].value > key;
-      i = 2 * i + (isLeft ? 1 : 2);
-      yield `Going to ${isLeft ? 'left' : 'right'} child`;
-    }
-    if (isFound) {
+
+    let index = yield* this.iteratorSearch(key);
+
+    if (index != null) {
       yield 'Have found node to delete';
     } else {
       return 'Can\'t find node to delete';
     }
 
-    const current = this.items[i];
-    const leftChild = this.items[2 * i + 1];
-    const rightChild = this.items[2 * i + 2];
+    const current = this.items[index];
+    const leftChild = this.items[2 * index + 1];
+    const rightChild = this.items[2 * index + 2];
     //if node has no children
     if ((!leftChild || leftChild.value == null) && (!rightChild || rightChild.value == null)) {
       current.clear();
