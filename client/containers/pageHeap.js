@@ -80,13 +80,16 @@ export class PageHeap extends PageBase {
   }
 
   * iteratorFill() {
-    let length = 0;
+    let length;
     yield 'Enter number of nodes (1 to 31)';
     this.dialog.open().then(formData => {
       length = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (length == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (length > 31 || length < 1) {
       return 'ERROR: use size between 1 and 31';
     }
@@ -114,13 +117,16 @@ export class PageHeap extends PageBase {
     if (this.items.length === this.length) {
       return 'ERROR: can\'t insert, no room in display';
     }
-    let key = 0;
+    let key;
     yield 'Enter key of node to insert';
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (key > 99 || key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }
@@ -189,12 +195,15 @@ export class PageHeap extends PageBase {
     const top = this.marker.position;
     const changingKey = this.items[top].value;
     yield 'Type node\'s new value';
-    let key = 0;
+    let key;
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (key > 99 || key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }

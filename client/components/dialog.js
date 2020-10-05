@@ -17,27 +17,28 @@ export class XDialog extends LitElement {
 
   firstUpdated() {
     this.dialog = this.shadowRoot.querySelector('dialog');
-    this.form = this.shadowRoot.querySelector('form');
-    //move slotted nodes into dialog's form directly for proper work FormData
-    //TODO: find a better way to beat this problem
-    const slot = this.shadowRoot.querySelector('slot');
-    this.shadowRoot.querySelector('.slotCnt').append(...slot.assignedNodes());
-    slot.remove();
+    this.inputs = this.shadowRoot.querySelector('slot')
+      .assignedElements()
+      .reduce((res, el) => [...res, ...el.querySelectorAll('input')], []);
   }
 
   open() {
     return new Promise((resolve, reject) => {
       this.dialog.showModal();
-      const onClose = () => {
-        this.dialog.removeEventListener('close', onClose);
+      this.dialog.addEventListener('close',  () => {
         if (this.dialog.returnValue === 'default') {
-          resolve(new FormData(this.form));
-          this.form.reset();
+          const formData = new FormData();
+          this.inputs.forEach(input => {
+            formData.append(input.name, input.value);
+            input.value = null;
+          });
+          resolve(formData);
         } else {
           reject();
         }
-      };
-      this.dialog.addEventListener('close', onClose);
+      }, {
+        once: true
+      });
     });
   }
 }

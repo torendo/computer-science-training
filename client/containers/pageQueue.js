@@ -64,13 +64,16 @@ export class PageQueue extends PageStack {
     if (this.length === this.items.length) {
       return 'ERROR: can\'t push. Queue is full';
     }
-    let key = 0;
+    let key;
     yield 'Enter key of item to insert';
     this.dialog.open().then(formData => {
       key = Number(formData.get('number'));
       this.iterate();
     }, () => this.iterate());
     yield 'Dialog opened'; //skip in promise
+    if (key == null) {
+      return 'ERROR: Input cancelled';
+    }
     if (key > 1000 || key < 0) {
       return 'ERROR: can\'t insert. Need key between 0 and 999';
     }

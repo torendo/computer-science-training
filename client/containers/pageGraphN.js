@@ -17,7 +17,7 @@ export class PageGraphN extends PageBase {
   }
   render() {
     return html`
-      <h4>Non-Directed Non-Weighted Graph</h4>
+      <h1>Non-Directed Non-Weighted Graph</h1>
       <div class="controlpanel">
         <x-button .callback=${this.newGraph.bind(this)}>New</x-button>
         <x-button .callback=${this.handleClick.bind(this, this.iteratorDFS)}>DFS</x-button>
