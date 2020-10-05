@@ -9,8 +9,8 @@ export class XView extends LitElement {
   }
 
   render() {
-    let template = (this.component != null && this.component !== '') ? `<${this.component}></${this.component}>` : '';
-    return html`${unsafeHTML(template)}`;
+    let exist = this.component != null && this.component !== '' && customElements.get(this.component) != null;
+    return exist ? html`${unsafeHTML(`<${this.component}></${this.component}>`)}` : '';
   }
 
   createRenderRoot() {
