@@ -26,33 +26,6 @@ import './containers/pageGraphD';
 import './containers/pageGraphW';
 import './containers/pageGraphDW';
 
-let view;
-const routes = {
-  '#array': 'page-array',
-  '#orderedArray': 'page-ordered-array',
-  '#bubbleSort': 'page-bubble-sort',
-  '#selectSort': 'page-select-sort',
-  '#insertionSort': 'page-insertion-sort',
-  '#stack': 'page-stack',
-  '#queue': 'page-queue',
-  '#priorityQueue': 'page-priority-queue',
-  '#linkList': 'page-link-list',
-  '#mergeSort': 'page-merge-sort',
-  '#shellSort': 'page-shell-sort',
-  '#partition': 'page-partition',
-  '#quickSort1': 'page-quick-sort-1',
-  '#quickSort2': 'page-quick-sort-2',
-  '#binaryTree': 'page-binary-tree',
-  '#redBlackTree': 'page-redblack-tree',
-  '#hashTable': 'page-hash-table',
-  '#hashChain': 'page-hash-chain',
-  '#heap': 'page-heap',
-  '#graphN': 'page-graph-n',
-  '#graphD': 'page-graph-d',
-  '#graphW': 'page-graph-w',
-  '#graphDW': 'page-graph-dw'
-};
-
 class XApp extends LitElement {
   render() {
     return html`
@@ -63,54 +36,54 @@ class XApp extends LitElement {
         
         <h2>Chapter 2 — Arrays</h2>
         <div class="nav-item"><a href="#array">1) Array</a></div>
-        <div class="nav-item"><a href="#orderedArray">2) OrderedArray</a></div>
+        <div class="nav-item"><a href="#ordered-array">2) OrderedArray</a></div>
         
         <h2>Chapter 3 — Simple Sorting</h2>
-        <div class="nav-item"><a href="#bubbleSort">3) Bubble</a></div>
-        <div class="nav-item"><a href="#insertionSort">4) Insertion</a></div>
-        <div class="nav-item"><a href="#selectSort">5) Selection</a></div>
+        <div class="nav-item"><a href="#bubble-sort">3) Bubble</a></div>
+        <div class="nav-item"><a href="#insertion-sort">4) Insertion</a></div>
+        <div class="nav-item"><a href="#select-sort">5) Selection</a></div>
         
         <h2>Chapter 4 — Stacks and Queues</h2>
         <div class="nav-item"><a href="#stack">6) Stack</a></div>
         <div class="nav-item"><a href="#queue">7) Queue</a></div>
-        <div class="nav-item"><a href="#priorityQueue">8) PriorityQ</a></div>
+        <div class="nav-item"><a href="#priority-queue">8) PriorityQ</a></div>
         
         <h2>Chapter 5 — Linked Lists</h2>
-        <div class="nav-item"><a href="#linkList">9) LinkList</a></div>
+        <div class="nav-item"><a href="#link-list">9) LinkList</a></div>
         
         <h2>Chapter 6 — Recursion</h2>
         <div class="nav-item" title="In progress">10) Towers</div>
-        <div class="nav-item"><a href="#mergeSort">11) mergeSort</a></div>
+        <div class="nav-item"><a href="#merge-sort">11) mergeSort</a></div>
         
         <h2>Chapter 7 — Advanced Sorting</h2>
-        <div class="nav-item"><a href="#shellSort">12) shellSort</a></div>
+        <div class="nav-item"><a href="#shell-sort">12) shellSort</a></div>
         <div class="nav-item"><a href="#partition">13) partition</a></div>
-        <div class="nav-item"><a href="#quickSort1">14) quickSort1</a></div>
-        <div class="nav-item"><a href="#quickSort2">15) quickSort2</a></div>
+        <div class="nav-item"><a href="#quick-sort-1">14) quickSort1</a></div>
+        <div class="nav-item"><a href="#quick-sort-2">15) quickSort2</a></div>
         
         <h2>Chapter 8 — Binary Trees</h2>
-        <div class="nav-item"><a href="#binaryTree">16) Tree</a></div>
+        <div class="nav-item"><a href="#binary-tree">16) Tree</a></div>
         
         <h2>Chapter 9 — Red-black Trees</h2>
-        <div class="nav-item"><a href="#redBlackTree">17) RBTree</a></div>
+        <div class="nav-item"><a href="#redblack-tree">17) RBTree</a></div>
         
         <h2>Chapter 10 — 2-3-4 Trees</h2>
         <div class="nav-item" title="In progress">18) Tree234</div>
         
         <h2>Chapter 11 — Hash Tables</h2>
-        <div class="nav-item"><a href="#hashTable">19-20) Hash/HashDouble</a></div>
-        <div class="nav-item"><a href="#hashChain">21) HashChain</a></div>
+        <div class="nav-item"><a href="#hash-table">19-20) Hash/HashDouble</a></div>
+        <div class="nav-item"><a href="#hash-chain">21) HashChain</a></div>
         
         <h2>Chapter 12 — Heaps</h2>
         <div class="nav-item"><a href="#heap">22) Heap</a></div>
         
         <h2>Chapter 13 — Graphs</h2>
-        <div class="nav-item"><a href="#graphN">23) GraphN</a></div>
-        <div class="nav-item"><a href="#graphD">24) GraphD</a></div>
+        <div class="nav-item"><a href="#graph-n">23) GraphN</a></div>
+        <div class="nav-item"><a href="#graph-d">24) GraphD</a></div>
         
         <h2>Chapter 14 — Weighted Graphs</h2>
-        <div class="nav-item"><a href="#graphW">25) GraphW</a></div>
-        <div class="nav-item"><a href="#graphDW">26) GraphDW</a></div>
+        <div class="nav-item"><a href="#graph-w">25) GraphW</a></div>
+        <div class="nav-item"><a href="#graph-dw">26) GraphDW</a></div>
       </nav>
       <x-view component="page-start"></x-view>      
       <footer>Built by Stanislav Proshkin with ❤ and WebComponents</footer>
@@ -122,20 +95,21 @@ class XApp extends LitElement {
   }
 
   firstUpdated() {
-    view = this.querySelector('x-view');
+    this.view = this.querySelector('x-view');
     this.loadView();
-    window.addEventListener('hashchange', this.loadView, false);
+    this.hashChangeCallback = this.loadView.bind(this);
+    window.addEventListener('hashchange', this.hashChangeCallback, false);
   }
   
   disconnectedCallback() {
-    window.removeEventListener('hashchange', this.loadView);
+    window.removeEventListener('hashchange', this.hashChangeCallback);
   }
 
   loadView() {
-    const hash = location.hash;
-    if (hash !== '') {
-      view.component = routes[hash];
-      view.scrollIntoView();
+    const hash = location.hash.substring(1);
+    if (hash !== '' && customElements.get('page-' + hash) != null) {
+      this.view.component = 'page-' + hash;
+      this.view.scrollIntoView();
     }
   }
 }
