@@ -229,14 +229,14 @@ export class PageBinaryTree extends PageBase {
       yield 'Node was deleted';
     } else if (!rightChild || rightChild.value == null) { //if node has no right child
       yield 'Will replace node with its left subtree';
-      PageBinaryTree.moveSubtree(leftChild.index, current.index, this.items);
+      moveSubtree(leftChild.index, current.index, this.items);
       yield 'Node was replaced by its left subtree';
     } else if (!leftChild || leftChild.value == null) { //if node has no left child
       yield 'Will replace node with its right subtree';
-      PageBinaryTree.moveSubtree(rightChild.index, current.index, this.items);
+      moveSubtree(rightChild.index, current.index, this.items);
       yield 'Node was replaced by its right subtree';
     } else { //node has two children, find successor
-      const successor = PageBinaryTree.getSuccessor(current.index, this.items);
+      const successor = getSuccessor(current.index, this.items);
       yield `Will replace node with ${this.items[successor].value}`;
       const hasRightChild = this.items[2 * successor + 2] && this.items[2 * successor + 2].value != null;
       if (hasRightChild) {
@@ -244,7 +244,7 @@ export class PageBinaryTree extends PageBase {
       }
       current.moveFrom(this.items[successor]);
       if (hasRightChild) {
-        PageBinaryTree.moveSubtree(2 * successor + 2, successor, this.items);
+        moveSubtree(2 * successor + 2, successor, this.items);
         yield 'Removed node in 2-step process';
       } else {
         yield 'Node was replaced by successor';
@@ -252,31 +252,31 @@ export class PageBinaryTree extends PageBase {
     }
     this.initMarker();
   }
+}
 
-  static getSuccessor(index, items) {
-    let successor = index;
-    let current = 2 * index + 2; //right child
-    while(items[current] && items[current].value != null) {
-      successor = current;
-      current = 2 * current + 1; //left child
-    }
-    return successor;
+export function getSuccessor(index, items) {
+  let successor = index;
+  let current = 2 * index + 2; //right child
+  while(items[current] && items[current].value != null) {
+    successor = current;
+    current = 2 * current + 1; //left child
   }
+  return successor;
+}
 
-  static moveSubtree(from, to, items) {
-    const tempItems = [];
-    function recursiveMoveToTemp(from, to) {
-      if (!items[from] || items[from].value == null) return;
-      tempItems[to] = new Item(items[from]);
-      items[from].clear();
-      recursiveMoveToTemp(2 * from + 1, 2 * to + 1); //left
-      recursiveMoveToTemp(2 * from + 2, 2 * to + 2); //right
-    }
-    recursiveMoveToTemp(from, to);
-    tempItems.forEach((item, index) => { //restore from temp
-      items[index].moveFrom(item);
-    });
+export function moveSubtree(from, to, items) {
+  const tempItems = [];
+  function recursiveMoveToTemp(from, to) {
+    if (!items[from] || items[from].value == null) return;
+    tempItems[to] = new Item(items[from]);
+    items[from].clear();
+    recursiveMoveToTemp(2 * from + 1, 2 * to + 1); //left
+    recursiveMoveToTemp(2 * from + 2, 2 * to + 2); //right
   }
+  recursiveMoveToTemp(from, to);
+  tempItems.forEach((item, index) => { //restore from temp
+    items[index].moveFrom(item);
+  });
 }
 
 customElements.define('page-binary-tree', PageBinaryTree);

@@ -2,7 +2,7 @@ import {PageBase} from './pageBase';
 import {html} from 'lit-element';
 import {Item} from '../classes/item';
 import {Marker} from '../classes/marker';
-import {PageBinaryTree} from './pageBinaryTree';
+import {getSuccessor, moveSubtree} from './pageBinaryTree';
 import '../components/button';
 import '../components/console';
 import '../components/dialog';
@@ -136,15 +136,15 @@ export class PageRedBlackTree extends PageBase {
       this.items[i].mark = false;
       current.clear();
     } else if (!rightChild || rightChild.value == null) { //if node has no right child
-      PageBinaryTree.moveSubtree(leftChild.index, current.index, this.items);
+      moveSubtree(leftChild.index, current.index, this.items);
     } else if (!leftChild || leftChild.value == null) { //if node has no left child
-      PageBinaryTree.moveSubtree(rightChild.index, current.index, this.items);
+      moveSubtree(rightChild.index, current.index, this.items);
     } else { //node has two children, find successor
-      const successor = PageBinaryTree.getSuccessor(current.index, this.items);
+      const successor = getSuccessor(current.index, this.items);
       const hasRightChild = this.items[2 * successor + 2] && this.items[2 * successor + 2].value != null;
       current.moveFrom(this.items[successor]);
       if (hasRightChild) {
-        PageBinaryTree.moveSubtree(2 * successor + 2, successor, this.items);
+        moveSubtree(2 * successor + 2, successor, this.items);
       }
     }
   }
@@ -231,17 +231,17 @@ export class PageRedBlackTree extends PageBase {
       return 'Can\'t rotate';
     }
     if (this.items[left] && this.items[left].value != null) {
-      PageBinaryTree.moveSubtree(left, 2 * left + 1, this.items);
+      moveSubtree(left, 2 * left + 1, this.items);
     }
     this.items[left].moveFrom(this.items[top]);
     this.items[top].moveFrom(this.items[right]);
     const rightGrandLeft = 2 * right + 1;
     if (this.items[rightGrandLeft] && this.items[rightGrandLeft].value != null) {
-      PageBinaryTree.moveSubtree(rightGrandLeft, 2 * left + 2, this.items);
+      moveSubtree(rightGrandLeft, 2 * left + 2, this.items);
     }
     const rightGrandRight = 2 * right + 2;
     if (this.items[rightGrandRight] && this.items[rightGrandRight].value != null) {
-      PageBinaryTree.moveSubtree(rightGrandRight, right, this.items);
+      moveSubtree(rightGrandRight, right, this.items);
     }
   }
 
@@ -253,17 +253,17 @@ export class PageRedBlackTree extends PageBase {
       return 'Can\'t rotate';
     }
     if (this.items[right] && this.items[right].value != null) {
-      PageBinaryTree.moveSubtree(right, 2 * right + 2, this.items);
+      moveSubtree(right, 2 * right + 2, this.items);
     }
     this.items[right].moveFrom(this.items[top]);
     this.items[top].moveFrom(this.items[left]);
     const leftGrandRight = 2 * left + 2;
     if (this.items[leftGrandRight] && this.items[leftGrandRight].value != null) {
-      PageBinaryTree.moveSubtree(leftGrandRight, 2 * right + 1, this.items);
+      moveSubtree(leftGrandRight, 2 * right + 1, this.items);
     }
     const leftGrandLeft = 2 * left + 1;
     if (this.items[leftGrandLeft] && this.items[leftGrandLeft].value != null) {
-      PageBinaryTree.moveSubtree(leftGrandLeft, left, this.items);
+      moveSubtree(leftGrandLeft, left, this.items);
     }
   }
 
