@@ -12,7 +12,7 @@
     "build": "node ./node_modules/gulp/bin/gulp.js build"
   },
   "dependencies": {
-    "express": "^4.16.2",
+    "express": "^4.17.3",
     "lit-element": "^2.0.1",
     "lit-html": "^1.0.0"
   },
